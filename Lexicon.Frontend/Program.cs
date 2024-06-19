@@ -1,10 +1,32 @@
 using Lexicon.Frontend.Components;
+using Lexicon.Frontend.Services;
+using Lexicon.Frontend.ServicesImp;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddHttpClient<IUnitOfWork, UnitOfWork>(client =>
+{
+    var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
+
+    if (string.IsNullOrEmpty(apiBaseUrl))
+    {
+        throw new InvalidOperationException("ApiBaseurl configuration is missing");
+    }
+
+    client.BaseAddress = new Uri(apiBaseUrl);
+}).ConfigurePrimaryHttpMessageHandler(() =>
+{
+    return new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+    };
+});
+
+
 
 var app = builder.Build();
 
