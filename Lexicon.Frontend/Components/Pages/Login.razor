@@ -1,0 +1,31 @@
+﻿@page "/login"
+@inject IUnitOfWork Services
+@rendermode InteractiveServer
+
+<h3>Users</h3>
+
+@if(users == null)
+{
+    <p><em>Loading ...</em></p>
+}
+
+else
+{
+    @foreach (var user in users)
+    {
+        <div>
+            @user.FirstName
+            @user.LastName
+        </div>
+    }
+}
+
+@code {
+
+    private List<User> users;
+
+    protected async override Task OnInitializedAsync()
+    {
+        users = (await Services.UserService.GetUsersAsync()).ToList();
+    }
+}
