@@ -43,4 +43,10 @@ using (var scope = app.Services.CreateScope())
 
 app.MapControllers();
 
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    FakeDataGenerator.Initialize(services);
+}
 app.Run();
