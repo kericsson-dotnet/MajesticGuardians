@@ -1,4 +1,4 @@
-﻿@page "/activity"
+﻿@page "/activities"
 @inject IUnitOfWork Services
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
@@ -67,18 +67,12 @@ else
 
 @code {
     private ActivityModel activityModel = new ActivityModel();
-    private List<ActivityModel> activities;
-
-    public enum ActivityType
-    {
-        Lecture,
-        Assignment,
-        Quiz
-    }
+    private List<ActivityModel>? activities;
 
     protected override async Task OnInitializedAsync()
     {
-        activities = await Http.GetFromJsonAsync<List<ActivityModel>>("api/activities");
+        //activities = await Http.GetFromJsonAsync<List<ActivityModel>>("api/activities"); // here is the issue
+        // Unable right now to connect to api controller
     }
 
     private async Task HandleSubmit()
@@ -95,12 +89,12 @@ else
             else
             {
                 // Handle failure
-                Console.WriteLine("Failed to save activity");
+                Console.WriteLine("Failed to save activities");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error saving activity: {ex.Message}");
+            Console.WriteLine($"Error saving activities: {ex.Message}");
         }
     }
 
