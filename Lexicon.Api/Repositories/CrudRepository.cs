@@ -20,7 +20,7 @@ public class CrudRepository<T> : ICrudRepository<T> where T : class
 
     public async Task<T> GetAsync(object id)
     {
-        return await DbSet.FindAsync(id) ?? throw new InvalidOperationException($"{typeof(T).Name}Id {id} not found.");
+        return await DbSet.FindAsync(id);
     }
 
     public void Add(T obj)
