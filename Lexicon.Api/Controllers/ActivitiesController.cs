@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lexicon.Api.Entities;
 using Lexicon.Api.Repositories;
+using AutoMapper;
+using Lexicon.Api.Dtos.ActivityDtos;
 
 namespace Lexicon.Api.Controllers;
 
@@ -10,48 +12,62 @@ namespace Lexicon.Api.Controllers;
 public class ActivitiesController : ControllerBase
 {
     private readonly IUnitOfWork _UoW;
+    private readonly IMapper _mapper;
 
-    public ActivitiesController(IUnitOfWork unitOfWork)
+    public ActivitiesController(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _UoW = unitOfWork;
+        _mapper = mapper;
     }
 
-    // GET: api/Activities
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Activity>>> GetActivities()
+    public async Task<IActionResult> GetActivities()
     {
         var activities = await _UoW.Activities.GetAllAsync();
-        return Ok(activities);
+
+        if(activities == null || !activities.Any()) 
+        {
+            return BadRequest();
+        }
+
+        return Ok(_mapper.Map<IEnumerable<ActivityDto>>(activities));
     }
 
-    // GET: api/Activities/5
     [HttpGet("{id}")]
     public async Task<ActionResult<Activity>> GetActivity(int id)
     {
         try
         {
             var activity = await _UoW.Activities.GetAsync(id);
-            return Ok(activity);
+            return Ok(_mapper.Map<ActivityDto>(activity));
         }
+
         catch (InvalidOperationException ex)
         {
             return NotFound(ex.Message);
         }
     }
 
-    // PUT: api/Activities/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutActivity(int id, Activity activity)
+    public async Task<IActionResult> PutActivity(int id, ActivityPostDto activityPostDto)
     {
-        if (id != activity.ActivityId)
+        if (id <= 0)
         {
             return BadRequest();
         }
 
         try
         {
-            _UoW.Activities.Update(activity);
+            var existingActivity = await _UoW.Activities.GetAsync(id);
+
+            if (existingActivity == null)
+            {
+                return BadRequest();
+            }
+
+            _mapper.Map(activityPostDto, existingActivity);
+
+            _UoW.Activities.Update(existingActivity);
             await _UoW.SaveAsync();
         }
         catch (DbUpdateConcurrencyException)
@@ -69,29 +85,49 @@ public class ActivitiesController : ControllerBase
         return NoContent();
     }
 
-    // POST: api/Activities
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<Activity>> PostActivity(Activity activity)
+    public async Task<ActionResult<ActivityPostDto>> PostActivity(ActivityPostDto activityPostDto)
     {
-        _UoW.Activities.Add(activity);
-        await _UoW.SaveAsync();
+        var activity = _mapper.Map<Activity>(activityPostDto); 
+        try
+        {
+            _UoW.Activities.Add(activity);
+            await _UoW.SaveAsync();
+        }
+
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occured while posting the activity");
+        }
 
         return CreatedAtAction("GetActivity", new { id = activity.ActivityId }, activity);
     }
 
-    // DELETE: api/Activities/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteActivity(int id)
     {
+        if (id <= 0)
+        {
+            return BadRequest();
+        }
+
         var activity = await _UoW.Activities.GetAsync(id);
+
         if (activity == null)
         {
             return NotFound();
         }
 
-        _UoW.Activities.Delete(activity);
-        await _UoW.SaveAsync();
+        try
+        {
+            _UoW.Activities.Delete(activity);
+            await _UoW.SaveAsync();
+        }
+
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occured while deleting the activity");
+        }
 
         return NoContent();
     }

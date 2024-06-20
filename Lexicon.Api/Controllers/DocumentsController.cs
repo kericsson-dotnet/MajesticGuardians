@@ -99,7 +99,6 @@ public class DocumentsController : ControllerBase
         return NoContent();
     }
 
-
     [HttpPost]
     public async Task<ActionResult<DocumentPostDto>> PostDocument(DocumentPostDto documentPostDto)
     {
