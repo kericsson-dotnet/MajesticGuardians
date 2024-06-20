@@ -1,6 +1,6 @@
 ﻿using Lexicon.Api.Entities;
 
-namespace Lexicon.Api.Dtos
+namespace Lexicon.Api.Dtos.DocumentDtos
 {
     public class DocumentPostDto
     {
