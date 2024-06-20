@@ -21,7 +21,7 @@ builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
     .AddXmlDataContractSerializerFormatters();
 
 
-builder.Services.AddScoped(typeof(ICrudRepository<>), typeof(CrudRepository<>));
+//builder.Services.AddScoped(typeof(ICrudRepository<>), typeof(CrudRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
