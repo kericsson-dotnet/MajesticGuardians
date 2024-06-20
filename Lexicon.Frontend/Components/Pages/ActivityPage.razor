@@ -5,8 +5,65 @@
 @using System.Net.Http.Json
 @inject HttpClient Http
 
+<PageTitle>Activity</PageTitle>
+
 <h3>Activity</h3>
 
-@code {
+<div class="new-module-form">
+    <EditForm Model="@activitiesModel" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
+        <div class="form-group">
+            <label for="moduleName">Module Name</label>
+            <InputText id="moduleName" class="form-control" @bind-Value="activitiesModel.Name" />
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <InputText id="description" class="form-control" @bind-Value="activitiesModel.Description" />
+        </div>
+        <div class="form-group">
+            <label for="startDate">Start Date</label>
+            <InputDate id="startDate" class="form-control" @bind-Value="activitiesModel.StartDate" />
+        </div>
+        <div class="form-group">
+            <label for="endDate">End Date</label>
+            <InputDate id="endDate" class="form-control" @bind-Value="activitiesModel.EndDate" />
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </EditForm>
+</div>
+
+@code {
+    private ActivitiesModel activitiesModel = new ActivitiesModel();
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/activities", activitiesModel);
+            if (response.IsSuccessStatusCode)
+            {
+                // Redirect to another page or show success message
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                // Handle failure
+                Console.WriteLine("Failed to save activity");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving activity: {ex.Message}");
+        }
+    }
+
+    public class ModuleModel
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public DateTime StartDate { get; set; } = DateTime.Now;
+        public DateTime EndDate { get; set; } = DateTime.Now;
+    }
 }

@@ -43,7 +43,7 @@
     {
         try
         {
-            var response = await Http.PostAsJsonAsync("api/auth/register", registerModel);
+            var response = await Http.PostAsJsonAsync("api/users", registerModel);
             if (response.IsSuccessStatusCode)
             {
                 // Redirect to login page upon successful registration
