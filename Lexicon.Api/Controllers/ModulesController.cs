@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lexicon.Api.Data;
@@ -32,27 +30,26 @@ namespace Lexicon.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Module>> GetModule(int id)
         {
-            var @module = await _context.Modules.FindAsync(id);
+            var module = await _context.Modules.FindAsync(id);
 
-            if (@module == null)
+            if (module == null)
             {
                 return NotFound();
             }
 
-            return @module;
+            return module;
         }
 
         // PUT: api/Modules/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutModule(int id, Module @module)
+        public async Task<IActionResult> PutModule(int id, Module module)
         {
-            if (id != @module.ModuleId)
+            if (id != module.ModuleId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(@module).State = EntityState.Modified;
+            _context.Entry(module).State = EntityState.Modified;
 
             try
             {
@@ -74,27 +71,34 @@ namespace Lexicon.Api.Controllers
         }
 
         // POST: api/Modules
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Module>> PostModule(Module @module)
+        public async Task<ActionResult<Module>> PostModule(ModuleModel model)
         {
-            _context.Modules.Add(@module);
+            var module = new Module
+            {
+                Name = model.Name,
+                Description = model.Description,
+                StartDate = model.StartDate,
+                EndDate = model.EndDate
+            };
+
+            _context.Modules.Add(module);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetModule", new { id = @module.ModuleId }, @module);
+            return CreatedAtAction("GetModule", new { id = module.ModuleId }, module);
         }
 
         // DELETE: api/Modules/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteModule(int id)
         {
-            var @module = await _context.Modules.FindAsync(id);
-            if (@module == null)
+            var module = await _context.Modules.FindAsync(id);
+            if (module == null)
             {
                 return NotFound();
             }
 
-            _context.Modules.Remove(@module);
+            _context.Modules.Remove(module);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -104,5 +108,13 @@ namespace Lexicon.Api.Controllers
         {
             return _context.Modules.Any(e => e.ModuleId == id);
         }
+    }
+
+    public class ModuleModel
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public DateTime StartDate { get; set; } = DateTime.Now;
+        public DateTime EndDate { get; set; } = DateTime.Now;
     }
 }

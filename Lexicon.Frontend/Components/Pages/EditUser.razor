@@ -1,0 +1,85 @@
+﻿@page "/edit_user"
+@inject IUnitOfWork Services
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@using System.Net.Http.Json
+@inject HttpClient Http
+
+<PageTitle>Edit User</PageTitle>
+
+<h3>Edit User</h3>
+
+<div class="edit-user-form">
+    <EditForm Model="@userModel" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="firstName">First Name</label>
+            <InputText id="firstName" class="form-control" @bind-Value="userModel.FirstName" />
+        </div>
+        <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <InputText id="lastName" class="form-control" @bind-Value="userModel.LastName" />
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <InputText id="email" type="email" class="form-control" @bind-Value="userModel.Email" />
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <InputText id="password" type="password" class="form-control" @bind-Value="userModel.Password" />
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </EditForm>
+    <p>
+        <a @onclick="NavigateToHome">Go to Home</a>
+    </p>
+</div>
+
+@code {
+    private UserModel userModel = new UserModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load the user data from the API or services
+        var userId = 1; // Replace with actual user ID logic
+        //userModel = await Http.GetFromJsonAsync<UserModel>($"api/users/{userId}");
+    }
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            var response = await Http.PutAsJsonAsync($"api/users/{userModel.Id}", userModel);
+            if (response.IsSuccessStatusCode)
+            {
+                // Redirect to a different page upon successful save
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                // Handle save failure (e.g., display an error message)
+                Console.WriteLine("Failed to save user changes");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving user changes: {ex.Message}");
+        }
+    }
+
+    private void NavigateToHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    public class UserModel
+    {
+        public int Id { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+}
