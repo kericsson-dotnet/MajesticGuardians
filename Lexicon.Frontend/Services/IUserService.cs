@@ -5,5 +5,7 @@ namespace Lexicon.Frontend.Services
     public interface IUserService
     {
         Task<IEnumerable<User>> GetUsersAsync();
+
+        Task<IEnumerable<Activities>> GetActivityAsync();
     }
 }
