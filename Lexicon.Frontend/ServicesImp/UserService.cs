@@ -14,5 +14,6 @@ namespace Lexicon.Frontend.ServicesImp
 
         public async Task<IEnumerable<User>> GetUsersAsync() => await _httpClient.GetFromJsonAsync<IEnumerable<User>>("api/users");
         public async Task<IEnumerable<Activities>> GetActivityAsync() => await _httpClient.GetFromJsonAsync<IEnumerable<Activities>>("api/activity");
+        
     }
 }

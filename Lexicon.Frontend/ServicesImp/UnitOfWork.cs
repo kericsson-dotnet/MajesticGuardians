@@ -1,4 +1,5 @@
 ﻿using Lexicon.Frontend.Services;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 namespace Lexicon.Frontend.ServicesImp
 {
@@ -12,6 +13,7 @@ namespace Lexicon.Frontend.ServicesImp
         }
 
         public IUserService UserService => new UserService(_httpClient);
+        public ICourseService CourseService => new CourseService(_httpClient);
         public IAuthService AuthService => new AuthService(_httpClient);
     }
 }
