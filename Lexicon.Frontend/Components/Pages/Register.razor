@@ -1,0 +1,71 @@
+﻿@page "/register"
+@inject IUnitOfWork Services
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@using System.Net.Http.Json
+@inject HttpClient Http
+
+
+
+<PageTitle>Register</PageTitle>
+
+<h3>Register</h3>
+
+<div class="register-form">
+    <EditForm Model="@registerModel" OnValidSubmit="HandleRegister">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="firstName">First Name</label>
+            <InputText id="firstName" class="form-control" @bind-Value="registerModel.FirstName" />
+        </div>
+        <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <InputText id="lastName" class="form-control" @bind-Value="registerModel.LastName" />
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <InputText id="email" type="email" class="form-control" @bind-Value="registerModel.Email" />
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <InputText id="password" type="password" class="form-control" @bind-Value="registerModel.Password" />
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+    </EditForm>
+</div>
+
+@code {
+    private RegisterModel registerModel = new RegisterModel();
+
+    private async Task HandleRegister()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/auth/register", registerModel);
+            if (response.IsSuccessStatusCode)
+            {
+                // Redirect to login page upon successful registration
+                Navigation.NavigateTo("/login");
+            }
+            else
+            {
+                // Handle registration failure (e.g., display an error message)
+                Console.WriteLine("Registration failed");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error registering: {ex.Message}");
+        }
+    }
+
+    public class RegisterModel
+    {
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+}

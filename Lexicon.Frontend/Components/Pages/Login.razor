@@ -1,31 +1,67 @@
 ﻿@page "/login"
 @inject IUnitOfWork Services
 @rendermode InteractiveServer
+@inject NavigationManager Navigation
+@using System.Net.Http.Json
+@inject HttpClient Http
 
-<h3>Users</h3>
+<PageTitle>Login</PageTitle>
 
-@if(users == null)
-{
-    <p><em>Loading ...</em></p>
-}
+<h3>Login</h3>
 
-else
-{
-    @foreach (var user in users)
-    {
-        <div>
-            @user.FirstName
-            @user.LastName
+<div class="login-form">
+    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="firstName">First Name</label>
+            <InputText id="firstName" class="form-control" @bind-Value="loginModel.FirstName" />
         </div>
-    }
-}
+        <div class="form-group">
+            <label for="password">Password</label>
+            <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" />
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </EditForm>
+    <p>
+        <a @onclick="NavigateToRegister">Register</a>
+    </p>
+</div>
 
 @code {
+    private LoginModel loginModel = new LoginModel();
 
-    private List<User> users;
-
-    protected async override Task OnInitializedAsync()
+    private async Task HandleLogin()
     {
-        users = (await Services.UserService.GetUsersAsync()).ToList();
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/auth/login", loginModel);
+            if (response.IsSuccessStatusCode)
+            {
+                // Redirect to a different page upon successful login
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                // Handle login failure (e.g., display an error message)
+                Console.WriteLine("Login failed");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error logging in: {ex.Message}");
+        }
+    }
+
+    private void NavigateToRegister()
+    {
+        Navigation.NavigateTo("/register");
+    }
+
+    public class LoginModel
+    {
+        public string FirstName { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 }
