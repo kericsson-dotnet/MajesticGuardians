@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Lexicon.Api.Data;
 using Lexicon.Api.Repositories;
+using Lexicon.Api.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +13,13 @@ builder.Services.AddDbContext<LexiconLmsContext>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddControllers();
+builder.Services.AddAutoMapper(typeof(Mappings));
+
+
+builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
+    .AddNewtonsoftJson()
+    .AddXmlDataContractSerializerFormatters();
+
 
 builder.Services.AddScoped(typeof(ICrudRepository<>), typeof(CrudRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
