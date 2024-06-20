@@ -5,47 +5,92 @@
 @using System.Net.Http.Json
 @inject HttpClient Http
 
-<PageTitle>Activity</PageTitle>
+<PageTitle>Activities</PageTitle>
 
-<h3>Activity</h3>
+<h3>Activities</h3>
 
-<div class="new-module-form">
-    <EditForm Model="@activitiesModel" OnValidSubmit="HandleSubmit">
+<div class="new-activity-form">
+    <EditForm Model="@activityModel" OnValidSubmit="HandleSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
         <div class="form-group">
-            <label for="moduleName">Module Name</label>
-            <InputText id="moduleName" class="form-control" @bind-Value="activitiesModel.Name" />
-        </div>
-        <div class="form-group">
-            <label for="description">Description</label>
-            <InputText id="description" class="form-control" @bind-Value="activitiesModel.Description" />
+            <label for="activityType">Activity Type</label>
+            <InputSelect id="activityType" class="form-control" @bind-Value="activityModel.Type">
+                @foreach (var type in Enum.GetValues(typeof(ActivityType)))
+                {
+                    <option value="@type">@type</option>
+                }
+            </InputSelect>
         </div>
         <div class="form-group">
             <label for="startDate">Start Date</label>
-            <InputDate id="startDate" class="form-control" @bind-Value="activitiesModel.StartDate" />
+            <InputDate id="startDate" class="form-control" @bind-Value="activityModel.StartDate" />
         </div>
         <div class="form-group">
             <label for="endDate">End Date</label>
-            <InputDate id="endDate" class="form-control" @bind-Value="activitiesModel.EndDate" />
+            <InputDate id="endDate" class="form-control" @bind-Value="activityModel.EndDate" />
         </div>
         <button type="submit" class="btn btn-primary">Save</button>
     </EditForm>
 </div>
 
+<h3>Existing Activities</h3>
+@if (activities == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Name</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var activity in activities)
+            {
+                <tr>
+                    <td>@activity.Type</td>
+                    <td>@activity.Name</td>
+                    <td>@activity.StartDate.ToShortDateString()</td>
+                    <td>@activity.EndDate.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
 @code {
-    private ActivitiesModel activitiesModel = new ActivitiesModel();
+    private ActivityModel activityModel = new ActivityModel();
+    private List<ActivityModel> activities;
+
+    public enum ActivityType
+    {
+        Lecture,
+        Assignment,
+        Quiz
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        activities = await Http.GetFromJsonAsync<List<ActivityModel>>("api/activities");
+    }
 
     private async Task HandleSubmit()
     {
         try
         {
-            var response = await Http.PostAsJsonAsync("api/activities", activitiesModel);
+            var response = await Http.PostAsJsonAsync("api/activities", activityModel);
             if (response.IsSuccessStatusCode)
             {
-                // Redirect to another page or show success message
-                Navigation.NavigateTo("/");
+                // Reload activities after a new one is added
+                activities = await Http.GetFromJsonAsync<List<ActivityModel>>("api/activities");
+                activityModel = new ActivityModel(); // Reset the form
             }
             else
             {
@@ -59,10 +104,10 @@
         }
     }
 
-    public class ModuleModel
+    public class ActivityModel
     {
+        public ActivityType Type { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
         public DateTime StartDate { get; set; } = DateTime.Now;
         public DateTime EndDate { get; set; } = DateTime.Now;
     }
