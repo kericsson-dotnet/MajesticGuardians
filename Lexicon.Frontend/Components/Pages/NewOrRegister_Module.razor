@@ -1,0 +1,69 @@
+﻿@page "/new_or_register_module"
+@inject IUnitOfWork Services
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@using System.Net.Http.Json
+@inject HttpClient Http
+
+<PageTitle>New or Register Module</PageTitle>
+
+<h3>New or Register Module</h3>
+
+<div class="new-module-form">
+    <EditForm Model="@moduleModel" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="moduleName">Module Name</label>
+            <InputText id="moduleName" class="form-control" @bind-Value="moduleModel.Name" />
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <InputText id="description" class="form-control" @bind-Value="moduleModel.Description" />
+        </div>
+        <div class="form-group">
+            <label for="startDate">Start Date</label>
+            <InputDate id="startDate" class="form-control" @bind-Value="moduleModel.StartDate" />
+        </div>
+        <div class="form-group">
+            <label for="endDate">End Date</label>
+            <InputDate id="endDate" class="form-control" @bind-Value="moduleModel.EndDate" />
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </EditForm>
+</div>
+
+@code {
+    private ModuleModel moduleModel = new ModuleModel();
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/modules", moduleModel);
+            if (response.IsSuccessStatusCode)
+            {
+                // Redirect to another page or show success message
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                // Handle failure
+                Console.WriteLine("Failed to save module");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving module: {ex.Message}");
+        }
+    }
+
+    public class ModuleModel
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public DateTime StartDate { get; set; } = DateTime.Now;
+        public DateTime EndDate { get; set; } = DateTime.Now;
+    }
+}
