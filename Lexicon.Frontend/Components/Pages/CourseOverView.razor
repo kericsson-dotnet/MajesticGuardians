@@ -4,10 +4,49 @@
 @inject NavigationManager Navigation
 @using System.Net.Http.Json
 @inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
 
 
-<h3>CourseOverView</h3>
+<h3>Course Overview</h3>
+
+@if (courses == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!courses.Any())
+{
+    <p>No courses available.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Course Name</th>
+                <th>Description</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var course in courses)
+            {
+                <tr>
+                    <td>@course.Name</td>
+                    <td>@course.Description</td>
+                    <td>@course.StartDate.ToShortDateString()</td>
+                    <td>@course.EndDate.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @code {
+    private List<Course> courses;
 
+    protected override async Task OnInitializedAsync()
+    {
+        courses = await Services.CourseService.GetCoursesAsync();
+    }
 }
