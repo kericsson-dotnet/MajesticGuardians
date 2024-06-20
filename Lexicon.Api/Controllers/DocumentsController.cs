@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lexicon.Api.Data;
 using Lexicon.Api.Entities;
+using Lexicon.Api.Repositories;
 
 namespace Lexicon.Api.Controllers;
 
@@ -9,32 +9,34 @@ namespace Lexicon.Api.Controllers;
 [ApiController]
 public class DocumentsController : ControllerBase
 {
-    private readonly LexiconLmsContext _context;
+    private readonly IUnitOfWork _UoW;
 
-    public DocumentsController(LexiconLmsContext context)
+    public DocumentsController(IUnitOfWork unitOfWork)
     {
-        _context = context;
+        _UoW = unitOfWork;
     }
 
     // GET: api/Documents
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Document>>> GetDocuments()
     {
-        return await _context.Documents.ToListAsync();
+        var documents = await _UoW.Documents.GetAllAsync();
+        return Ok(documents);
     }
 
     // GET: api/Documents/5
     [HttpGet("{id}")]
     public async Task<ActionResult<Document>> GetDocument(int id)
     {
-        var document = await _context.Documents.FindAsync(id);
-
-        if (document == null)
+        try
         {
-            return NotFound();
+            var document = await _UoW.Documents.GetAsync(id);
+            return Ok(document);
         }
-
-        return document;
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 
     // PUT: api/Documents/5
@@ -47,15 +49,14 @@ public class DocumentsController : ControllerBase
             return BadRequest();
         }
 
-        _context.Entry(document).State = EntityState.Modified;
-
         try
         {
-            await _context.SaveChangesAsync();
+            _UoW.Documents.Update(document);
+            await _UoW.SaveAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!DocumentExists(id))
+            if (await _UoW.Documents.GetAsync(id) == null)
             {
                 return NotFound();
             }
@@ -73,8 +74,8 @@ public class DocumentsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Document>> PostDocument(Document document)
     {
-        _context.Documents.Add(document);
-        await _context.SaveChangesAsync();
+        _UoW.Documents.Add(document);
+        await _UoW.SaveAsync();
 
         return CreatedAtAction("GetDocument", new { id = document.DocumentId }, document);
     }
@@ -83,20 +84,15 @@ public class DocumentsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteDocument(int id)
     {
-        var document = await _context.Documents.FindAsync(id);
+        var document = await _UoW.Documents.GetAsync(id);
         if (document == null)
         {
             return NotFound();
         }
 
-        _context.Documents.Remove(document);
-        await _context.SaveChangesAsync();
+        _UoW.Documents.Delete(document);
+        await _UoW.SaveAsync();
 
         return NoContent();
-    }
-
-    private bool DocumentExists(int id)
-    {
-        return _context.Documents.Any(e => e.DocumentId == id);
     }
 }

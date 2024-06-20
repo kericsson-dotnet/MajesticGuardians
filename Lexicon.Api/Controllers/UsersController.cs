@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lexicon.Api.Data;
 using Lexicon.Api.Entities;
+using Lexicon.Api.Repositories;
 
 namespace Lexicon.Api.Controllers;
 
@@ -9,32 +9,34 @@ namespace Lexicon.Api.Controllers;
 [ApiController]
 public class UsersController : ControllerBase
 {
-    private readonly LexiconLmsContext _context;
+    private readonly IUnitOfWork _UoW;
 
-    public UsersController(LexiconLmsContext context)
+    public UsersController(IUnitOfWork unitOfWork)
     {
-        _context = context;
+        _UoW = unitOfWork;
     }
 
     // GET: api/Users
     [HttpGet]
     public async Task<ActionResult<IEnumerable<User>>> GetUsers()
     {
-        return await _context.Users.ToListAsync();
+        var users = await _UoW.Users.GetAllAsync();
+        return Ok(users);
     }
 
     // GET: api/Users/5
     [HttpGet("{id}")]
     public async Task<ActionResult<User>> GetUser(int id)
     {
-        var user = await _context.Users.FindAsync(id);
-
-        if (user == null)
+        try
         {
-            return NotFound();
+            var user = await _UoW.Users.GetAsync(id);
+            return Ok(user);
         }
-
-        return user;
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 
     // PUT: api/Users/5
@@ -47,15 +49,14 @@ public class UsersController : ControllerBase
             return BadRequest();
         }
 
-        _context.Entry(user).State = EntityState.Modified;
-
         try
         {
-            await _context.SaveChangesAsync();
+            _UoW.Users.Update(user);
+            await _UoW.SaveAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!UserExists(id))
+            if (await _UoW.Users.GetAsync(id) == null)
             {
                 return NotFound();
             }
@@ -73,8 +74,8 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<User>> PostUser(User user)
     {
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        _UoW.Users.Add(user);
+        await _UoW.SaveAsync();
 
         return CreatedAtAction("GetUser", new { id = user.UserId }, user);
     }
@@ -83,20 +84,15 @@ public class UsersController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
-        var user = await _context.Users.FindAsync(id);
+        var user = await _UoW.Users.GetAsync(id);
         if (user == null)
         {
             return NotFound();
         }
 
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync();
+        _UoW.Users.Delete(user);
+        await _UoW.SaveAsync();
 
         return NoContent();
-    }
-
-    private bool UserExists(int id)
-    {
-        return _context.Users.Any(e => e.UserId == id);
     }
 }
