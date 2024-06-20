@@ -47,32 +47,32 @@ public class ActivitiesController : ControllerBase
             return NotFound(ex.Message);
         }
     }
-
     [HttpPut("{id}")]
     public async Task<IActionResult> PutActivity(int id, ActivityPostDto activityPostDto)
     {
-        if (id <= 0)
+        if (id <= 0 || !await ActivityExists(id))
         {
             return BadRequest();
         }
 
+        var existingActivity = await _UoW.Activities.GetAsync(id);
+
+        if (existingActivity == null)
+        {
+            return NotFound();
+        }
+
+        _mapper.Map(activityPostDto, existingActivity);
+
         try
         {
-            var existingActivity = await _UoW.Activities.GetAsync(id);
-
-            if (existingActivity == null)
-            {
-                return BadRequest();
-            }
-
-            _mapper.Map(activityPostDto, existingActivity);
-
             _UoW.Activities.Update(existingActivity);
             await _UoW.SaveAsync();
         }
+
         catch (DbUpdateConcurrencyException)
         {
-            if (await _UoW.Activities.GetAsync(id) == null)
+            if (!await ActivityExists(id))
             {
                 return NotFound();
             }
@@ -82,8 +82,10 @@ public class ActivitiesController : ControllerBase
             }
         }
 
+
         return NoContent();
     }
+
 
     [HttpPost]
     public async Task<ActionResult<ActivityPostDto>> PostActivity(ActivityPostDto activityPostDto)
@@ -95,7 +97,7 @@ public class ActivitiesController : ControllerBase
             await _UoW.SaveAsync();
         }
 
-        catch (Exception)
+        catch (InvalidOperationException)
         {
             return StatusCode(500, "An error occured while posting the activity");
         }
@@ -131,4 +133,7 @@ public class ActivitiesController : ControllerBase
 
         return NoContent();
     }
+
+    private async Task<bool> ActivityExists(int id) => await _UoW.Activities.GetAsync(id) != null;
+
 }
