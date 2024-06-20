@@ -8,6 +8,6 @@ public interface IUnitOfWork
     ICrudRepository<Course> Courses { get; }
     ICrudRepository<Module> Modules { get; }
     ICrudRepository<Activity> Activities { get; }
-    ICrudRepository<Document> Documents { get; }
+    IDocumentRepository Documents { get; }
     Task SaveAsync();
 }
