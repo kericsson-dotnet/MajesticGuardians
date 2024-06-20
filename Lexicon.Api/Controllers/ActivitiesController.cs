@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lexicon.Api.Data;
 using Lexicon.Api.Entities;
+using Lexicon.Api.Repositories;
 
 namespace Lexicon.Api.Controllers;
 
@@ -9,32 +9,34 @@ namespace Lexicon.Api.Controllers;
 [ApiController]
 public class ActivitiesController : ControllerBase
 {
-    private readonly LexiconLmsContext _context;
+    private readonly IUnitOfWork _UoW;
 
-    public ActivitiesController(LexiconLmsContext context)
+    public ActivitiesController(IUnitOfWork unitOfWork)
     {
-        _context = context;
+        _UoW = unitOfWork;
     }
 
     // GET: api/Activities
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Activity>>> GetActivities()
     {
-        return await _context.Activities.ToListAsync();
+        var activities = await _UoW.Activities.GetAllAsync();
+        return Ok(activities);
     }
 
     // GET: api/Activities/5
     [HttpGet("{id}")]
     public async Task<ActionResult<Activity>> GetActivity(int id)
     {
-        var activity = await _context.Activities.FindAsync(id);
-
-        if (activity == null)
+        try
         {
-            return NotFound();
+            var activity = await _UoW.Activities.GetAsync(id);
+            return Ok(activity);
         }
-
-        return activity;
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 
     // PUT: api/Activities/5
@@ -47,15 +49,14 @@ public class ActivitiesController : ControllerBase
             return BadRequest();
         }
 
-        _context.Entry(activity).State = EntityState.Modified;
-
         try
         {
-            await _context.SaveChangesAsync();
+            _UoW.Activities.Update(activity);
+            await _UoW.SaveAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!ActivityExists(id))
+            if (await _UoW.Activities.GetAsync(id) == null)
             {
                 return NotFound();
             }
@@ -73,8 +74,8 @@ public class ActivitiesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Activity>> PostActivity(Activity activity)
     {
-        _context.Activities.Add(activity);
-        await _context.SaveChangesAsync();
+        _UoW.Activities.Add(activity);
+        await _UoW.SaveAsync();
 
         return CreatedAtAction("GetActivity", new { id = activity.ActivityId }, activity);
     }
@@ -83,20 +84,15 @@ public class ActivitiesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteActivity(int id)
     {
-        var activity = await _context.Activities.FindAsync(id);
+        var activity = await _UoW.Activities.GetAsync(id);
         if (activity == null)
         {
             return NotFound();
         }
 
-        _context.Activities.Remove(activity);
-        await _context.SaveChangesAsync();
+        _UoW.Activities.Delete(activity);
+        await _UoW.SaveAsync();
 
         return NoContent();
-    }
-
-    private bool ActivityExists(int id)
-    {
-        return _context.Activities.Any(e => e.ActivityId == id);
     }
 }

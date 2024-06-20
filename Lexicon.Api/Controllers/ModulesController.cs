@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lexicon.Api.Data;
 using Lexicon.Api.Entities;
+using Lexicon.Api.Repositories;
 
 namespace Lexicon.Api.Controllers;
 
@@ -9,32 +9,34 @@ namespace Lexicon.Api.Controllers;
 [ApiController]
 public class ModulesController : ControllerBase
 {
-    private readonly LexiconLmsContext _context;
+    private readonly IUnitOfWork _UoW;
 
-    public ModulesController(LexiconLmsContext context)
+    public ModulesController(IUnitOfWork unitOfWork)
     {
-        _context = context;
+        _UoW = unitOfWork;
     }
 
     // GET: api/Modules
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Module>>> GetModules()
     {
-        return await _context.Modules.ToListAsync();
+        var modules = await _UoW.Modules.GetAllAsync();
+        return Ok(modules);
     }
 
     // GET: api/Modules/5
     [HttpGet("{id}")]
     public async Task<ActionResult<Module>> GetModule(int id)
     {
-        var @module = await _context.Modules.FindAsync(id);
-
-        if (@module == null)
+        try
         {
-            return NotFound();
+            var @module = await _UoW.Modules.GetAsync(id);
+            return Ok(@module);
         }
-
-        return @module;
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 
     // PUT: api/Modules/5
@@ -47,15 +49,14 @@ public class ModulesController : ControllerBase
             return BadRequest();
         }
 
-        _context.Entry(@module).State = EntityState.Modified;
-
         try
         {
-            await _context.SaveChangesAsync();
+            _UoW.Modules.Update(@module);
+            await _UoW.SaveAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!ModuleExists(id))
+            if (await _UoW.Modules.GetAsync(id) == null)
             {
                 return NotFound();
             }
@@ -73,8 +74,8 @@ public class ModulesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Module>> PostModule(Module @module)
     {
-        _context.Modules.Add(@module);
-        await _context.SaveChangesAsync();
+        _UoW.Modules.Add(@module);
+        await _UoW.SaveAsync();
 
         return CreatedAtAction("GetModule", new { id = @module.ModuleId }, @module);
     }
@@ -83,20 +84,15 @@ public class ModulesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteModule(int id)
     {
-        var @module = await _context.Modules.FindAsync(id);
+        var @module = await _UoW.Modules.GetAsync(id);
         if (@module == null)
         {
             return NotFound();
         }
 
-        _context.Modules.Remove(@module);
-        await _context.SaveChangesAsync();
+        _UoW.Modules.Delete(@module);
+        await _UoW.SaveAsync();
 
         return NoContent();
-    }
-
-    private bool ModuleExists(int id)
-    {
-        return _context.Modules.Any(e => e.ModuleId == id);
     }
 }
