@@ -8,20 +8,20 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly LexiconLmsContext _context;
 
-    public IRepository<User> Users { get; private set; }
-    public IRepository<Course> Courses { get; private set; }
-    public IRepository<Module> Modules { get; private set; }
-    public IRepository<Activity> Activities { get; private set; }
-    public IRepository<Document> Documents { get; private set; }
+    public ICrudRepository<User> Users { get; private set; }
+    public ICrudRepository<Course> Courses { get; private set; }
+    public ICrudRepository<Module> Modules { get; private set; }
+    public ICrudRepository<Activity> Activities { get; private set; }
+    public ICrudRepository<Document> Documents { get; private set; }
 
     public UnitOfWork(LexiconLmsContext context)
     {
         _context = context;
-        Users = new Repository<User>(_context);
-        Courses = new Repository<Course>(_context);
-        Modules = new Repository<Module>(_context);
-        Activities = new Repository<Activity>(_context);
-        Documents = new Repository<Document>(_context);
+        Users = new CrudRepository<User>(_context);
+        Courses = new CrudRepository<Course>(_context);
+        Modules = new CrudRepository<Module>(_context);
+        Activities = new CrudRepository<Activity>(_context);
+        Documents = new CrudRepository<Document>(_context);
     }
 
     public async Task SaveAsync()

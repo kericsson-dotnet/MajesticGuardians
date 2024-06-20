@@ -1,6 +1,6 @@
 namespace Lexicon.Api.Repositories;
 
-public interface IRepository<T> where T : class
+public interface ICrudRepository<T> where T : class
 {
     Task<IEnumerable<T>> GetAllAsync();
     Task<T> GetAsync(object id);
