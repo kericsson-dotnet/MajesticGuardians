@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Lexicon.Api.Dtos.CourseDtos;
 using Lexicon.Api.Dtos.DocumentDtos;
 using Lexicon.Api.Dtos.UserDtos;
 using Lexicon.Api.Entities;
@@ -21,6 +22,12 @@ namespace Lexicon.Api.Mapper
             CreateMap<User, UserDto>();
             CreateMap<User, UserPostDto>();
             CreateMap<UserPostDto, User>();
+
+            // Course mapper
+            CreateMap<CourseDto, Course>();
+            CreateMap<Course, CourseDto>();
+            CreateMap<Course, CoursePostDto>();
+            CreateMap<CoursePostDto, Course>();
         }
 
     }
