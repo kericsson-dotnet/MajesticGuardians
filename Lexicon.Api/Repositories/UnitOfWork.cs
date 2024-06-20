@@ -12,7 +12,6 @@ public class UnitOfWork : IUnitOfWork
     public ICrudRepository<Course> Courses { get; private set; }
     public ICrudRepository<Module> Modules { get; private set; }
     public ICrudRepository<Activity> Activities { get; private set; }
-    public ICrudRepository<Document> Documents { get; private set; }
 
     public UnitOfWork(LexiconLmsContext context)
     {
@@ -21,8 +20,9 @@ public class UnitOfWork : IUnitOfWork
         Courses = new CrudRepository<Course>(_context);
         Modules = new CrudRepository<Module>(_context);
         Activities = new CrudRepository<Activity>(_context);
-        Documents = new CrudRepository<Document>(_context);
     }
+
+    public IDocumentRepository Documents => new DocumentRepository(_context);
 
     public async Task SaveAsync()
     {
