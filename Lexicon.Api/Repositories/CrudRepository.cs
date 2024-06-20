@@ -2,12 +2,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lexicon.Api.Repositories;
 
-public class Repository<T> : IRepository<T> where T : class
+public class CrudRepository<T> : ICrudRepository<T> where T : class
 {
     protected readonly DbContext _context;
     protected DbSet<T> DbSet;
 
-    public Repository(DbContext context)
+    public CrudRepository(DbContext context)
     {
         _context = context;
         DbSet = _context.Set<T>();

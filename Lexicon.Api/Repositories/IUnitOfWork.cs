@@ -4,10 +4,10 @@ namespace Lexicon.Api.Repositories;
 
 public interface IUnitOfWork
 {
-    IRepository<User> Users { get; }
-    IRepository<Course> Courses { get; }
-    IRepository<Module> Modules { get; }
-    IRepository<Activity> Activities { get; }
-    IRepository<Document> Documents { get; }
+    ICrudRepository<User> Users { get; }
+    ICrudRepository<Course> Courses { get; }
+    ICrudRepository<Module> Modules { get; }
+    ICrudRepository<Activity> Activities { get; }
+    ICrudRepository<Document> Documents { get; }
     Task SaveAsync();
 }
