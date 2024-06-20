@@ -41,14 +41,18 @@ public class DocumentsController : ControllerBase
             return BadRequest();
         }
 
-        var document = await _unitOfWork.Documents.GetAsync(id);
-
-        if (document == null)
+        try
         {
-            return NotFound();
+
+            var document = await _unitOfWork.Documents.GetAsync(id);
+
+            return Ok(_mapper.Map<DocumentDto>(document));
         }
 
-        return Ok(_mapper.Map<DocumentDto>(document));
+        catch(Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 
 
