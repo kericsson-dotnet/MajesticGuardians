@@ -2,6 +2,7 @@
 using Lexicon.Api.Dtos.ActivityDtos;
 using Lexicon.Api.Dtos.CourseDtos;
 using Lexicon.Api.Dtos.DocumentDtos;
+using Lexicon.Api.Dtos.ModuleDtos;
 using Lexicon.Api.Dtos.UserDtos;
 using Lexicon.Api.Entities;
 
@@ -35,6 +36,13 @@ namespace Lexicon.Api.Mapper
             CreateMap<Activity, ActivityDto>();
             CreateMap<Activity, ActivityPostDto>();
             CreateMap<ActivityPostDto, Activity>();
+
+
+            // Module mapper
+            CreateMap<ModuleDto, Module>();
+            CreateMap<Module, ModuleDto>();
+            CreateMap<Module, ModulePostDto>();
+            CreateMap<ModulePostDto, Module>();
         }
 
     }
