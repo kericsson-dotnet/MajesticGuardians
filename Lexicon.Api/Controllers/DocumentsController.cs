@@ -59,16 +59,10 @@ public class DocumentsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> PutDocument(int id, DocumentPostDto documentPost)
     {
-        if (id <= 0)
+        if (id <= 0 || !await DocumentExists(id))
         {
             return BadRequest();
         }
-
-        if (!await DocumentExists(id))
-        {
-            return BadRequest();
-        }
-
 
         var existingDocument = await _unitOfWork.Documents.GetAsync(id);
 
