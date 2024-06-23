@@ -12,5 +12,6 @@ namespace Lexicon.Frontend.ServicesImp
         }
 
         public IUserService UserService => new UserService(_httpClient);
+        public IAuthService AuthService => new AuthService(_httpClient);
     }
 }
