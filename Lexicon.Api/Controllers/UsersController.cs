@@ -11,9 +11,11 @@ public class UsersController : ControllerBase
 {
     private readonly IUnitOfWork _UoW;
 
-    public UsersController(IUnitOfWork unitOfWork)
+
+    public UsersController(IUnitOfWork unitOfWork, IUserRepository userRepository)
     {
         _UoW = unitOfWork;
+
     }
 
     // GET: api/Users

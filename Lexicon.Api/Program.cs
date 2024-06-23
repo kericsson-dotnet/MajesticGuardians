@@ -22,7 +22,7 @@ builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
 
 //builder.Services.AddScoped(typeof(ICrudRepository<>), typeof(CrudRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 

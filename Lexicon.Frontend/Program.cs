@@ -1,6 +1,6 @@
+
 using Lexicon.Frontend.Components;
-using Lexicon.Frontend.Services;
-using Lexicon.Frontend.ServicesImp;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddHttpClient<IUnitOfWork, UnitOfWork>(client =>
+builder.Services.AddHttpClient<Lexicon.Frontend.Services.IUnitOfWork, Lexicon.Frontend.ServicesImp.UnitOfWork>(client =>
 {
     var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
 
@@ -25,7 +25,6 @@ builder.Services.AddHttpClient<IUnitOfWork, UnitOfWork>(client =>
         ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
     };
 });
-
 
 
 var app = builder.Build();

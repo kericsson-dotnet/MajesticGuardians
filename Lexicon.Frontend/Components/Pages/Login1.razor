@@ -1,0 +1,57 @@
+﻿@page "/login1"
+@inject IUnitOfWork Services
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Components.Forms
+@using Lexicon.Api.Models
+
+<h3>Login</h3>
+
+<EditForm Model="LoginModel" OnSubmit="HandleSubmit" FormName="LoginForm">
+    <div class="mb-3 row" >
+        <label for="email" class="col-sm-2 col-form-label">Email:</label>
+        <div class="col-sm-10">
+            <InputText id="email" @bind-Value="LoginModel!.Email" />
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="password" class="col-sm-2 col-form-label">Password:</label>
+        <div class="col-sm-10">
+        <InputText id="password" @bind-Value="LoginModel!.Password" type="password" />
+        </div>
+   </div>
+    <div class="row">
+        <div class="col-sm-10 offset-sm-2">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+    </div>
+
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm(FormName = "LoginForm")]
+    public UserLoginModel? LoginModel { get; set; }
+
+    protected override void OnInitialized()
+    {
+        LoginModel ??= new();
+    }
+
+    private async Task HandleSubmit()
+    {
+        Console.WriteLine($"Email: {LoginModel.Email}, Password: {LoginModel.Password}");
+
+        var res = await Services.AuthService.LoginAsync(LoginModel);
+
+        if (res)
+        {
+            Console.WriteLine("Find");
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            Console.WriteLine("Not Find");
+            NavigationManager.NavigateTo("/");
+        }
+    }
+}
+

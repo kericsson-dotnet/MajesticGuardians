@@ -3,5 +3,6 @@
     public interface IUnitOfWork
     {
         IUserService UserService { get; }
+        IAuthService AuthService { get; }
     }
 }
