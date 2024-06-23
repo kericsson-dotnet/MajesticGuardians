@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lexicon.Api.Data;
 using Lexicon.Api.Entities;
+using AutoMapper;
+using Lexicon.Api.Repositories;
+using Lexicon.Api.Dtos.DocumentDtos;
 
 namespace Lexicon.Api.Controllers;
 
@@ -9,53 +11,82 @@ namespace Lexicon.Api.Controllers;
 [ApiController]
 public class DocumentsController : ControllerBase
 {
-    private readonly LexiconLmsContext _context;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public DocumentsController(LexiconLmsContext context)
+    public DocumentsController(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _context = context;
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
-    // GET: api/Documents
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Document>>> GetDocuments()
+    public async Task<IActionResult> GetDocuments()
     {
-        return await _context.Documents.ToListAsync();
-    }
+        var documents = await _unitOfWork.Documents.GetAllAsync();
 
-    // GET: api/Documents/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Document>> GetDocument(int id)
-    {
-        var document = await _context.Documents.FindAsync(id);
-
-        if (document == null)
-        {
-            return NotFound();
-        }
-
-        return document;
-    }
-
-    // PUT: api/Documents/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutDocument(int id, Document document)
-    {
-        if (id != document.DocumentId)
+        if (!documents.Any() || documents == null)
         {
             return BadRequest();
         }
 
-        _context.Entry(document).State = EntityState.Modified;
+        return Ok(_mapper.Map<IEnumerable<DocumentDto>>(documents));
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<DocumentDto>> GetDocument(int id)
+    {
+        if (id <= 0)
+        {
+            return BadRequest();
+        }
 
         try
         {
-            await _context.SaveChangesAsync();
+
+            var document = await _unitOfWork.Documents.GetAsync(id);
+
+            return Ok(_mapper.Map<DocumentDto>(document));
+        }
+
+        catch(Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutDocument(int id, DocumentPostDto documentPost)
+    {
+        if (id <= 0)
+        {
+            return BadRequest();
+        }
+
+        if (!await DocumentExists(id))
+        {
+            return BadRequest();
+        }
+
+
+        var existingDocument = await _unitOfWork.Documents.GetAsync(id);
+
+        if (existingDocument == null)
+        {
+            return BadRequest();
+        }
+
+        _mapper.Map(documentPost, existingDocument);
+
+        try
+        {
+            _unitOfWork.Documents.Update(existingDocument);
+            await _unitOfWork.SaveAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!DocumentExists(id))
+            if (!await DocumentExists(id))
             {
                 return NotFound();
             }
@@ -68,35 +99,53 @@ public class DocumentsController : ControllerBase
         return NoContent();
     }
 
-    // POST: api/Documents
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<Document>> PostDocument(Document document)
+    public async Task<ActionResult<DocumentPostDto>> PostDocument(DocumentPostDto documentPostDto)
     {
-        _context.Documents.Add(document);
-        await _context.SaveChangesAsync();
+        var document = _mapper.Map<Document>(documentPostDto);
+
+        try
+        {
+            _unitOfWork.Documents.Add(document);
+            await _unitOfWork.SaveAsync();
+        }
+
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occured while posting the document");
+        }
 
         return CreatedAtAction("GetDocument", new { id = document.DocumentId }, document);
     }
 
-    // DELETE: api/Documents/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteDocument(int id)
     {
-        var document = await _context.Documents.FindAsync(id);
+        if (id <= 0)
+        {
+            return BadRequest();
+        }
+
+        var document = await _unitOfWork.Documents.GetAsync(id);
+
         if (document == null)
         {
             return NotFound();
         }
 
-        _context.Documents.Remove(document);
-        await _context.SaveChangesAsync();
+        try
+        {
+            _unitOfWork.Documents.Delete(id);
+            await _unitOfWork.SaveAsync();
+        }
+
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occured while deleting the document");
+        }
 
         return NoContent();
     }
 
-    private bool DocumentExists(int id)
-    {
-        return _context.Documents.Any(e => e.DocumentId == id);
-    }
+    private async Task<bool> DocumentExists(int id) => await _unitOfWork.Documents.GetAsync(id) != null;
 }
