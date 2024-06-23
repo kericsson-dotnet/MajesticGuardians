@@ -13,7 +13,7 @@ namespace Lexicon.Api.Data
             {
                 if (context.Users.Any())
                 {
-                    return; 
+                    return;
                 }
                 var faker = new Faker("en");              
                 var users = new List<User>();

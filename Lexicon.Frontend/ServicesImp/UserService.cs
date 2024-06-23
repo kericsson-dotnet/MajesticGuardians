@@ -1,6 +1,6 @@
 ﻿using Lexicon.Frontend.Models;
 using Lexicon.Frontend.Services;
-
+using Microsoft.AspNetCore.Mvc;
 namespace Lexicon.Frontend.ServicesImp
 {
     public class UserService : IUserService
@@ -11,7 +11,7 @@ namespace Lexicon.Frontend.ServicesImp
         {
             _httpClient = httpClient;
         }
-
         public async Task<IEnumerable<User>> GetUsersAsync() => await _httpClient.GetFromJsonAsync<IEnumerable<User>>("api/users");
+       
     }
 }
