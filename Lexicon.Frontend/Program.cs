@@ -1,4 +1,3 @@
-
 using Lexicon.Frontend.Components;
 using Lexicon.Frontend.Services;
 using Lexicon.Frontend.ServicesImp;
@@ -33,15 +32,6 @@ builder.Services.AddHttpClient<Lexicon.Frontend.Services.IUnitOfWork, Lexicon.Fr
 
 // Register IAuthService
 builder.Services.AddScoped<IAuthService, AuthService>();
-
-// Register UserService - Assuming UserService and UserServiceImp are correctly defined
-builder.Services.AddScoped<IUserService, UserService>(); // Adjust this based on your actual implementation
-builder.Services.AddScoped<UserService>();
-
-
-// Register UserService - Assuming UserService and UserServiceImp are correctly defined
-builder.Services.AddScoped<IUserService, UserService>(); // Adjust this based on your actual implementation
-builder.Services.AddScoped<UserService>();
 
 
 builder.Services.AddScoped<UserService>();
