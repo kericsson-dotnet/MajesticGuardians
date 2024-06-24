@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lexicon.Api.Entities;
 using Lexicon.Api.Repositories;
+using AutoMapper;
+using Lexicon.Api.Dtos.UserDtos;
 
 namespace Lexicon.Api.Controllers;
 
@@ -10,50 +12,69 @@ namespace Lexicon.Api.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly IUnitOfWork _UoW;
+    private readonly IMapper _mapper;
 
 
-    public UsersController(IUnitOfWork unitOfWork, IUserRepository userRepository)
+    public UsersController(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _UoW = unitOfWork;
-
+        _mapper = mapper;
     }
 
-    // GET: api/Users
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
     {
         var users = await _UoW.Users.GetAllAsync();
-        return Ok(users);
+
+        if (users == null || !users.Any())
+        {
+            return BadRequest();
+        }
+
+        return Ok(_mapper.Map<IEnumerable<UserDto>>(users));
     }
 
-    // GET: api/Users/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<User>> GetUser(int id)
+    public async Task<ActionResult<UserDto>> GetUser(int id)
     {
         try
         {
             var user = await _UoW.Users.GetAsync(id);
-            return Ok(user);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<UserDto>(user));
         }
+
         catch (InvalidOperationException ex)
         {
             return NotFound(ex.Message);
         }
     }
 
-    // PUT: api/Users/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutUser(int id, User user)
+    public async Task<IActionResult> PutUser(int id, UserPostDto userPostDto)
     {
-        if (id != user.UserId)
+        var existingUser = await _UoW.Users.GetAsync(id);
+
+        if (existingUser == null)
+        {
+            return NotFound();
+        }
+
+        if (id != existingUser.UserId || id <= 0)
         {
             return BadRequest();
         }
 
+        _mapper.Map(userPostDto, existingUser);
+
         try
         {
-            _UoW.Users.Update(user);
+            _UoW.Users.Update(existingUser);
             await _UoW.SaveAsync();
         }
         catch (DbUpdateConcurrencyException)
@@ -71,29 +92,50 @@ public class UsersController : ControllerBase
         return NoContent();
     }
 
-    // POST: api/Users
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<User>> PostUser(User user)
+    public async Task<ActionResult<UserPostDto>> PostUser(UserPostDto userPostDto)
     {
-        _UoW.Users.Add(user);
-        await _UoW.SaveAsync();
+        var user = _mapper.Map<User>(userPostDto);
 
+        try
+        {
+            _UoW.Users.Add(user);
+            await _UoW.SaveAsync();
+        }
+
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occured while posting the user");
+
+        }
         return CreatedAtAction("GetUser", new { id = user.UserId }, user);
     }
 
-    // DELETE: api/Users/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
+        if (id <= 0)
+        {
+            return BadRequest();
+        }
+
         var user = await _UoW.Users.GetAsync(id);
+
         if (user == null)
         {
             return NotFound();
         }
 
-        _UoW.Users.Delete(user);
-        await _UoW.SaveAsync();
+        try
+        {
+            _UoW.Users.Delete(user.UserId);
+            await _UoW.SaveAsync();
+        }
+
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occured while deleting the user");
+        }
 
         return NoContent();
     }
