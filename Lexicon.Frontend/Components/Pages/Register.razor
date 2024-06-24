@@ -82,17 +82,6 @@
                 };
 
             await UserService.CreateUserAsync(User);
-
-            // Hantera svar från API efter behov
-            // if (UserService.CreateUserAsync(user) != null)
-            // {
-            //     Navigation.NavigateTo("/login");
-            // }
-            // else
-            // {
-            //     Console.WriteLine("Failed to create user");
-            //     Navigation.NavigateTo("/error");
-            // }
             Navigation.NavigateTo("/login");
         }
         catch (Exception ex)
