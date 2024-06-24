@@ -40,12 +40,6 @@ public class UsersController : ControllerBase
         try
         {
             var user = await _UoW.Users.GetAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
             return Ok(_mapper.Map<UserDto>(user));
         }
 
@@ -53,27 +47,33 @@ public class UsersController : ControllerBase
         {
             return NotFound(ex.Message);
         }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> PutUser(int id, UserPostDto userPostDto)
     {
-        var existingUser = await _UoW.Users.GetAsync(id);
-
-        if (existingUser == null)
-        {
-            return NotFound();
-        }
-
-        if (id != existingUser.UserId || id <= 0)
-        {
-            return BadRequest();
-        }
-
-        _mapper.Map(userPostDto, existingUser);
-
+       
         try
         {
+            var existingUser = await _UoW.Users.GetAsync(id);
+
+            if (existingUser == null)
+            {
+                return NotFound();
+            }
+
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+            _mapper.Map(userPostDto, existingUser);
+
             _UoW.Users.Update(existingUser);
             await _UoW.SaveAsync();
         }
@@ -87,6 +87,16 @@ public class UsersController : ControllerBase
             {
                 throw;
             }
+        }
+
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
         }
 
         return NoContent();
@@ -103,11 +113,16 @@ public class UsersController : ControllerBase
             await _UoW.SaveAsync();
         }
 
-        catch (Exception)
+        catch (InvalidOperationException ex)
         {
-            return StatusCode(500, "An error occured while posting the user");
-
+            return NotFound(ex.Message);
         }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+
         return CreatedAtAction("GetUser", new { id = user.UserId }, user);
     }
 
@@ -119,22 +134,21 @@ public class UsersController : ControllerBase
             return BadRequest();
         }
 
-        var user = await _UoW.Users.GetAsync(id);
-
-        if (user == null)
-        {
-            return NotFound();
-        }
-
         try
         {
+            var user = await _UoW.Users.GetAsync(id);
             _UoW.Users.Delete(user.UserId);
             await _UoW.SaveAsync();
         }
 
-        catch (Exception)
+        catch (InvalidOperationException ex)
         {
-            return StatusCode(500, "An error occured while deleting the user");
+            return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
         }
 
         return NoContent();
