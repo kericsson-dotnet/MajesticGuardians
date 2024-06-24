@@ -39,6 +39,14 @@ builder.Services.AddScoped<IUserService, UserService>(); // Adjust this based on
 builder.Services.AddScoped<UserService>();
 
 
+// Register UserService - Assuming UserService and UserServiceImp are correctly defined
+builder.Services.AddScoped<IUserService, UserService>(); // Adjust this based on your actual implementation
+builder.Services.AddScoped<UserService>();
+
+
+builder.Services.AddScoped<UserService>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
