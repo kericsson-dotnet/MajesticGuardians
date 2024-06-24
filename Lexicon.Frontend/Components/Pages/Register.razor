@@ -4,68 +4,90 @@
 @inject NavigationManager Navigation
 @using System.Net.Http.Json
 @inject HttpClient Http
+@using Lexicon.Frontend.ServicesImp
+@using Microsoft.AspNetCore.Components.Forms
+
+
+
+
+@inject IAuthService AuthService
 
 
 
 <PageTitle>Register</PageTitle>
-
 <h3>Register</h3>
 
-<div class="register-form">
-    <EditForm Model="@registerModel" OnValidSubmit="HandleRegister">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <div class="form-group">
+<EditForm Model="@User" OnValidSubmit="HandleRegister" FormName="logintest">
+    <div class="register-form">
+        <div class="mb-3">
             <label for="firstName">First Name</label>
-            <InputText id="firstName" class="form-control" @bind-Value="registerModel.FirstName" />
+            <InputText id="firstName" class="form-control" @bind-Value="User.FirstName" />
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="lastName">Last Name</label>
-            <InputText id="lastName" class="form-control" @bind-Value="registerModel.LastName" />
+            <InputText id="lastName" class="form-control" @bind-Value="User.LastName" />
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="email">Email</label>
-            <InputText id="email" type="email" class="form-control" @bind-Value="registerModel.Email" />
+            <InputText id="email" class="form-control" @bind-Value="User.Email" />
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="password">Password</label>
-            <InputText id="password" type="password" class="form-control" @bind-Value="registerModel.Password" />
+            <InputText id="password" class="form-control" @bind-Value="User.Password" />
         </div>
-        <button type="submit" class="btn btn-primary">Register</button>
-    </EditForm>
-</div>
+        <div class="mb-3">
+            <label for="role">Role</label>
+            <InputSelect id="role" class="form-control" @bind-Value="User.Role">
+                @foreach (UserRole role in Enum.GetValues(typeof(UserRole)))
+                {
+                    <option value="@role">@role</option>
+                }
+            </InputSelect>
+        </div> 
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+</EditForm>
 
 @code {
-    private RegisterModel registerModel = new RegisterModel();
+    [SupplyParameterFromForm]
+    private User User { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        User = new User()
+            {
+                FirstName = string.Empty,
+                LastName = string.Empty,
+                Password = string.Empty,
+                Email = string.Empty,
+                Role = 0,
+                Documents = []
+            };
+    }
+
 
     private async Task HandleRegister()
     {
         try
         {
-            var response = await Http.PostAsJsonAsync("api/users", registerModel);
-            if (response.IsSuccessStatusCode)
-            {
-                // Redirect to login page upon successful registration
-                Navigation.NavigateTo("/login");
-            }
-            else
-            {
-                // Handle registration failure (e.g., display an error message)
-                Console.WriteLine("Registration failed");
-            }
+            User =  new User()
+                {
+                    FirstName = User.FirstName,
+                    LastName = User.LastName,
+                    Email = User.Email,
+                    Password = User.Password,
+                    Role = 0,
+                    Documents = []
+                };
+
+            await Services.UserService.CreateUserAsync(User);
+
+            Navigation.NavigateTo("/login1");
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error registering: {ex.Message}");
+            Navigation.NavigateTo("/error");
         }
-    }
-
-    public class RegisterModel
-    {
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
     }
 }
