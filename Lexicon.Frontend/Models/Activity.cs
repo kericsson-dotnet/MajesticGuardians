@@ -7,7 +7,7 @@ namespace Lexicon.Frontend.Models
         Lecture,
         Assignment
     }
-    public class Activities
+    public class Activity
     {
         public ActivityType Type { get; set; }
         public string Name { get; set; } = string.Empty;
