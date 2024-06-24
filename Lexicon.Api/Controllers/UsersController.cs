@@ -40,6 +40,12 @@ public class UsersController : ControllerBase
         try
         {
             var user = await _UoW.Users.GetAsync(id);
+
+            if(user == null)
+            {
+                return NotFound();
+            }
+
             return Ok(_mapper.Map<UserDto>(user));
         }
 

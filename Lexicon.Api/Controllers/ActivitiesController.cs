@@ -39,6 +39,12 @@ public class ActivitiesController : ControllerBase
         try
         {
             var activity = await _UoW.Activities.GetAsync(id);
+
+            if(activity == null)
+            {
+                return NotFound();
+            }
+
             return Ok(_mapper.Map<ActivityDto>(activity));
         }
 
