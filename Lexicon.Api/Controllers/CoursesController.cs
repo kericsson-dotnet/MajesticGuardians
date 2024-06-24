@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lexicon.Api.Entities;
 using Lexicon.Api.Repositories;
+using AutoMapper;
+using Lexicon.Api.Dtos.CourseDtos;
 
 namespace Lexicon.Api.Controllers;
 
@@ -10,28 +12,45 @@ namespace Lexicon.Api.Controllers;
 public class CoursesController : ControllerBase
 {
     private readonly IUnitOfWork _UoW;
+    private readonly IMapper _mapper;
 
-    public CoursesController(IUnitOfWork unitOfWork)
+    public CoursesController(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _UoW = unitOfWork;
+        _mapper = mapper;
     }
 
-    // GET: api/Courses
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Course>>> GetCourses()
+    public async Task<ActionResult<IEnumerable<CourseDto>>> GetCourses()
     {
         var courses = await _UoW.Courses.GetAllAsync();
-        return Ok(courses);
+
+        if(courses == null || !courses.Any())
+        {
+            return BadRequest();
+        }
+
+        return Ok(_mapper.Map<IEnumerable<CourseDto>>(courses));
     }
 
-    // GET: api/Courses/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Course>> GetCourse(int id)
+    public async Task<ActionResult<CourseDto>> GetCourse(int id)
     {
+        if (id <= 0)
+        {
+            return BadRequest();
+        }
+
         try
         {
             var course = await _UoW.Courses.GetAsync(id);
-            return Ok(course);
+
+            if(course == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<CourseDto>(course));
         }
         catch (InvalidOperationException ex)
         {
@@ -39,19 +58,27 @@ public class CoursesController : ControllerBase
         }
     }
 
-    // PUT: api/Courses/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutCourse(int id, Course course)
+    public async Task<IActionResult> PutCourse(int id, CoursePostDto coursePost)
     {
-        if (id != course.CourseId)
+        var existingCourse = await _UoW.Courses.GetAsync(id);
+
+        if(existingCourse == null)
+        {
+            return NotFound();
+        }
+
+        if (id != existingCourse.CourseId || id<=0)
         {
             return BadRequest();
         }
 
+        _mapper.Map(coursePost, existingCourse);
+
         try
         {
-            _UoW.Courses.Update(course);
+            _UoW.Courses.Update(existingCourse);
             await _UoW.SaveAsync();
         }
         catch (DbUpdateConcurrencyException)
@@ -69,29 +96,50 @@ public class CoursesController : ControllerBase
         return NoContent();
     }
 
-    // POST: api/Courses
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<Course>> PostCourse(Course course)
+    public async Task<ActionResult<CoursePostDto>> PostCourse(CoursePostDto coursePostDto)
     {
-        _UoW.Courses.Add(course);
-        await _UoW.SaveAsync();
+        var course = _mapper.Map<Course>(coursePostDto);
+
+        try
+        {
+            _UoW.Courses.Add(course);
+            await _UoW.SaveAsync();
+        }
+
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occured while posting the course");
+        }
 
         return CreatedAtAction("GetCourse", new { id = course.CourseId }, course);
     }
 
-    // DELETE: api/Courses/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCourse(int id)
     {
+        if (id <= 0)
+        {
+            return BadRequest();
+        }
+
         var course = await _UoW.Courses.GetAsync(id);
+
         if (course == null)
         {
             return NotFound();
         }
 
-        _UoW.Courses.Delete(course);
-        await _UoW.SaveAsync();
+        try
+        {
+            _UoW.Courses.Delete(course.CourseId);
+            await _UoW.SaveAsync();
+        }
+
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occured while deleting the course");
+        }
 
         return NoContent();
     }
