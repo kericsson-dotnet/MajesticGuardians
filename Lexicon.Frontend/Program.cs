@@ -34,8 +34,6 @@ builder.Services.AddHttpClient<Lexicon.Frontend.Services.IUnitOfWork, Lexicon.Fr
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 
-builder.Services.AddScoped<UserService>();
-
 
 var app = builder.Build();
 

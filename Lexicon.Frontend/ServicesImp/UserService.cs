@@ -1,5 +1,4 @@
-﻿using Azure;
-using Lexicon.Frontend.Models;
+﻿using Lexicon.Frontend.Models;
 using Lexicon.Frontend.Services;
 using Microsoft.AspNetCore.Mvc;
 namespace Lexicon.Frontend.ServicesImp

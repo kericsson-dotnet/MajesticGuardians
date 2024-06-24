@@ -4,7 +4,6 @@
 @inject NavigationManager Navigation
 @using System.Net.Http.Json
 @inject HttpClient Http
-@inject UserService UserService
 @using Lexicon.Frontend.ServicesImp
 @using Microsoft.AspNetCore.Components.Forms
 
@@ -71,17 +70,18 @@
     {
         try
         {
-            User = new Lexicon.Frontend.Models.User
+            User =  new User()
                 {
                     FirstName = User.FirstName,
                     LastName = User.LastName,
                     Email = User.Email,
                     Password = User.Password,
-                    Role = 0, // Use the converted UserRole
+                    Role = 0,
                     Documents = []
                 };
 
-            await UserService.CreateUserAsync(User);
+            await Services.UserService.CreateUserAsync(User);
+
             Navigation.NavigateTo("/login");
         }
         catch (Exception ex)
