@@ -39,12 +39,6 @@ public class ActivitiesController : ControllerBase
         try
         {
             var activity = await _UoW.Activities.GetAsync(id);
-
-            if (activity == null)
-            {
-                return NotFound();
-            }
-
             return Ok(_mapper.Map<ActivityDto>(activity));
         }
 
@@ -52,26 +46,26 @@ public class ActivitiesController : ControllerBase
         {
             return NotFound(ex.Message);
         }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
+
     [HttpPut("{id}")]
     public async Task<IActionResult> PutActivity(int id, ActivityPostDto activityPostDto)
     {
-        if (id <= 0 || !await ActivityExists(id))
+        if (id <= 0)
         {
             return BadRequest();
         }
 
-        var existingActivity = await _UoW.Activities.GetAsync(id);
-
-        if (existingActivity == null)
-        {
-            return NotFound();
-        }
-
-        _mapper.Map(activityPostDto, existingActivity);
-
         try
         {
+            var existingActivity = await _UoW.Activities.GetAsync(id);
+            _mapper.Map(activityPostDto, existingActivity);
+
             _UoW.Activities.Update(existingActivity);
             await _UoW.SaveAsync();
         }
@@ -88,6 +82,15 @@ public class ActivitiesController : ControllerBase
             }
         }
 
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
 
         return NoContent();
     }
@@ -103,10 +106,16 @@ public class ActivitiesController : ControllerBase
             await _UoW.SaveAsync();
         }
 
-        catch (InvalidOperationException)
+        catch (InvalidOperationException ex)
         {
-            return StatusCode(500, "An error occured while posting the activity");
+            return NotFound(ex.Message);
         }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+
 
         return CreatedAtAction("GetActivity", new { id = activity.ActivityId }, activity);
     }
@@ -119,22 +128,21 @@ public class ActivitiesController : ControllerBase
             return BadRequest();
         }
 
-        var activity = await _UoW.Activities.GetAsync(id);
-
-        if (activity == null)
-        {
-            return NotFound();
-        }
-
         try
         {
+            var activity = await _UoW.Activities.GetAsync(id);
             _UoW.Activities.Delete(activity.ActivityId);
             await _UoW.SaveAsync();
         }
 
-        catch (Exception)
+        catch (InvalidOperationException ex)
         {
-            return StatusCode(500, "An error occured while deleting the activity");
+            return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
         }
 
         return NoContent();
