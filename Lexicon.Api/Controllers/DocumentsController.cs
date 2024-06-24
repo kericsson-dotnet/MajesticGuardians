@@ -43,7 +43,6 @@ public class DocumentsController : ControllerBase
 
         try
         {
-
             var document = await _unitOfWork.Documents.GetAsync(id);
 
             if(document == null)
@@ -54,9 +53,14 @@ public class DocumentsController : ControllerBase
             return Ok(_mapper.Map<DocumentDto>(document));
         }
 
-        catch(Exception ex)
+        catch (InvalidOperationException ex)
         {
             return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
         }
     }
 
@@ -64,25 +68,20 @@ public class DocumentsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> PutDocument(int id, DocumentPostDto documentPost)
     {
-        if (id <= 0 || !await DocumentExists(id))
+        if (id <= 0)
         {
             return BadRequest();
         }
-
-        var existingDocument = await _unitOfWork.Documents.GetAsync(id);
-
-        if (existingDocument == null)
-        {
-            return BadRequest();
-        }
-
-        _mapper.Map(documentPost, existingDocument);
 
         try
         {
+            var existingDocument = await _unitOfWork.Documents.GetAsync(id);
+            _mapper.Map(documentPost, existingDocument);
+
             _unitOfWork.Documents.Update(existingDocument);
             await _unitOfWork.SaveAsync();
         }
+
         catch (DbUpdateConcurrencyException)
         {
             if (!await DocumentExists(id))
@@ -93,6 +92,16 @@ public class DocumentsController : ControllerBase
             {
                 throw;
             }
+        }
+
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
         }
 
         return NoContent();
@@ -109,9 +118,14 @@ public class DocumentsController : ControllerBase
             await _unitOfWork.SaveAsync();
         }
 
-        catch (Exception)
+        catch (InvalidOperationException ex)
         {
-            return StatusCode(500, "An error occured while posting the document");
+            return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
         }
 
         return CreatedAtAction("GetDocument", new { id = document.DocumentId }, document);
@@ -127,20 +141,20 @@ public class DocumentsController : ControllerBase
 
         var document = await _unitOfWork.Documents.GetAsync(id);
 
-        if (document == null)
-        {
-            return NotFound();
-        }
-
         try
         {
             _unitOfWork.Documents.Delete(id);
             await _unitOfWork.SaveAsync();
         }
 
-        catch (Exception)
+        catch (InvalidOperationException ex)
         {
-            return StatusCode(500, "An error occured while deleting the document");
+            return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
         }
 
         return NoContent();
