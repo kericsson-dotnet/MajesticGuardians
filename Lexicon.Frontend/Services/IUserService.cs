@@ -7,5 +7,7 @@ namespace Lexicon.Frontend.Services
         Task<IEnumerable<User>> GetUsersAsync();
 
         Task<IEnumerable<Activity>> GetActivityAsync();
+
+        Task CreateUserAsync(User user);
     }
 }
