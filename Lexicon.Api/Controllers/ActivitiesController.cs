@@ -25,7 +25,7 @@ public class ActivitiesController : ControllerBase
     {
         var activities = await _UoW.Activities.GetAllAsync();
 
-        if(activities == null || !activities.Any()) 
+        if (activities == null || !activities.Any())
         {
             return BadRequest();
         }
@@ -39,6 +39,12 @@ public class ActivitiesController : ControllerBase
         try
         {
             var activity = await _UoW.Activities.GetAsync(id);
+
+            if (activity == null)
+            {
+                return NotFound();
+            }
+
             return Ok(_mapper.Map<ActivityDto>(activity));
         }
 
@@ -90,7 +96,7 @@ public class ActivitiesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ActivityPostDto>> PostActivity(ActivityPostDto activityPostDto)
     {
-        var activity = _mapper.Map<Activity>(activityPostDto); 
+        var activity = _mapper.Map<Activity>(activityPostDto);
         try
         {
             _UoW.Activities.Add(activity);
@@ -122,7 +128,7 @@ public class ActivitiesController : ControllerBase
 
         try
         {
-            _UoW.Activities.Delete(activity);
+            _UoW.Activities.Delete(activity.ActivityId);
             await _UoW.SaveAsync();
         }
 
