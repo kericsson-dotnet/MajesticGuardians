@@ -46,6 +46,11 @@ public class DocumentsController : ControllerBase
 
             var document = await _unitOfWork.Documents.GetAsync(id);
 
+            if(document == null)
+            {
+                return NotFound();
+            }
+
             return Ok(_mapper.Map<DocumentDto>(document));
         }
 
