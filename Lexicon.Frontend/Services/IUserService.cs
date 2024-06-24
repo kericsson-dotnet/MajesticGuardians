@@ -6,6 +6,6 @@ namespace Lexicon.Frontend.Services
     { 
         Task<IEnumerable<User>> GetUsersAsync();
 
-        Task<IEnumerable<Activities>> GetActivityAsync();
+        Task<IEnumerable<Activity>> GetActivityAsync();
     }
 }
