@@ -122,7 +122,7 @@ public class ActivitiesController : ControllerBase
 
         try
         {
-            _UoW.Activities.Delete(activity);
+            _UoW.Activities.Delete(activity.ActivityId);
             await _UoW.SaveAsync();
         }
 
