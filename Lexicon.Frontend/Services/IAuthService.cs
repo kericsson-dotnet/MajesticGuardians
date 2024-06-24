@@ -6,5 +6,9 @@ namespace Lexicon.Frontend.Services
     {
         Task<bool> LoginAsync(UserLoginModel model);
         Task LogoutAsync();
+
+        User? GetCurrentUser();
+        bool IsLoggedIn { get; }
+        bool IsInRole(UserRole role);
     }
 }

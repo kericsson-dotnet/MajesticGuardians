@@ -1,5 +1,9 @@
-
 using Lexicon.Frontend.Components;
+using Lexicon.Frontend.Services;
+using Lexicon.Frontend.ServicesImp;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Net.Http;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +30,10 @@ builder.Services.AddHttpClient<Lexicon.Frontend.Services.IUnitOfWork, Lexicon.Fr
     };
 });
 
+// Register IAuthService
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+
 
 var app = builder.Build();
 
@@ -36,6 +44,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
 
 app.UseHttpsRedirection();
 
