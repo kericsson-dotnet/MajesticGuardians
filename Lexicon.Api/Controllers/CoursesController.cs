@@ -45,39 +45,33 @@ public class CoursesController : ControllerBase
         {
             var course = await _UoW.Courses.GetAsync(id);
 
-            if (course == null)
-            {
-                return NotFound();
-            }
-
             return Ok(_mapper.Map<CourseDto>(course));
         }
+
         catch (InvalidOperationException ex)
         {
             return NotFound(ex.Message);
         }
-    }
 
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> PutCourse(int id, CoursePostDto coursePost)
     {
-        var existingCourse = await _UoW.Courses.GetAsync(id);
-
-        if (existingCourse == null)
-        {
-            return NotFound();
-        }
-
-        if (id != existingCourse.CourseId || id <= 0)
+        if (id <= 0)
         {
             return BadRequest();
         }
 
-        _mapper.Map(coursePost, existingCourse);
-
         try
         {
+            var existingCourse = await _UoW.Courses.GetAsync(id);
+            _mapper.Map(coursePost, existingCourse);
+
             _UoW.Courses.Update(existingCourse);
             await _UoW.SaveAsync();
         }
@@ -91,6 +85,16 @@ public class CoursesController : ControllerBase
             {
                 throw;
             }
+        }
+
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
         }
 
         return NoContent();
@@ -107,9 +111,14 @@ public class CoursesController : ControllerBase
             await _UoW.SaveAsync();
         }
 
-        catch (Exception)
+        catch (InvalidOperationException ex)
         {
-            return StatusCode(500, "An error occured while posting the course");
+            return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
         }
 
         return CreatedAtAction("GetCourse", new { id = course.CourseId }, course);
@@ -123,22 +132,22 @@ public class CoursesController : ControllerBase
             return BadRequest();
         }
 
-        var course = await _UoW.Courses.GetAsync(id);
-
-        if (course == null)
-        {
-            return NotFound();
-        }
-
         try
         {
+            var course = await _UoW.Courses.GetAsync(id);
+
             _UoW.Courses.Delete(course.CourseId);
             await _UoW.SaveAsync();
         }
 
-        catch (Exception)
+        catch (InvalidOperationException ex)
         {
-            return StatusCode(500, "An error occured while deleting the course");
+            return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
         }
 
         return NoContent();
