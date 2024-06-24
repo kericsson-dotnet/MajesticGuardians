@@ -39,39 +39,33 @@ public class ModulesController : ControllerBase
         try
         {
             var module = await _UoW.Modules.GetAsync(id);
-
-            if(module == null)
-            {
-                return NotFound();
-            }
-
             return Ok(_mapper.Map<ModuleDto>(module));
         }
+
         catch (InvalidOperationException ex)
         {
             return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
         }
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> PutModule(int id, ModulePostDto modulePostDto)
     {
-        var existingModule = await _UoW.Modules.GetAsync(id);
-
-        if(existingModule == null)
-        {
-            return NotFound();
-        }
-
-        if (id != existingModule.ModuleId || id<=0)
+        if (id <= 0)
         {
             return BadRequest();
         }
-
-        _mapper.Map(modulePostDto, existingModule);
-
+     
         try
         {
+            var existingModule = await _UoW.Modules.GetAsync(id);
+            _mapper.Map(modulePostDto, existingModule);
+
             _UoW.Modules.Update(existingModule);
             await _UoW.SaveAsync();
         }
@@ -85,6 +79,16 @@ public class ModulesController : ControllerBase
             {
                 throw;
             }
+        }
+
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
         }
 
         return NoContent();
@@ -101,9 +105,14 @@ public class ModulesController : ControllerBase
             await _UoW.SaveAsync();
         }
 
-        catch (Exception)
+        catch (InvalidOperationException ex)
         {
-            return StatusCode(500, "An error occured while posting the module");
+            return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
         }
 
         return CreatedAtAction("GetModule", new { id = existingModule.ModuleId }, existingModule);
@@ -117,24 +126,22 @@ public class ModulesController : ControllerBase
             return BadRequest();
         }
 
-        var module = await _UoW.Modules.GetAsync(id);
-
-        if (module == null)
-        {
-            return NotFound();
-        }
-
         try
         {
+            var module = await _UoW.Modules.GetAsync(id);
             _UoW.Modules.Delete(module.ModuleId);
             await _UoW.SaveAsync();
         }
 
-        catch (Exception)
+        catch (InvalidOperationException ex)
         {
-            return StatusCode(500, "An error occured while deleting the module");
+            return NotFound(ex.Message);
         }
 
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
 
         return NoContent();
     }
