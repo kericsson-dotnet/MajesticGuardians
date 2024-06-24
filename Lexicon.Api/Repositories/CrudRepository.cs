@@ -36,7 +36,7 @@ public class CrudRepository<T> : ICrudRepository<T> where T : class
 
     public void Delete(object id)
     {
-        T existing = DbSet.Find(id) ?? throw new InvalidOperationException("Not Found"); ;
+        T existing = DbSet.Find(id) ?? throw new InvalidOperationException("Not Found");
         DbSet.Remove(existing);
     }
 }
