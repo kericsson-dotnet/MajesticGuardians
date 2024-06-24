@@ -5,29 +5,39 @@
 @using System.Net.Http.Json
 @inject HttpClient Http
 
+@inject IAuthService AuthService
+
 <PageTitle>Login</PageTitle>
 
 <h3>Login</h3>
 
-<div class="login-form">
-    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
 
-        <div class="form-group">
-            <label for="firstName">First Name</label>
-            <InputText id="firstName" class="form-control" @bind-Value="loginModel.FirstName" />
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" />
-        </div>
-        <button type="submit" class="btn btn-primary">Login</button>
-    </EditForm>
-    <p>
-        <a @onclick="NavigateToRegister">Register</a>
-    </p>
-</div>
+@if (!AuthService.IsLoggedIn)
+{
+    <div class="login-form">
+        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <InputText id="firstName" class="form-control" @bind-Value="loginModel.FirstName" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" />
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </EditForm>
+        <p>
+            <a @onclick="NavigateToRegister">Register</a>
+        </p>
+    </div>
+}
+else
+{
+    <p>You are already logged in.</p>
+}
 
 @code {
     private LoginModel loginModel = new LoginModel();
@@ -46,6 +56,7 @@
             {
                 // Handle login failure (e.g., display an error message)
                 Console.WriteLine("Login failed");
+                Navigation.NavigateTo("/register");
             }
         }
         catch (Exception ex)
