@@ -53,16 +53,25 @@
     [SupplyParameterFromForm]
     private User User { get; set; }
 
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        User = new User()
+            {
+                FirstName = string.Empty,
+                LastName = string.Empty,
+                Password = string.Empty,
+                Email = string.Empty,
+                Role = 0,
+                Documents = []
+            };
     }
+
 
     private async Task HandleRegister()
     {
         try
         {
-            var user = new Lexicon.Frontend.Models.User
+            User = new Lexicon.Frontend.Models.User
                 {
                     FirstName = User.FirstName,
                     LastName = User.LastName,
@@ -72,7 +81,7 @@
                     Documents = []
                 };
 
-            await UserService.CreateUserAsync(user);
+            await UserService.CreateUserAsync(User);
 
             // Hantera svar från API efter behov
             // if (UserService.CreateUserAsync(user) != null)
