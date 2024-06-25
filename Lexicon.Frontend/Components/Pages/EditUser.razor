@@ -1,4 +1,4 @@
-﻿@page "/edit_user"
+﻿@* @page "/edit_user"
 @inject IUnitOfWork Services
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
@@ -10,25 +10,43 @@
 <h3>Edit User</h3>
 
 <div class="edit-user-form">
-    <EditForm Model="@userModel" OnValidSubmit="HandleSubmit">
+    <EditForm Model="@user" OnValidSubmit="HandleSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
         <div class="form-group">
             <label for="firstName">First Name</label>
-            <InputText id="firstName" class="form-control" @bind-Value="userModel.FirstName" />
+            <InputText id="firstName" class="form-control" @bind-Value="user.FirstName" />
         </div>
         <div class="form-group">
             <label for="lastName">Last Name</label>
-            <InputText id="lastName" class="form-control" @bind-Value="userModel.LastName" />
+            <InputText id="lastName" class="form-control" @bind-Value="user.LastName" />
         </div>
         <div class="form-group">
             <label for="email">Email</label>
-            <InputText id="email" type="email" class="form-control" @bind-Value="userModel.Email" />
+            <InputText id="email" type="email" class="form-control" @bind-Value="user.Email" />
         </div>
         <div class="form-group">
             <label for="password">Password</label>
-            <InputText id="password" type="password" class="form-control" @bind-Value="userModel.Password" />
+            <InputText id="password" type="password" class="form-control" @bind-Value="user.Password" />
+        </div>
+        <div class="form-group">
+            <label for="role">Role</label>
+            <InputSelect id="role" class="form-control" @bind-Value="user.Role">
+                @foreach (var role in Enum.GetValues(typeof(UserRole)))
+                {
+                    <option value="@role">@role</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <label for="course">Course</label>
+            <InputSelect id="course" class="form-control" @bind-Value="selectedCourseId">
+                @foreach (var course in courses)
+                {
+                    <option value="@course.CourseId">@course.Name</option>
+                }
+            </InputSelect>
         </div>
         <button type="submit" class="btn btn-primary">Save</button>
     </EditForm>
@@ -38,20 +56,45 @@
 </div>
 
 @code {
-    private UserModel userModel = new UserModel();
+    private User user = new User();
+    private List<Course> courses = new List<Course>();
+    private int selectedCourseId; // Stores the selected course ID
 
     protected override async Task OnInitializedAsync()
     {
-        // Load the user data from the API or services
+        await LoadUserData();
+        await LoadCourses();
+    }
+
+    private async Task LoadUserData()
+    {
         var userId = 1; // Replace with actual user ID logic
-        //userModel = await Http.GetFromJsonAsync<UserModel>($"api/users/{userId}");
+        user = await Http.GetFromJsonAsync<User>($"api/users/{userId}");
+        selectedCourseId = GetSelectedCourseId(user); // Initialize selectedCourseId from user
+    }
+
+    private async Task LoadCourses()
+    {
+        courses = await Http.GetFromJsonAsync<List<Course>>("api/courses");
+    }
+
+    private int GetSelectedCourseId(User user)
+    {
+        // Implement your logic to get the selected course ID for the user
+        // For example, you might have a service or repository method to retrieve this
+        // This example assumes a simple scenario where we just take the first course ID
+        // Adjust this logic based on how you determine which course is selected for the user
+        return 0; // Default value if no course is selected
     }
 
     private async Task HandleSubmit()
     {
         try
         {
-            var response = await Http.PutAsJsonAsync($"api/users/{userModel.Id}", userModel);
+            // Update user with selectedCourseId before saving
+            UpdateUserCourse(user, selectedCourseId);
+
+            var response = await Http.PutAsJsonAsync($"api/users/{user.UserId}", user);
             if (response.IsSuccessStatusCode)
             {
                 // Redirect to a different page upon successful save
@@ -69,17 +112,16 @@
         }
     }
 
+    private void UpdateUserCourse(User user, int courseId)
+    {
+        // Implement logic to update the user's selected course
+        // For simplicity, assuming we replace the entire Courses list
+        // This example assumes there is no direct Course property on User
+    }
+
     private void NavigateToHome()
     {
         Navigation.NavigateTo("/");
     }
-
-    public class UserModel
-    {
-        public int Id { get; set; }
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
 }
+ *@

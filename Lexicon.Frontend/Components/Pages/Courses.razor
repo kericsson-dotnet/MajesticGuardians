@@ -1,0 +1,114 @@
+﻿@page "/courses/{userId:int}"
+@inject IUnitOfWork Services
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@using System.Net.Http.Json
+@using Lexicon.Frontend.ServicesImp
+@using Lexicon.Frontend.Models
+
+<h3>Course Overview</h3>
+
+@if (currentUser == null)
+{
+    <p><em>Loading courses...</em></p>
+}
+else
+{
+    <p>Welcome, @currentUser.FirstName @currentUser.LastName!</p>
+
+    @if (!courses.Any())
+    {
+        <p>No courses available.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Course Name</th>
+                    <th>Description</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    @if (isTeacher)
+                    {
+                        <th>
+                            <a @onclick="NavigateToNewModule" class="btn btn-primary">+ Module</a>
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var course in courses)
+                {
+                    <tr>
+                        <td>@course.Name</td>
+                        <td>@course.Description</td>
+                        <td>@course.StartDate.ToShortDateString()</td>
+                        <td>@course.EndDate.ToShortDateString()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    [Parameter]
+    public int userId { get; set; }
+
+    private List<Course> courses = new List<Course>();
+    private User? currentUser = null;
+    private bool isTeacher = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            currentUser = await Services.UserService.GetUserAsync(userId);
+
+            if (currentUser != null)
+            {
+                isTeacher = currentUser.Role == Lexicon.Frontend.Models.UserRole.Teacher;
+                // Get all courses from database
+                var allCourses = await Services.CourseService.GetCoursesAsync();
+
+                if (isTeacher)
+                {
+                    // Fetch courses for teacher (simulate or retrieve from local data)
+                    courses = GetCoursesForTeacher(allCourses, currentUser.UserId);
+                }
+                else
+                {
+                    // Fetch courses for student (simulate or retrieve from local data)
+                    courses = GetCoursesForStudent(allCourses, currentUser.UserId);
+                }
+            }
+            else
+            {
+                // Handle users that are not logged in
+                Navigation.NavigateTo("/login1");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log exception
+            Console.Error.WriteLine($"Error fetching user: {ex.Message}");
+            Navigation.NavigateTo("/error"); // Example error handling
+        }
+    }
+
+    private List<Course> GetCoursesForTeacher(List<Course> allCourses, int teacherId)
+    {
+        return allCourses.Where(c => c.Users.Any(u => u.UserId == teacherId && u.Role == Lexicon.Frontend.Models.UserRole.Teacher)).ToList();
+    }
+
+    private List<Course> GetCoursesForStudent(List<Course> allCourses, int studentId)
+    {
+        return allCourses.Where(c => c.Users.Any(u => u.UserId == studentId && u.Role == Lexicon.Frontend.Models.UserRole.Student)).ToList();
+    }
+
+    private void NavigateToNewModule()
+    {
+        Navigation.NavigateTo("/new_or_register_module");
+    }
+}
