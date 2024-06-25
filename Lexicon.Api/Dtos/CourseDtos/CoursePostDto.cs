@@ -18,5 +18,9 @@ namespace Lexicon.Api.Dtos.CourseDtos
 
         [Required]
         public DateTime EndDate { get; set; }
+
+        public List<int> UserIds { get; set; } = [];
+
+        public List<int> DocumentIds { get; set; } = [];
     }
 }
