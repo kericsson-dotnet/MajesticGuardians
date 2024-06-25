@@ -23,7 +23,7 @@ namespace Lexicon.Api.Dtos.DocumentDtos
         [Required]
         public DateTime TimeAdded { get; set; } = DateTime.Now;
 
-        public User? AddedBy { get; set; }
+        public int UserId { get; set; }
 
     }
 }
