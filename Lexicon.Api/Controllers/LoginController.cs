@@ -19,13 +19,14 @@ namespace Lexicon.Api.Controllers
         }
 
         [HttpPost("validate")]
-        public async Task<ActionResult<bool>> ValidateUser([FromBody] UserLoginModel model)
+        public async Task<ActionResult> ValidateUser([FromBody] UserLoginModel model)
         {
             var user = await _userRepository.ValidateCredentialsAsync(model.Email, model.Password);
             if (user == null)
-            {           
+            {
                 return Unauthorized();
             }
+
             string token;
             if (user.Role == Entities.UserRole.Teacher)
             {
@@ -35,9 +36,8 @@ namespace Lexicon.Api.Controllers
             {
                 token = _tokenService.GenerateToken(model.Email, "User");
             }
-       
-            return Ok(new { Token = token });
 
+            return Ok(token);
         }
 
     }

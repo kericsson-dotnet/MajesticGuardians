@@ -1,5 +1,8 @@
 ﻿using Lexicon.Api.Models;
 using Lexicon.Frontend.Services;
+using Microsoft.AspNetCore.Mvc;
+using static Lexicon.Frontend.Components.Pages.Login;
+using static System.Net.WebRequestMethods;
 
 namespace Lexicon.Frontend.ServicesImp
 {
@@ -13,23 +16,10 @@ namespace Lexicon.Frontend.ServicesImp
            _httpClient = httpClient;
         }
 
-        public async Task<bool> LoginAsync(UserLoginModel model)
+        public async Task<HttpResponseMessage> LoginAsync(UserLoginModel model)
         {
-
-
-            var response = await _httpClient.PostAsJsonAsync("api/login/validate", model);
-
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<bool>();
-            }
-            else
-            {
-               
-                return false;
-            }
+            return await _httpClient.PostAsJsonAsync("api/login/validate", model);
         }
-
         public Task LogoutAsync()
         {
             isAuthenticated = false;

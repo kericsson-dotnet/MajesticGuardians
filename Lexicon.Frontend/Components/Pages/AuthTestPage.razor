@@ -1,0 +1,37 @@
+﻿@page "/admin"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager NavigationManager
+@inject CustomAuthenticationStateProvider AuthStateProvider
+@inject IJSRuntime JsRuntime
+
+
+<h3>Admin Page</h3>
+<CascadingAuthenticationState>
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+            <h3>Admin Content</h3>
+            <p>This content is only visible to admin users.</p>
+        </Authorized>
+        <NotAuthorized>
+            <p>You are not authorized to view this page. Please <a href="/login1">log in</a>.</p>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
+@code {
+    private bool _firstRender = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _firstRender = false;
+            // 确保在渲染完成后进行任何必要的初始化
+            await JsRuntime.InvokeVoidAsync("console.log", "Admin page rendered");
+        }
+    }
+}
+
+

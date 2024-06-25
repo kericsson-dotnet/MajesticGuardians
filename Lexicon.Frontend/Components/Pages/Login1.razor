@@ -1,13 +1,17 @@
 ﻿@page "/login1"
+@rendermode InteractiveServer
 @inject IUnitOfWork Services
 @inject NavigationManager NavigationManager
+@inject CustomAuthenticationStateProvider AuthStateProvider
+@inject IJSRuntime JsRuntime
+@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using Lexicon.Api.Models
 
 <h3>Login</h3>
 
 <EditForm Model="LoginModel" OnSubmit="HandleSubmit" FormName="LoginForm">
-    <div class="mb-3 row" >
+    <div class="mb-3 row">
         <label for="email" class="col-sm-2 col-form-label">Email:</label>
         <div class="col-sm-10">
             <InputText id="email" @bind-Value="LoginModel!.Email" />
@@ -16,42 +20,60 @@
     <div class="mb-3 row">
         <label for="password" class="col-sm-2 col-form-label">Password:</label>
         <div class="col-sm-10">
-        <InputText id="password" @bind-Value="LoginModel!.Password" type="password" />
+            <InputText id="password" @bind-Value="LoginModel!.Password" type="password" />
         </div>
-   </div>
+    </div>
     <div class="row">
         <div class="col-sm-10 offset-sm-2">
             <button type="submit" class="btn btn-primary">Login</button>
         </div>
     </div>
-
 </EditForm>
 
 @code {
     [SupplyParameterFromForm(FormName = "LoginForm")]
     public UserLoginModel? LoginModel { get; set; }
 
+    private bool _isRendered;
+
     protected override void OnInitialized()
     {
         LoginModel ??= new();
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isRendered = true;
+
+        }
+    }
+
     private async Task HandleSubmit()
     {
-        Console.WriteLine($"Email: {LoginModel.Email}, Password: {LoginModel.Password}");
-
         var res = await Services.AuthService.LoginAsync(LoginModel);
-
-        if (res)
+        if (res.IsSuccessStatusCode)
         {
-            Console.WriteLine("Find");
-            NavigationManager.NavigateTo("/login");
+            var token = await res.Content.ReadAsStringAsync();
+            if (_isRendered)
+            {
+                AuthStateProvider.SetInitialized();
+                await ((CustomAuthenticationStateProvider)AuthStateProvider).MarkUserAsAuthenticated(token);
+
+                NavigationManager.NavigateTo("/user-role");
+            }
+            else
+            {
+                // Render undone
+                Console.WriteLine("Component not rendered yet. Try again later.");
+            }
         }
         else
         {
-            Console.WriteLine("Not Find");
+            Console.WriteLine("Invalid credentials");
             NavigationManager.NavigateTo("/");
         }
     }
+ 
 }
-
