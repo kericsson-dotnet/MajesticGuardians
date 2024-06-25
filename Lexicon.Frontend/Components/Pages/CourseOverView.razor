@@ -5,20 +5,15 @@
 @using System.Net.Http.Json
 @inject HttpClient Http
 @inject IHttpClientFactory HttpClientFactory
+@using Lexicon.Frontend.ServicesImp
+@inject IAuthService AuthService
 
 
 <h3>Course Overview</h3>
 
-@if (courses == null)
+@if (isTeacher)
 {
-    <p><em>Loading...</em></p>
-}
-else if (!courses.Any())
-{
-    <p>No courses available.</p>
-}
-else
-{
+    <p>Welcome, @currentUser.FirstName @currentUser.LastName!</p>
     <table class="table">
         <thead>
             <tr>
@@ -44,13 +39,51 @@ else
         </tbody>
     </table>
 }
+else
+{
+    <p>Welcome, @currentUser.FirstName @currentUser.LastName!</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Course Name</th>
+                <th>Description</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var course in courses)
+            {
+                <tr>
+                    <td>@course.Name</td>
+                    <td>@course.Description</td>
+                    <td>@course.StartDate.ToShortDateString()</td>
+                    <td>@course.EndDate.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
 
 @code {
     private List<Course> courses;
+    private Lexicon.Api.Entities.User currentUser;
+    private bool isTeacher;
 
     protected override async Task OnInitializedAsync()
     {
-        courses = await Services.CourseService.GetCoursesAsync();
+        currentUser = AuthService.GetCurrentUser();
+        if (currentUser != null)
+        {
+            isTeacher = currentUser.Role == Lexicon.Api.Entities.UserRole.Teacher;
+            courses = await Services.CourseService.GetCoursesAsync();
+        }
+        else
+        {
+            // Handel non logged in users
+            Navigation.NavigateTo("/login1");
+        }
     }
 
     private void NavigateToNewModule()
