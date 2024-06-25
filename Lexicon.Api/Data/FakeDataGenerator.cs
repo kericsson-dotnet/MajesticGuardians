@@ -59,6 +59,7 @@ namespace Lexicon.Api.Data
                 context.Courses.AddRange(courses);
                 context.SaveChanges();               
                 var modules = new List<Module>();
+                courses = context.Courses.ToList();
                 foreach (var course in courses)
                 {
                     for (int i = 0; i < 3; i++)
@@ -68,7 +69,7 @@ namespace Lexicon.Api.Data
                             .RuleFor(m => m.Description, f => f.Lorem.Paragraph())
                             .RuleFor(m => m.StartDate, f => f.Date.Past())
                             .RuleFor(m => m.EndDate, f => f.Date.Future())
-                            .RuleFor(m => m.Course, f => course)
+                            .RuleFor(m => m.Course, f => f.PickRandom(courses))
                             .RuleFor(m => m.Documents, f => faker.PickRandom(documents, 2).ToList())
                             .Generate();
                         modules.Add(module);
