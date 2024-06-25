@@ -57,7 +57,16 @@ public class UsersController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> PutUser(int id, UserPostDto userPostDto)
     {
-       
+        if (id <= 0)
+        {
+            return BadRequest();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         try
         {
             var existingUser = await _UoW.Users.GetAsync(id);
@@ -105,6 +114,11 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<UserPostDto>> PostUser(UserPostDto userPostDto)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         var user = _mapper.Map<User>(userPostDto);
 
         try
