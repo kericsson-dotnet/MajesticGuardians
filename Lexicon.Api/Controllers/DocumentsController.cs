@@ -68,6 +68,11 @@ public class DocumentsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> PutDocument(int id, DocumentPostDto documentPost)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         if (id <= 0)
         {
             return BadRequest();
@@ -110,6 +115,11 @@ public class DocumentsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<DocumentPostDto>> PostDocument(DocumentPostDto documentPostDto)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         var document = _mapper.Map<Document>(documentPostDto);
 
         try
