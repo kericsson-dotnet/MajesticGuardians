@@ -1,19 +1,33 @@
+:root {
+    --primary: #D60000;
+    --primary-light: #ff3f3f;
+    --primary-lighter: #ffa0a0;
+}
+
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 a, .btn-link {
-    color: #006bb7;
+    color: var(--primary);
 }
 
 .btn-primary {
     color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+    background-color: var(--primary);
+    border-color: var(--primary);
 }
 
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:focus {
+    background-color: var(--primary-light) !important;
+    border-color: var(--primary-light) !important;
+}
+   
+
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--primary-lighter);
 }
 
 .content {
