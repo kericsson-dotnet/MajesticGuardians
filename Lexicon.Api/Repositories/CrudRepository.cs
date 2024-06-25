@@ -20,7 +20,7 @@ public class CrudRepository<T> : ICrudRepository<T> where T : class
 
     public async Task<T> GetAsync(object id)
     {
-        return await DbSet.FindAsync(id) ?? throw new InvalidOperationException("Not Found");
+        return await DbSet.FindAsync(id) ?? throw new InvalidOperationException($"{typeof(T).Name} Id {id} not found.");
     }
 
     public void Add(T obj)
@@ -36,7 +36,7 @@ public class CrudRepository<T> : ICrudRepository<T> where T : class
 
     public void Delete(object id)
     {
-        T existing = DbSet.Find(id) ?? throw new InvalidOperationException("Not Found");
+        T existing = DbSet.Find(id) ?? throw new InvalidOperationException($"{typeof(T).Name}Id {id} not found.");
         DbSet.Remove(existing);
     }
 }
