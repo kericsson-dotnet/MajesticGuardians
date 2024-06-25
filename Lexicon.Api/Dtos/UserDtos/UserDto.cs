@@ -28,6 +28,6 @@ namespace Lexicon.Api.Dtos.UserDtos
         [Required]
         public UserRole Role { get; set; } = UserRole.Student;
 
-        public List<Document>? Documents { get; set; } = [];
+        public List<int> DocumentIds { get; set; } = [];
     }
 }
