@@ -34,7 +34,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ModuleDto>> GetModule(int id)
+    public async Task<ActionResult<ModuleDto>> GetModule([FromRoute] int id)
     {
         try
         {
@@ -54,7 +54,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutModule(int id, ModulePostDto modulePostDto)
+    public async Task<IActionResult> PutModule([FromRoute] int id, [FromBody] ModulePostDto modulePostDto)
     {
         if (id <= 0)
         {
@@ -100,7 +100,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Module>> PostModule(ModulePostDto modulePostDto)
+    public async Task<ActionResult<ModulePostDto>> PostModule([FromBody] ModulePostDto modulePostDto)
     {
         if (!ModelState.IsValid)
         {
@@ -129,7 +129,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteModule(int id)
+    public async Task<IActionResult> DeleteModule([FromRoute] int id)
     {
         if (id <= 0)
         {
