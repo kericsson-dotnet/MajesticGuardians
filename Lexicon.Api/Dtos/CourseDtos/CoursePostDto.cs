@@ -10,7 +10,7 @@ namespace Lexicon.Api.Dtos.CourseDtos
         public string Name { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(500, ErrorMessage = "Description length can't be more than 100.")]
+        [StringLength(500, ErrorMessage = "Description length can't be more than 500.")]
         public string Description { get; set; } = string.Empty;
 
         [Required]
@@ -18,5 +18,9 @@ namespace Lexicon.Api.Dtos.CourseDtos
 
         [Required]
         public DateTime EndDate { get; set; }
+
+        public List<int> UserIds { get; set; } = [];
+
+        public List<int> DocumentIds { get; set; } = [];
     }
 }

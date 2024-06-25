@@ -14,14 +14,17 @@ namespace Lexicon.Api.Dtos.UserDtos
         public string LastName { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(100, ErrorMessage = "Email length can't be more than 200.")]
+        [StringLength(200, ErrorMessage = "Email length can't be more than 200.")]
         public string Email { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(100, ErrorMessage = "Password length can't be more than 100.")]
+        [StringLength(200, ErrorMessage = "Password length can't be more than 200.")]
         public string Password { get; set; } = string.Empty;
 
         [Required]
         public UserRole Role { get; set; } = UserRole.Student;
+
+        public List<int> DocumentIds { get; set; } = [];
+
     }
 }

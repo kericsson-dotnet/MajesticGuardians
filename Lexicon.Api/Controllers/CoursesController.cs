@@ -34,7 +34,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CourseDto>> GetCourse(int id)
+    public async Task<ActionResult<CourseDto>> GetCourse([FromRoute] int id)
     {
         if (id <= 0)
         {
@@ -60,7 +60,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutCourse(int id, CoursePostDto coursePost)
+    public async Task<IActionResult> PutCourse([FromRoute] int id, [FromBody] CoursePostDto coursePost)
     {
         if (id <= 0)
         {
@@ -106,7 +106,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<CoursePostDto>> PostCourse(CoursePostDto coursePostDto)
+    public async Task<ActionResult<CoursePostDto>> PostCourse([FromBody] CoursePostDto coursePostDto)
     {
         if (!ModelState.IsValid)
         {
@@ -135,7 +135,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteCourse(int id)
+    public async Task<IActionResult> DeleteCourse([FromRoute] int id)
     {
         if (id <= 0)
         {
