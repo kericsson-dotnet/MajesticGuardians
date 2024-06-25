@@ -12,33 +12,45 @@
 <h3>Course Overview</h3>
 
 <p>Welcome, @currentUser.FirstName @currentUser.LastName!</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Course Name</th>
-            <th>Description</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            @if (isTeacher)
-            {
-             <th>
-                <a @onclick="NavigateToNewModule" class="btn btn-primary">+ Module</a>
-             </th>
-            }
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var course in courses)
-        {
+
+@if (courses == null)
+{
+    <p><em>Loading courses...</em></p>
+}
+else if (!courses.Any())
+{
+    <p>No courses available.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
             <tr>
-                <td>@course.Name</td>
-                <td>@course.Description</td>
-                <td>@course.StartDate.ToShortDateString()</td>
-                <td>@course.EndDate.ToShortDateString()</td>
+                <th>Course Name</th>
+                <th>Description</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                @if (isTeacher)
+                {
+                    <th>
+                        <a @onclick="NavigateToNewModule" class="btn btn-primary">+ Module</a>
+                    </th>
+                }
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var course in courses)
+            {
+                <tr>
+                    <td>@course.Name</td>
+                    <td>@course.Description</td>
+                    <td>@course.StartDate.ToShortDateString()</td>
+                    <td>@course.EndDate.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 
 
@@ -53,11 +65,21 @@
         if (currentUser != null)
         {
             isTeacher = currentUser.Role == Lexicon.Api.Entities.UserRole.Teacher;
-            courses = await Services.CourseService.GetCoursesAsync();
+
+            if (isTeacher)
+            {
+                courses = await Services.CourseService.GetCoursesAsync();
+            }
+            else
+            {
+                // I guess GetStudentCourseAsync uses student id as parameter
+                var studentCourse = await Services.CourseService.GetStudentCourseAsync(currentUser.UserId);
+                courses = new List<Course> { studentCourse };
+            }
         }
-        else
+        else if(currentUser == null)
         {
-            // Handel non logged in users
+            // Handel users thats not logged in
             Navigation.NavigateTo("/login1");
         }
     }

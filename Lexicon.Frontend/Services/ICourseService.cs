@@ -5,5 +5,6 @@ namespace Lexicon.Frontend.Services
     public interface ICourseService
     {
         Task<List<Course>> GetCoursesAsync();
+        Task<Course> GetStudentCourseAsync(int studentId);
     }
 }

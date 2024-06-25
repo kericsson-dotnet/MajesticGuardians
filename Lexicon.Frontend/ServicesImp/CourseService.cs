@@ -16,5 +16,10 @@ namespace Lexicon.Frontend.ServicesImp
         {
             return await _httpClient.GetFromJsonAsync<List<Course>>("api/courses");
         }
+
+        public async Task<Course> GetStudentCourseAsync(int studentId)
+        {
+            return await _httpClient.GetFromJsonAsync<Course>($"api/courses/student/{studentId}");
+        }
     }
 }
