@@ -67,6 +67,11 @@ public class CoursesController : ControllerBase
             return BadRequest();
         }
 
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         try
         {
             var existingCourse = await _UoW.Courses.GetAsync(id);
@@ -103,6 +108,11 @@ public class CoursesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<CoursePostDto>> PostCourse(CoursePostDto coursePostDto)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         var course = _mapper.Map<Course>(coursePostDto);
 
         try
