@@ -22,10 +22,10 @@ namespace Lexicon.Api.Dtos.ModuleDtos
         [Required]
         public DateTime EndDate { get; set; }
 
-        public Course? Course { get; set; }
+        public int CourseId { get; set; }
 
-        public List<Activity> Activities { get; set; } = [];
+        public List<int> ActivityIds { get; set; } = [];
 
-        public List<Document> Documents { get; set; } = [];
+        public List<int> DocumentIds { get; set; } = [];
     }
 }
