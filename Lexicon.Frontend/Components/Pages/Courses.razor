@@ -61,28 +61,51 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        currentUser = AuthService.GetCurrentUser();
+        //currentUser = AuthService.GetCurrentUser();
+        // Teacher test
+        //currentUser = new Lexicon.Api.Entities.User { FirstName = "John", LastName = "Smith", Role = Lexicon.Api.Entities.UserRole.Teacher, UserId = 77 };
+        
+        // Student test
+        currentUser = new Lexicon.Api.Entities.User { FirstName = "Kalle", LastName = "Anka", Role = Lexicon.Api.Entities.UserRole.Student, UserId = 11 };
+
+
         if (currentUser != null)
         {
             isTeacher = currentUser.Role == Lexicon.Api.Entities.UserRole.Teacher;
 
+            // Get all courses from database
+            var allCourses = await Services.CourseService.GetCoursesAsync();
+
             if (isTeacher)
             {
-                courses = await Services.CourseService.GetCoursesAsync();
+                // Fetch courses for teacher (simulate or retrieve from local data)
+                courses = GetCoursesForTeacher(allCourses, currentUser.UserId);
             }
             else
             {
-                // I guess GetStudentCourseAsync uses student id as parameter
-                var studentCourse = await Services.CourseService.GetStudentCourseAsync(currentUser.UserId);
-                courses = new List<Course> { studentCourse };
+                // Fetch courses for student (simulate or retrieve from local data)
+                courses = GetCoursesForStudent(allCourses, currentUser.UserId);
             }
         }
-        else if(currentUser == null)
+        else
         {
-            // Handel users thats not logged in
+            // Handle users that are not logged in
             Navigation.NavigateTo("/login1");
         }
     }
+
+    private List<Course> GetCoursesForTeacher(List<Course> allCourses, int teacherId)
+    {
+        // Simulate or retrieve courses for teacher
+        return allCourses.Where(c => c.Users.Any(u => u.UserId == teacherId && u.Role == UserRole.Teacher)).ToList();
+    }
+
+    private List<Course> GetCoursesForStudent(List<Course> allCourses, int studentId)
+    {
+        //currentUser = AuthService.GetCurrentUser();
+        return allCourses.Where(c => c.Users.Any(u => u.UserId == studentId && u.Role == UserRole.Student)).ToList();
+    }
+
 
     private void NavigateToNewModule()
     {
