@@ -26,21 +26,21 @@ namespace Lexicon.Frontend.Services
             // Wait until render done
             if (!_isInitialized)
             {
-                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
-            }
+				return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+			}
+			var token = await _localStorageService.GetItemAsync("authToken");
+			var identity = string.IsNullOrWhiteSpace(token)
+				? new ClaimsIdentity()
+				: new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(token), "jwt");
 
-            var token = await _localStorageService.GetItemAsync("authToken");
-            var identity = string.IsNullOrWhiteSpace(token)
-                ? new ClaimsIdentity()
-                : new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(token), "jwt");
+			_httpClient.DefaultRequestHeaders.Authorization =
+				string.IsNullOrWhiteSpace(token)
+					? null
+					: new AuthenticationHeaderValue("Bearer", token);
 
-            _httpClient.DefaultRequestHeaders.Authorization =
-                string.IsNullOrWhiteSpace(token)
-                    ? null
-                    : new AuthenticationHeaderValue("Bearer", token);
-
-            return new AuthenticationState(new ClaimsPrincipal(identity));
-        }
+			return new AuthenticationState(new ClaimsPrincipal(identity));
+			
+		}
 
         public async Task MarkUserAsAuthenticated(string token)
         {

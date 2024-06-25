@@ -58,7 +58,7 @@
             var token = await res.Content.ReadAsStringAsync();
             if (_isRendered)
             {
-                AuthStateProvider.SetInitialized();
+                
                 await ((CustomAuthenticationStateProvider)AuthStateProvider).MarkUserAsAuthenticated(token);
 
                 NavigationManager.NavigateTo("/user-role");
