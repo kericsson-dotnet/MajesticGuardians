@@ -61,6 +61,11 @@ public class ActivitiesController : ControllerBase
             return BadRequest();
         }
 
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         try
         {
             var existingActivity = await _UoW.Activities.GetAsync(id);
@@ -99,7 +104,13 @@ public class ActivitiesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ActivityPostDto>> PostActivity(ActivityPostDto activityPostDto)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         var activity = _mapper.Map<Activity>(activityPostDto);
+        
         try
         {
             _UoW.Activities.Add(activity);
