@@ -34,7 +34,7 @@ public class DocumentsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<DocumentDto>> GetDocument(int id)
+    public async Task<ActionResult<DocumentDto>> GetDocument([FromRoute] int id)
     {
         if (id <= 0)
         {
@@ -64,9 +64,8 @@ public class DocumentsController : ControllerBase
         }
     }
 
-
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutDocument(int id, DocumentPostDto documentPost)
+    public async Task<IActionResult> PutDocument([FromRoute] int id, [FromBody] DocumentPostDto documentPost)
     {
         if (!ModelState.IsValid)
         {
@@ -113,7 +112,7 @@ public class DocumentsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<DocumentPostDto>> PostDocument(DocumentPostDto documentPostDto)
+    public async Task<ActionResult<DocumentPostDto>> PostDocument([FromBody] DocumentPostDto documentPostDto)
     {
         if (!ModelState.IsValid)
         {
@@ -142,7 +141,7 @@ public class DocumentsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteDocument(int id)
+    public async Task<IActionResult> DeleteDocument([FromRoute] int id)
     {
         if (id <= 0)
         {
