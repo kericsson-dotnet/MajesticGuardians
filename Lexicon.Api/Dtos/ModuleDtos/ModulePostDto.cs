@@ -9,7 +9,7 @@ namespace Lexicon.Api.Dtos.ModuleDtos
         public string Name { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(100, ErrorMessage = "Description length can't be more than 500.")]
+        [StringLength(500, ErrorMessage = "Description length can't be more than 500.")]
         public string Description { get; set; } = string.Empty;
 
         [Required]
