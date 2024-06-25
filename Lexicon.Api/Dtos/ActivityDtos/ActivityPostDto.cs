@@ -17,5 +17,7 @@ namespace Lexicon.Api.Dtos.ActivityDtos
 
         [Required]
         public DateTime EndDate { get; set; }
+
+        public List<int> DocumentIds { get; set; } = [];
     }
 }
