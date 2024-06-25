@@ -60,7 +60,12 @@ public class ModulesController : ControllerBase
         {
             return BadRequest();
         }
-     
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         try
         {
             var existingModule = await _UoW.Modules.GetAsync(id);
@@ -97,6 +102,11 @@ public class ModulesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Module>> PostModule(ModulePostDto modulePostDto)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         var existingModule = _mapper.Map<Module>(modulePostDto);
 
         try
