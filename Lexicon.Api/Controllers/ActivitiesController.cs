@@ -34,7 +34,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Activity>> GetActivity(int id)
+    public async Task<ActionResult<ActivityDto>> GetActivity([FromRoute] int id)
     {
         try
         {
@@ -54,7 +54,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutActivity(int id, ActivityPostDto activityPostDto)
+    public async Task<IActionResult> PutActivity([FromRoute] int id, [FromBody] ActivityPostDto activityPostDto)
     {
         if (id <= 0)
         {
@@ -100,9 +100,8 @@ public class ActivitiesController : ControllerBase
         return NoContent();
     }
 
-
     [HttpPost]
-    public async Task<ActionResult<ActivityPostDto>> PostActivity(ActivityPostDto activityPostDto)
+    public async Task<ActionResult<ActivityPostDto>> PostActivity([FromBody] ActivityPostDto activityPostDto)
     {
         if (!ModelState.IsValid)
         {
@@ -132,7 +131,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteActivity(int id)
+    public async Task<IActionResult> DeleteActivity([FromRoute] int id)
     {
         if (id <= 0)
         {
