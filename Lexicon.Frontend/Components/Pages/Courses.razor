@@ -6,8 +6,6 @@
 @inject HttpClient Http
 @inject IHttpClientFactory HttpClientFactory
 @using Lexicon.Frontend.ServicesImp
-@inject IAuthService AuthService
-@inject IUserService UserService
 
 
 
@@ -63,7 +61,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        currentUser = AuthService.GetCurrentUser();
+        currentUser = Services.AuthService.GetCurrentUser();
 
 
         if (currentUser != null)
@@ -93,13 +91,11 @@ else
 
     private List<Course> GetCoursesForTeacher(List<Course> allCourses, int teacherId)
     {
-        // Simulate or retrieve courses for teacher
         return allCourses.Where(c => c.Users.Any(u => u.UserId == teacherId && u.Role == UserRole.Teacher)).ToList();
     }
 
     private List<Course> GetCoursesForStudent(List<Course> allCourses, int studentId)
     {
-        //currentUser = AuthService.GetCurrentUser();
         return allCourses.Where(c => c.Users.Any(u => u.UserId == studentId && u.Role == UserRole.Student)).ToList();
     }
 
