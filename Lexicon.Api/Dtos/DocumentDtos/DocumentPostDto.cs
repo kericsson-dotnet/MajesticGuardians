@@ -19,5 +19,8 @@ namespace Lexicon.Api.Dtos.DocumentDtos
 
         [Required]
         public DateTime TimeAdded { get; set; } = DateTime.Now;
+
+        public int UserId { get; set; }
+
     }
 }

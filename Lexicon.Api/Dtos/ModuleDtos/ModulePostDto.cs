@@ -17,5 +17,11 @@ namespace Lexicon.Api.Dtos.ModuleDtos
 
         [Required]
         public DateTime EndDate { get; set; }
+
+        public int CourseId { get; set; }
+
+        public List<int> ActivityIds { get; set; } = [];
+
+        public List<int> DocumentIds { get; set; } = [];
     }
 }
