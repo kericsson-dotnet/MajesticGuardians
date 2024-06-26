@@ -1,10 +1,13 @@
 ﻿using Lexicon.Frontend.Models;
-
-namespace Lexicon.Frontend.Services;
-
-public interface IUserService
+using Microsoft.AspNetCore.Mvc;
+namespace Lexicon.Frontend.Services
 {
-    Task<IEnumerable<User>> GetUsersAsync();
-    Task<User> GetUserAsync(int id);
-    Task CreateUserAsync(User user);
+    public interface IUserService
+    { 
+        Task<IEnumerable<User>> GetUsersAsync();
+
+        Task CreateUserAsync(User user);
+
+        Task<User?> GetCurrentUserAsync();
+    }
 }
