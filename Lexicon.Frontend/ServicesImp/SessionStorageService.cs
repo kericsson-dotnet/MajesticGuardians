@@ -1,8 +1,9 @@
-﻿using Microsoft.JSInterop;
+﻿using Lexicon.Frontend.Services;
+using Microsoft.JSInterop;
 
 namespace Lexicon.Frontend.ServicesImp
 {
-    public class SessionStorageService
+    public class SessionStorageService : ISessionStorageService
     {
         private readonly IJSRuntime _jsRuntime;
 

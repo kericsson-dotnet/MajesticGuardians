@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Cors.Infrastructure;
+﻿using Lexicon.Frontend.ServicesImp;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 namespace Lexicon.Frontend.Services;
 
@@ -11,4 +12,5 @@ public interface IUnitOfWork
     IAuthService AuthService { get; }
     ICourseService CourseService { get; }
     IFileService FileService { get; }
+    ISessionStorageService SessionStorageService { get; }
 }

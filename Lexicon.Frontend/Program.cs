@@ -16,7 +16,7 @@ builder.Services.AddRazorComponents()
 
 
 builder.Services.AddMvc();
-builder.Services.AddHttpClient<Lexicon.Frontend.Services.IUnitOfWork, Lexicon.Frontend.ServicesImp.UnitOfWork>(client =>
+builder.Services.AddHttpClient<IUnitOfWork, UnitOfWork> (client =>
 {
     var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
 
@@ -34,23 +34,13 @@ builder.Services.AddHttpClient<Lexicon.Frontend.Services.IUnitOfWork, Lexicon.Fr
     };
 });
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.Cookie.Name = "auth_token";
-        options.LoginPath = "/login2";
-        options.Cookie.MaxAge = TimeSpan.FromMinutes(30);
-        options.AccessDeniedPath = "/access-denied";
-    });
 
+builder.Services.AddServerSideBlazor(options =>
+{
+    options.DetailedErrors = true;
+});
 
-//builder.Services.AddServerSideBlazor(options =>
-//{
-//    options.DetailedErrors = true;
-//});
-
-////Add Services for Authorization
-builder.Services.AddScoped<SessionStorageService>();
+// Add Services for Authorization
 builder.Services.AddScoped<CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<CustomAuthenticationStateProvider>());
 
@@ -63,10 +53,8 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
 
 app.UseHttpsRedirection();
 
