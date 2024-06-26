@@ -38,7 +38,6 @@ else
 @code {
 
     private List<Module> modules;
-    private bool student = true;
     protected async override Task OnInitializedAsync()
     {
         modules = (await Services.ModuleService.GetModulesAsync()).ToList();

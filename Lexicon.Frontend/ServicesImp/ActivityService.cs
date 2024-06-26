@@ -13,4 +13,5 @@ public class ActivityService : IActivityService
     }
 
     public async Task<IEnumerable<Activity>> GetActivitiesAsync() => await _httpClient.GetFromJsonAsync<IEnumerable<Activity>>("api/activities");
+    public async Task<Activity> GetActivityAsync(int id) => await _httpClient.GetFromJsonAsync<Activity>($"api/activities/{id}");
 }
