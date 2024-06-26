@@ -11,16 +11,19 @@ namespace Lexicon.Frontend.ServicesImp
     {
         private readonly HttpClient _httpClient;
         private readonly LocalStorageService _localStorageService;
-        private bool _isAuthenticated = false;
-        private string _token;
+        private string? _token;
+        private bool _isAuthenticated; 
 
         public AuthService(HttpClient httpClient, LocalStorageService localStorageService)
         {
             _httpClient = httpClient;
             _localStorageService = localStorageService;
+            _token = string.Empty;
+            _isAuthenticated = false;
         }
+        public bool IsAuthenticated() => _isAuthenticated && !string.IsNullOrEmpty(_token);
 
-        public async Task<string> LoginAsync(UserLoginModel model)
+        public async Task<string?> LoginAsync(UserLoginModel model)
         {
             try
             {
@@ -30,16 +33,14 @@ namespace Lexicon.Frontend.ServicesImp
                 {
                     var token = await response.Content.ReadAsStringAsync();
                     _token = token;
-                    _isAuthenticated = true;
 
-                    // Spara token i localStorage
                     await _localStorageService.SetItemAsync("authToken", token);
-
+                    _isAuthenticated = true;
                     return token;
                 }
+
                 else
                 {
-                    _isAuthenticated = false;
                     return null;
                 }
             }
@@ -51,29 +52,10 @@ namespace Lexicon.Frontend.ServicesImp
 
         public async Task LogoutAsync()
         {
-            _isAuthenticated = false;
             _token = null;
-
-            // Ta bort token från localStorage
+            _isAuthenticated = false;
             await _localStorageService.RemoveItemAsync("authToken");
         }
 
-        public async Task<string> GetTokenAsync()
-        {
-            if (!string.IsNullOrEmpty(_token))
-            {
-                return _token;
-            }
-
-            // Hämta token från localStorage om det finns
-            _token = await _localStorageService.GetItemAsync("authToken");
-            return _token;
-        }
-
-        public bool IsAuthenticated()
-        {
-            // Kontrollera om användaren är autentiserad genom att kolla om _token är satt och giltigt
-            return _isAuthenticated && !string.IsNullOrEmpty(_token);
-        }
     }
 }
