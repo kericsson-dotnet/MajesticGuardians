@@ -4,7 +4,7 @@ namespace Lexicon.Frontend.Services
 {
     public interface IAuthService
     { 
-        Task<HttpResponseMessage> LoginAsync(UserLoginModel model);
+        Task<string> LoginAsync(UserLoginModel model);
         public bool IsAuthenticated();
         Task LogoutAsync();
     }
