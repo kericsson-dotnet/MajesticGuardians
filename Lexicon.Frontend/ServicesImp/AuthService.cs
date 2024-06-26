@@ -1,55 +1,61 @@
-﻿using Lexicon.Api.Entities;
-using Lexicon.Api.Models;
+﻿using Lexicon.Api.Models;
 using Lexicon.Frontend.Services;
+using Microsoft.JSInterop;
+using System;
 using System.Net.Http.Json;
+using System.Threading.Tasks;
 
 namespace Lexicon.Frontend.ServicesImp
 {
     public class AuthService : IAuthService
     {
         private readonly HttpClient _httpClient;
-        private User? currentUser;
-        private bool isAuthenticated = false;
+        private readonly LocalStorageService _localStorageService;
+        private string? _token;
+        private bool _isAuthenticated; 
 
-        public AuthService(HttpClient httpClient)
+        public AuthService(HttpClient httpClient, LocalStorageService localStorageService)
         {
             _httpClient = httpClient;
+            _localStorageService = localStorageService;
+            _token = string.Empty;
+            _isAuthenticated = false;
         }
+        public bool IsAuthenticated() => _isAuthenticated && !string.IsNullOrEmpty(_token);
 
-        public async Task<bool> LoginAsync(UserLoginModel model)
+        public async Task<string?> LoginAsync(UserLoginModel model)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/login/validate", model);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                // Anta att API:et returnerar en User-objekt vid lyckad inloggning
-                currentUser = await response.Content.ReadFromJsonAsync<User>();
-                isAuthenticated = true;
-                return true;
+                var response = await _httpClient.PostAsJsonAsync("api/login/validate", model);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var token = await response.Content.ReadAsStringAsync();
+                    _token = token;
+
+                    await _localStorageService.SetItemAsync("authToken", token);
+                    _isAuthenticated = true;
+                    return token;
+                }
+
+                else
+                {
+                    return null;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return false;
+                throw new ApplicationException("Inloggning misslyckades", ex);
             }
         }
 
-        public Task LogoutAsync()
+        public async Task LogoutAsync()
         {
-            currentUser = null;
-            isAuthenticated = false;
-            return Task.CompletedTask;
+            _token = null;
+            _isAuthenticated = false;
+            await _localStorageService.RemoveItemAsync("authToken");
         }
 
-        public User? GetCurrentUser()
-        {
-            return currentUser;
-        }
-
-        public bool IsLoggedIn => isAuthenticated;
-
-        public bool IsInRole(UserRole role)
-        {
-            return currentUser?.Role == role;
-        }
     }
 }

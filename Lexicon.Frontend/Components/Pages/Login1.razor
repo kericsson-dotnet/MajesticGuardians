@@ -1,56 +1,104 @@
 ﻿@page "/login1"
-@inject IUnitOfWork Services
-@inject NavigationManager NavigationManager
-@using Microsoft.AspNetCore.Components.Forms
 @using Lexicon.Api.Models
+@using Lexicon.Frontend.ServicesImp
+
+@inject IUnitOfWork Services
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject IUnitOfWork Services
+@inject LocalStorageService LocalStorageService;
+
+@rendermode InteractiveServer
+
+<PageTitle>Login</PageTitle>
 
 <h3>Login</h3>
 
-<EditForm Model="LoginModel" OnSubmit="HandleSubmit" FormName="LoginForm">
-    <div class="mb-3 row" >
-        <label for="email" class="col-sm-2 col-form-label">Email:</label>
-        <div class="col-sm-10">
-            <InputText id="email" @bind-Value="LoginModel!.Email" />
-        </div>
-    </div>
-    <div class="mb-3 row">
-        <label for="password" class="col-sm-2 col-form-label">Password:</label>
-        <div class="col-sm-10">
-        <InputText id="password" @bind-Value="LoginModel!.Password" type="password" />
-        </div>
-   </div>
-    <div class="row">
-        <div class="col-sm-10 offset-sm-2">
-            <button type="submit" class="btn btn-primary">Login</button>
-        </div>
-    </div>
+@if (isAuthenticated)
+{
+    <p>You are already logged in.</p>
+    <button class="btn btn-primary" @onclick="Logout">Logout</button>
+}
 
-</EditForm>
+else
+{
+    <div class="login-form">
+        <EditForm Model="@loginModel" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <InputText id="email" class="form-control" @bind-Value="loginModel.Email" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" />
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </EditForm>
+        <p>
+            <a @onclick="NavigateToRegister">Register</a>
+        </p>
+    </div>
+}
 
 @code {
-    [SupplyParameterFromForm(FormName = "LoginForm")]
-    public UserLoginModel? LoginModel { get; set; }
+    private LoginModel loginModel = new LoginModel();
+    private bool isAuthenticated = false;
 
-    protected override void OnInitialized()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        LoginModel ??= new();
+        if (firstRender)
+        {
+            isAuthenticated = !string.IsNullOrEmpty(await LocalStorageService.GetItemAsync("authToken"));
+            StateHasChanged(); 
+        }
     }
 
     private async Task HandleSubmit()
     {
-        Console.WriteLine($"Email: {LoginModel.Email}, Password: {LoginModel.Password}");
-
-        var res = await Services.AuthService.LoginAsync(LoginModel);
-
-        if (res)
+        try
         {
-            Console.WriteLine("Find");
-            NavigationManager.NavigateTo("/courses");
+            var response = await Services.AuthService.LoginAsync(new UserLoginModel
+                {
+                    Email = loginModel.Email,
+                    Password = loginModel.Password
+                });
+
+            if (!string.IsNullOrEmpty(response))
+            {
+                Navigation.NavigateTo("/");
+            }
+
+            else
+            {
+                Console.WriteLine("Login failed");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            Console.WriteLine("Not Find");
-            NavigationManager.NavigateTo("/");
+            Console.WriteLine($"Error logging in: {ex.Message}");
         }
+    }
+
+    private async Task Logout()
+    {
+        await Services.AuthService.LogoutAsync();
+        await LocalStorageService.RemoveItemAsync("authToken");
+        isAuthenticated = false;
+        Navigation.NavigateTo("/login1");
+    }
+
+
+    private void NavigateToRegister()
+    {
+        Navigation.NavigateTo("/register");
+    }
+
+    public class LoginModel
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 }

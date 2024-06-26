@@ -3,12 +3,9 @@ using Lexicon.Api.Models;
 namespace Lexicon.Frontend.Services
 {
     public interface IAuthService
-    {
-        Task<bool> LoginAsync(UserLoginModel model);
+    { 
+        Task<string?> LoginAsync(UserLoginModel model);
+        public bool IsAuthenticated();
         Task LogoutAsync();
-
-        User? GetCurrentUser();
-        bool IsLoggedIn { get; }
-        bool IsInRole(UserRole role);
     }
 }
