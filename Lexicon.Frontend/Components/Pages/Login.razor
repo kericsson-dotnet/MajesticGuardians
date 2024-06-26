@@ -1,25 +1,38 @@
 ﻿@page "/login"
+@using Lexicon.Api.Models
+@using Lexicon.Frontend.ServicesImp
+
 @inject IUnitOfWork Services
-@rendermode InteractiveServer
 @inject NavigationManager Navigation
-@using System.Net.Http.Json
 @inject HttpClient Http
+
+@rendermode InteractiveServer
 
 <PageTitle>Login</PageTitle>
 
 <h3>Login</h3>
 
+@if (isAuthenticated)
+{
+    <p>You are already logged in.</p>
+    <button class="btn btn-primary" @onclick="Logout">Logout</button>
+}
 
-@if (!Services.AuthService.IsAuthenticated())
+else if (!loading)
+{
+    <p>loading...</p>
+}
+
+else
 {
     <div class="login-form">
-        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+        <EditForm Model="@loginModel" OnValidSubmit="HandleSubmit">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
             <div class="form-group">
-                <label for="firstName">First Name</label>
-                <InputText id="firstName" class="form-control" @bind-Value="loginModel.FirstName" />
+                <label for="email">Email</label>
+                <InputText id="email" class="form-control" @bind-Value="loginModel.Email" />
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
@@ -32,35 +45,56 @@
         </p>
     </div>
 }
-else
-{
-    <p>You are already logged in.</p>
-}
 
 @code {
     private LoginModel loginModel = new LoginModel();
+    private bool isAuthenticated = false;
+    private bool loading = false;
 
-    private async Task HandleLogin()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var token = await Services.SessionStorageService.GetItemAsync("authToken");
+            isAuthenticated = !string.IsNullOrEmpty(token);
+            loading = true;
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleSubmit()
     {
         try
         {
-            var response = await Http.PostAsJsonAsync("api/auth/login", loginModel);
-            if (response.IsSuccessStatusCode)
+            var response = await Services.AuthService.LoginAsync(new UserLoginModel
+                {
+                    Email = loginModel.Email,
+                    Password = loginModel.Password
+                });
+
+            if (!string.IsNullOrEmpty(response))
             {
-                // Redirect to a different page upon successful login
+                await Services.SessionStorageService.SetItemAsync("authToken", response);
+                var storedToken = await Services.SessionStorageService.GetItemAsync("authToken");
+                isAuthenticated = true;
                 Navigation.NavigateTo("/");
             }
             else
             {
-                // Handle login failure (e.g., display an error message)
                 Console.WriteLine("Login failed");
-                Navigation.NavigateTo("/register");
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error logging in: {ex.Message}");
         }
+    }
+
+    private async Task Logout()
+    {
+        await Services.AuthService.LogoutAsync();
+        isAuthenticated = false;
+        Navigation.NavigateTo("/login");
     }
 
     private void NavigateToRegister()
@@ -70,7 +104,7 @@ else
 
     public class LoginModel
     {
-        public string FirstName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
     }
 }
