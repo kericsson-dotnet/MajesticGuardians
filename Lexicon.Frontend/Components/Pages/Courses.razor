@@ -4,6 +4,7 @@
 @inject NavigationManager Navigation
 @using System.Net.Http.Json
 @using Lexicon.Frontend.ServicesImp
+@using Lexicon.Frontend.Models
 
 <h3>Course Overview</h3>
 
@@ -67,7 +68,7 @@ else
 
             if (currentUser != null)
             {
-                isTeacher = currentUser.Role == UserRole.Teacher;
+                isTeacher = currentUser.Role == Lexicon.Frontend.Models.UserRole.Teacher;
                 // Get all courses from database
                 var allCourses = await Services.CourseService.GetCoursesAsync();
 
@@ -98,12 +99,12 @@ else
 
     private List<Course> GetCoursesForTeacher(List<Course> allCourses, int teacherId)
     {
-        return allCourses.Where(c => c.Users.Any(u => u.UserId == teacherId && u.Role == UserRole.Teacher)).ToList();
+        return allCourses.Where(c => c.Users.Any(u => u.UserId == teacherId && u.Role == Lexicon.Frontend.Models.UserRole.Teacher)).ToList();
     }
 
     private List<Course> GetCoursesForStudent(List<Course> allCourses, int studentId)
     {
-        return allCourses.Where(c => c.Users.Any(u => u.UserId == studentId && u.Role == UserRole.Student)).ToList();
+        return allCourses.Where(c => c.Users.Any(u => u.UserId == studentId && u.Role == Lexicon.Frontend.Models.UserRole.Student)).ToList();
     }
 
     private void NavigateToNewModule()
