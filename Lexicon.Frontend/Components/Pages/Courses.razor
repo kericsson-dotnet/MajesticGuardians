@@ -3,8 +3,6 @@
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
 @using System.Net.Http.Json
-@inject HttpClient Http
-@inject IHttpClientFactory HttpClientFactory
 @using Lexicon.Frontend.ServicesImp
 
 
@@ -56,18 +54,18 @@ else
 
 @code {
     private List<Course> courses;
-    private Lexicon.Api.Entities.User currentUser;
+    private User currentUser;
     private bool isTeacher;
 
     protected override async Task OnInitializedAsync()
     {
-        currentUser = Services.AuthService.GetCurrentUser();
+        // currentUser = Services.AuthService.GetCurrentUser(); <--- denna hittas inte pga "Cannot implicitly convert type 'Lexicon.Api.Entities.User' to 'Lexicon.Frontend.Models.User"
 
 
         if (currentUser != null)
         {
-            isTeacher = currentUser.Role == Lexicon.Api.Entities.UserRole.Teacher;
-
+            //isTeacher = currentUser.Role == Lexicon.Api.Entities.UserRole.Teacher;
+            isTeacher = currentUser.Role == UserRole.Teacher;
             // Get all courses from database
             var allCourses = await Services.CourseService.GetCoursesAsync();
 
