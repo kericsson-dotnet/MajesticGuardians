@@ -1,24 +1,56 @@
 ﻿@page "/"
+@using System.IdentityModel.Tokens.Jwt
+@inject NavigationManager NavigationManager
+@inject IUnitOfWork Services;
 
 @rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
-<div class="container mt-5">
-    <div class="jumbotron text-center">
-        <h1 class="display-4">Hello and welcome to Lexicon It</h1>
-        <p class="lead">Our companys aim are to get you your dream jobb</p>
-        <hr class="my-4" />
-        <p>Click the button below to login or register.</p>
-        <button class="btn btn-primary btn-lg" @onclick="NavigateToLoginRegister">Login/Register</button>
+@if (currentUser != null || !loading)
+{
+    if (loading)
+    {
+        <p><strong>User ID: </strong> @currentUser.UserId</p>
+        <p><strong>Email: </strong> @currentUser.Email</p>
+        <p><strong>Role: </strong> @currentUser.Role</p>
+    }
+
+    else
+    {
+        <p>loading...</p>
+    }
+}
+
+else
+{
+    <div class="container mt-5">
+        <div class="jumbotron text-center">
+            <h1 class="display-4">Hello and welcome to Lexicon It</h1>
+            <p class="lead">Our company's aim is to get you your dream job</p>
+            <hr class="my-4" />
+            <p>Click the button below to login or register.</p>
+            <button class="btn btn-primary btn-lg" @onclick="NavigateToLoginRegister">Login/Register</button>
+        </div>
     </div>
-</div>
+}
 
 @code {
-    [Inject] private NavigationManager? Navigation { get; set; }
+    private User? currentUser;
+    private bool loading = false;
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            currentUser = await Services.UserService.GetCurrentUserAsync();
+            loading = true;
+            StateHasChanged();
+        }
+    }
 
     private void NavigateToLoginRegister()
     {
-        Navigation.NavigateTo("/login");
+        NavigationManager.NavigateTo("/login");
     }
 }
