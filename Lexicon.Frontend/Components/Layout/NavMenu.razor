@@ -1,53 +1,85 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Lexicon.Frontend</a>
+﻿<div>
+    <div class="top-row navbar navbar-dark px-3">
+    <div class="container-fluid px-0">
+        <a class="navbar-brand" href="">
+            <img class="logo" src="logo.png" width="232" height="80" alt="Lexicon" />
+        </a>
+        <button type="button" title="Navigation menu" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarScroll" />
     </div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
+<div class="collapse navbar-collapse" id="navbarScroll" >
+    <div class="user vstack gap-0">
+        <div class="role">@user.Role.ToString()</div>
+        <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle align-items-center gap-1" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+                <i class="bi bi-person-circle"></i>
+                <span>@($"{user.FirstName} {user.LastName}")</span>
+            </a>
+            <ul class="dropdown-menu w-100">
+                <li><a class="dropdown-item" href="edit_user"><i class="bi bi-pen"></i> Ändra uppgifter</a></li>
+                <li><a class="dropdown-item" @onclick="Logout"><i class="bi bi-box-arrow-left"></i> Logga ut</a></li>
+            </ul>
         </div>
+    </div>
+    <nav class="flex-column">
+        @if (user.Role == UserRole.Teacher)
+        {
+            <li class="nav-item px-2">
+                <NavLink class="nav-link" href="course_over_view" Match="NavLinkMatch.All">
+                    <i class="bi bi-book"></i> Hantera kurser
+                </NavLink>
+            </li>
 
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="edit_user">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Edit User
-            </NavLink>
-        </li>
+            <li class="nav-item px-2">
+                <!-- TODO: Navigare till användare sida -->
+                <NavLink class="nav-link" href="edit_user">
+                    <i class="bi bi-person"></i> Hantera användare
+                </NavLink>
+            </li>
 
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="new_or_register_activity">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> New Activity
-            </NavLink>
-        </li>
-
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="new_or_register_module">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> New Module
-            </NavLink>
-        </li>
-
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="activities">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Activity
-            </NavLink>
-        </li>
-
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="course_over_view">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Courses
-            </NavLink>
-
-        </li><li class="nav-item px-3">
-            <NavLink class="nav-link" href="modules">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Modules
-            </NavLink>
-        </li>
+            <li class="nav-item px-2">
+                    <!-- TODO: Navigare till Uppladdningar sida -->
+                <NavLink class="nav-link" href="new_or_register_activity">
+                    <i class="bi bi-archive"></i> Hantera uppladdningar
+                </NavLink>
+            </li>
+        }
+        else
+        {
+            <li class="nav-item px-2">
+                <NavLink class="nav-link" href="course_over_view" Match="NavLinkMatch.All">
+                    <i class="bi bi-book"></i> Kursöversikt
+                </NavLink>
+            </li>
+            <li class="nav-item px-2">
+                <NavLink class="nav-link" href="#">
+                    <i class="bi bi-archive"></i> Mina uppladdningar
+                </NavLink>
+            </li>
+            <li class="nav-item px-2">
+                <!-- TODO: Navigera till Elever sida -->
+                <NavLink class="nav-link" href="#">
+                    <i class="bi bi-people"></i> Kursdeltagare
+                </NavLink>
+            </li>
+                <li class="nav-item px-2">
+                <!-- TODO: Navigera till Lärare sida -->
+                <NavLink class="nav-link" href="#">
+                    <i class="bi bi-people"></i> Lärare
+                </NavLink>
+            </li>
+        }
     </nav>
 </div>
+</div>
+
+@code {
+    // TODO: Get logged in user
+    private User user = new User(){FirstName = "John", LastName = "Doe", Role = UserRole.Student};
+
+    private void Logout() {
+        // TODO: handle logout
+    }
+}
 
