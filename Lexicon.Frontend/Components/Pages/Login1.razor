@@ -1,16 +1,26 @@
 ﻿@page "/login1"
 @using Lexicon.Api.Models
+@using Lexicon.Frontend.ServicesImp
+
 @inject IUnitOfWork Services
-@rendermode InteractiveServer
 @inject NavigationManager Navigation
 @inject HttpClient Http
 @inject IUnitOfWork Services
+@inject LocalStorageService LocalStorageService;
+
+@rendermode InteractiveServer
 
 <PageTitle>Login</PageTitle>
 
 <h3>Login</h3>
 
-@if (!Services.AuthService.IsAuthenticated())
+@if (isAuthenticated)
+{
+    <p>You are already logged in.</p>
+    <button class="btn btn-primary" @onclick="Logout">Logout</button>
+}
+
+else
 {
     <div class="login-form">
         <EditForm Model="@loginModel" OnValidSubmit="HandleSubmit">
@@ -32,13 +42,19 @@
         </p>
     </div>
 }
-else
-{
-    <p>You are already logged in.</p>
-}
 
 @code {
     private LoginModel loginModel = new LoginModel();
+    private bool isAuthenticated = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isAuthenticated = !string.IsNullOrEmpty(await LocalStorageService.GetItemAsync("authToken"));
+            StateHasChanged(); // Ensure UI reflects changes
+        }
+    }
 
     private async Task HandleSubmit()
     {
@@ -65,6 +81,15 @@ else
             Console.WriteLine($"Error logging in: {ex.Message}");
         }
     }
+
+    private async Task Logout()
+    {
+        await Services.AuthService.LogoutAsync();
+        await LocalStorageService.RemoveItemAsync("authToken");
+        isAuthenticated = false;
+        Navigation.NavigateTo("/login1");
+    }
+
 
     private void NavigateToRegister()
     {
