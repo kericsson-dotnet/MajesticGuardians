@@ -19,8 +19,8 @@ namespace Lexicon.Api.Services
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub,email ),
-                new Claim(ClaimTypes.Role, role),
+                new Claim("email",email ),
+                new Claim("role", role),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
             var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);

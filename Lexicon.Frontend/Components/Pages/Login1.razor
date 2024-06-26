@@ -13,7 +13,7 @@
 @if (!Services.AuthService.IsAuthenticated())
 {
     <div class="login-form">
-        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+        <EditForm Model="@loginModel" OnValidSubmit="HandleSubmit">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
@@ -40,7 +40,7 @@ else
 @code {
     private LoginModel loginModel = new LoginModel();
 
-    private async Task HandleLogin()
+    private async Task HandleSubmit()
     {
         try
         {
@@ -50,14 +50,13 @@ else
                     Password = loginModel.Password
                 });
 
-            if (response.IsSuccessStatusCode)
+            if (!string.IsNullOrEmpty(response))
             {
-                // Redirect to a different page upon successful login
                 Navigation.NavigateTo("/");
             }
+
             else
             {
-                // Handle login failure (e.g., display an error message)
                 Console.WriteLine("Login failed");
             }
         }
