@@ -7,6 +7,8 @@
 @inject IHttpClientFactory HttpClientFactory
 @using Lexicon.Frontend.ServicesImp
 @inject IAuthService AuthService
+@inject IUserService UserService
+
 
 
 <h3>Course Overview</h3>
@@ -61,12 +63,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        //currentUser = AuthService.GetCurrentUser();
-        // Teacher test
-        //currentUser = new Lexicon.Api.Entities.User { FirstName = "John", LastName = "Smith", Role = Lexicon.Api.Entities.UserRole.Teacher, UserId = 77 };
-        
-        // Student test
-        currentUser = new Lexicon.Api.Entities.User { FirstName = "Kalle", LastName = "Anka", Role = Lexicon.Api.Entities.UserRole.Student, UserId = 11 };
+        currentUser = AuthService.GetCurrentUser();
 
 
         if (currentUser != null)

@@ -33,6 +33,8 @@ builder.Services.AddHttpClient<Lexicon.Frontend.Services.IUnitOfWork, Lexicon.Fr
 // Register IAuthService
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+// IUserService
+builder.Services.AddScoped<IUserService, UserService>();
 
 
 var app = builder.Build();
