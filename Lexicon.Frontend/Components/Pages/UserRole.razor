@@ -1,0 +1,45 @@
+﻿
+@page "/user-role"
+@inject CustomAuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+<h3>User Role</h3>
+
+<AuthorizeView>
+	<Authorized>
+		<p>Your role is: @role</p>
+	</Authorized>
+	<NotAuthorized>
+		<p>You are not authorized.</p>
+	</NotAuthorized>
+</AuthorizeView>
+
+@code {
+	private string role;
+
+	protected override async Task OnInitializedAsync()
+	{
+		
+		var authState = await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).GetAuthenticationStateAsync();
+		var user = authState.User;
+
+		if (user.Identity.IsAuthenticated)
+		{
+			var roleClaim = user.FindFirst(c => c.Type == ClaimTypes.Role);
+			if (roleClaim != null)
+			{
+				role = roleClaim.Value;
+			}
+			else
+			{
+				role = "No role found";
+			}
+		}
+		else
+		{
+			role = "Not authenticated";
+		}
+}
+	
+}
