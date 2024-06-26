@@ -1,56 +1,80 @@
 ﻿@page "/login1"
-@inject IUnitOfWork Services
-@inject NavigationManager NavigationManager
-@using Microsoft.AspNetCore.Components.Forms
 @using Lexicon.Api.Models
+@inject IUnitOfWork Services
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject IUnitOfWork Services
+
+<PageTitle>Login</PageTitle>
 
 <h3>Login</h3>
 
-<EditForm Model="LoginModel" OnSubmit="HandleSubmit" FormName="LoginForm">
-    <div class="mb-3 row" >
-        <label for="email" class="col-sm-2 col-form-label">Email:</label>
-        <div class="col-sm-10">
-            <InputText id="email" @bind-Value="LoginModel!.Email" />
-        </div>
-    </div>
-    <div class="mb-3 row">
-        <label for="password" class="col-sm-2 col-form-label">Password:</label>
-        <div class="col-sm-10">
-        <InputText id="password" @bind-Value="LoginModel!.Password" type="password" />
-        </div>
-   </div>
-    <div class="row">
-        <div class="col-sm-10 offset-sm-2">
-            <button type="submit" class="btn btn-primary">Login</button>
-        </div>
-    </div>
+@if (!Services.AuthService.IsAuthenticated())
+{
+    <div class="login-form">
+        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-</EditForm>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <InputText id="email" class="form-control" @bind-Value="loginModel.Email" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" />
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </EditForm>
+        <p>
+            <a @onclick="NavigateToRegister">Register</a>
+        </p>
+    </div>
+}
+else
+{
+    <p>You are already logged in.</p>
+}
 
 @code {
-    [SupplyParameterFromForm(FormName = "LoginForm")]
-    public UserLoginModel? LoginModel { get; set; }
+    private LoginModel loginModel = new LoginModel();
 
-    protected override void OnInitialized()
+    private async Task HandleLogin()
     {
-        LoginModel ??= new();
+        try
+        {
+            var response = await Services.AuthService.LoginAsync(new UserLoginModel
+                {
+                    Email = loginModel.Email,
+                    Password = loginModel.Password
+                });
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Redirect to a different page upon successful login
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                // Handle login failure (e.g., display an error message)
+                Console.WriteLine("Login failed");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error logging in: {ex.Message}");
+        }
     }
 
-    private async Task HandleSubmit()
+    private void NavigateToRegister()
     {
-        Console.WriteLine($"Email: {LoginModel.Email}, Password: {LoginModel.Password}");
+        Navigation.NavigateTo("/register");
+    }
 
-        var res = await Services.AuthService.LoginAsync(LoginModel);
-
-        if (res)
-        {
-            Console.WriteLine("Find");
-            NavigationManager.NavigateTo("/login");
-        }
-        else
-        {
-            Console.WriteLine("Not Find");
-            NavigationManager.NavigateTo("/");
-        }
+    public class LoginModel
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 }

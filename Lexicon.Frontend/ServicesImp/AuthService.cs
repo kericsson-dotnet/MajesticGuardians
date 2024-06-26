@@ -8,48 +8,30 @@ namespace Lexicon.Frontend.ServicesImp
     public class AuthService : IAuthService
     {
         private readonly HttpClient _httpClient;
-        private User? currentUser;
-        private bool isAuthenticated = false;
+        private bool _isAuthenticated = false;
 
         public AuthService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
-        public async Task<bool> LoginAsync(UserLoginModel model)
+        public bool IsAuthenticated() => _isAuthenticated;
+
+        public async Task<HttpResponseMessage> LoginAsync(UserLoginModel model)
         {
             var response = await _httpClient.PostAsJsonAsync("api/login/validate", model);
-
             if (response.IsSuccessStatusCode)
             {
-                // Anta att API:et returnerar en User-objekt vid lyckad inloggning
-                currentUser = await response.Content.ReadFromJsonAsync<User>();
-                isAuthenticated = true;
-                return true;
+                _isAuthenticated = true;
             }
-            else
-            {
-                return false;
-            }
+            return response;
         }
 
         public Task LogoutAsync()
         {
-            currentUser = null;
-            isAuthenticated = false;
+            _isAuthenticated = false;
             return Task.CompletedTask;
         }
 
-        public User? GetCurrentUser()
-        {
-            return currentUser;
-        }
-
-        public bool IsLoggedIn => isAuthenticated;
-
-        public bool IsInRole(UserRole role)
-        {
-            return currentUser?.Role == role;
-        }
     }
 }

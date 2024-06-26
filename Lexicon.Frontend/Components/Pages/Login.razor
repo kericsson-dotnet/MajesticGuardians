@@ -5,14 +5,12 @@
 @using System.Net.Http.Json
 @inject HttpClient Http
 
-@inject IAuthService AuthService
-
 <PageTitle>Login</PageTitle>
 
 <h3>Login</h3>
 
 
-@if (!AuthService.IsLoggedIn)
+@if (!Services.AuthService.IsAuthenticated())
 {
     <div class="login-form">
         <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
