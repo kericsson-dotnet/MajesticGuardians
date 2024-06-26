@@ -21,6 +21,7 @@ namespace Lexicon.Frontend.ServicesImp
         public IActivityService ActivityService => new ActivityService(_httpClient);
         public ICourseService CourseService => new CourseService(_httpClient);
         public IDocumentService DocumentService => new DocumentService(_httpClient);
-        public IAuthService AuthService => new AuthService(_httpClient, _localStorageService);
+        public IAuthService AuthService => new AuthService(_httpClient);
+        public IFileService FileService => new FileService(_httpClient);
     }
 }

@@ -1,5 +1,9 @@
 ﻿@page "/file-upload"
-
+@rendermode InteractiveServer
+@using System.Net
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Net.Http.Headers
+@inject IUnitOfWork Services;
 <h2>File Upload</h2>
 
 @if (Message.Length > 0)
@@ -15,39 +19,41 @@
 	<button class="btn btn-primary" type="submit">Submit</button>
 </EditForm>
 
-
-
-
-
 @code {
 	[SupplyParameterFromForm(FormName ="fileUpload")]
 	private FileUploadWeb LoadFile { get; set; } = new();
 	private long maxFileSize = 1024 * 15;
-	private int maxAllowedFiles = 3;
 	private string Message { get; set; } = String.Empty;
-	private List<IBrowserFile> selectedFiles = new();
+
 
 	private async Task OnSubmit()
 	{
-		//TODO Handle file here, send request to API 
-		Console.WriteLine("File upload");
-	}
+		try
+		{
+			using MultipartFormDataContent content = new();
+			//Add values if wanted to save in db
+			content.Add(new StringContent(LoadFile.Title), "Title");
+			content.Add(new StringContent(LoadFile.Description), "Description");
 
+			foreach(var file in LoadFile.Attachments)
+			{
+				string safeFileName = WebUtility.HtmlEncode(file.Name);
+				var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
+				fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(file.ContentType);
+				content.Add(fileContent, nameof(LoadFile.Attachments), safeFileName);
+			}
+			Message = await Services.FileService.PostFileAsync(content);
+			LoadFile = new();
+		}catch(Exception e)
+		{
+			Message = "Upload failed. Error: " + e.Message;
+		}
+	}
 	private void OnInputFileChange(InputFileChangeEventArgs e)
 	{
 		var newFiles = e.GetMultipleFiles().ToList();
-		if (selectedFiles.Count + newFiles.Count > maxAllowedFiles)
-		{
-			Message = $"You can only upload a maximum of {maxAllowedFiles} files. Please reselect.";
-			//selectedFiles.Clear();  // clear the existing files if needed
-		}
-		else
-		{
-			selectedFiles.AddRange(newFiles);
-			Message = String.Empty; 
-		}
+		LoadFile.Attachments = e.GetMultipleFiles();
 	}
-
 	private class FileUploadWeb
 	{
 		public string Title { get; set; } = String.Empty;
