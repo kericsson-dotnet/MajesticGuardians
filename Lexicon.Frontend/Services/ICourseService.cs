@@ -1,9 +1,9 @@
 ﻿using Lexicon.Frontend.Models;
 
-namespace Lexicon.Frontend.Services
+namespace Lexicon.Frontend.Services;
+
+public interface ICourseService
 {
-    public interface ICourseService
-    {
-        Task<List<Course>> GetCoursesAsync();
-    }
+    Task<List<Course>> GetCoursesAsync();
+    Task<Course> GetCourseAsync(int id);
 }

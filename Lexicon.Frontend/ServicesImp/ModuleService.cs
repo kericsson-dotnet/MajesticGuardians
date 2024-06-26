@@ -13,4 +13,5 @@ public class ModuleService : IModuleService
     }
 
     public async Task<IEnumerable<Module>> GetModulesAsync() => await _httpClient.GetFromJsonAsync<IEnumerable<Module>>("api/modules");
+    public async Task<Module> GetModuleAsync(int id) => await _httpClient.GetFromJsonAsync<Module>($"api/modules/{id}");
 }

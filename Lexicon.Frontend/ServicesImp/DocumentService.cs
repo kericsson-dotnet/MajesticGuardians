@@ -13,4 +13,5 @@ public class DocumentService : IDocumentService
     }
 
     public async Task<IEnumerable<Document>> GetDocumentsAsync() => await _httpClient.GetFromJsonAsync<IEnumerable<Document>>("api/documents");
+    public async Task<Document> GetDocumentAsync(int id) => await _httpClient.GetFromJsonAsync<Document>($"api/documents/{id}");
 }

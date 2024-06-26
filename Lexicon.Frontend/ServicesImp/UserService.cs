@@ -1,21 +1,18 @@
 ﻿using Lexicon.Frontend.Models;
 using Lexicon.Frontend.Services;
-using Microsoft.AspNetCore.Mvc;
-namespace Lexicon.Frontend.ServicesImp
+
+namespace Lexicon.Frontend.ServicesImp;
+
+public class UserService : IUserService
 {
-    public class UserService : IUserService
+    private readonly HttpClient _httpClient;
+
+    public UserService(HttpClient httpClient)
     {
-        private readonly HttpClient _httpClient;
-
-        public UserService(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
-
-        public async Task<IEnumerable<User>> GetUsersAsync() => await _httpClient.GetFromJsonAsync<IEnumerable<User>>("api/users");
-
-        public async Task CreateUserAsync(User user) => await _httpClient.PostAsJsonAsync("api/users", user);
-      
-
+        _httpClient = httpClient;
     }
+
+    public async Task<IEnumerable<User>> GetUsersAsync() => await _httpClient.GetFromJsonAsync<IEnumerable<User>>("api/users");
+    public async Task<User> GetUserAsync(int id) => await _httpClient.GetFromJsonAsync<User>($"api/users/{id}");
+    public async Task CreateUserAsync(User user) => await _httpClient.PostAsJsonAsync("api/users", user);
 }
