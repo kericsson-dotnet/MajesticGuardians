@@ -1,89 +1,98 @@
-﻿@page "/courses"
+﻿@page "/courses/{userId:int}"
 @inject IUnitOfWork Services
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
 @using System.Net.Http.Json
 @using Lexicon.Frontend.ServicesImp
 
-
-
 <h3>Course Overview</h3>
 
-<p>Welcome, @currentUser.FirstName @currentUser.LastName!</p>
-
-@if (courses == null)
+@if (currentUser == null)
 {
     <p><em>Loading courses...</em></p>
 }
-else if (!courses.Any())
-{
-    <p>No courses available.</p>
-}
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Course Name</th>
-                <th>Description</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                @if (isTeacher)
-                {
-                    <th>
-                        <a @onclick="NavigateToNewModule" class="btn btn-primary">+ Module</a>
-                    </th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var course in courses)
-            {
+    <p>Welcome, @currentUser.FirstName @currentUser.LastName!</p>
+
+    @if (!courses.Any())
+    {
+        <p>No courses available.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>@course.Name</td>
-                    <td>@course.Description</td>
-                    <td>@course.StartDate.ToShortDateString()</td>
-                    <td>@course.EndDate.ToShortDateString()</td>
+                    <th>Course Name</th>
+                    <th>Description</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    @if (isTeacher)
+                    {
+                        <th>
+                            <a @onclick="NavigateToNewModule" class="btn btn-primary">+ Module</a>
+                        </th>
+                    }
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var course in courses)
+                {
+                    <tr>
+                        <td>@course.Name</td>
+                        <td>@course.Description</td>
+                        <td>@course.StartDate.ToShortDateString()</td>
+                        <td>@course.EndDate.ToShortDateString()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 }
 
-
-
 @code {
-    private List<Course> courses;
-    private User currentUser;
-    private bool isTeacher;
+    [Parameter]
+    public int userId { get; set; }
+
+    private List<Course> courses = new List<Course>();
+    private User? currentUser = null;
+    private bool isTeacher = false;
 
     protected override async Task OnInitializedAsync()
     {
-        // currentUser = Services.AuthService.GetCurrentUser(); <--- denna hittas inte pga "Cannot implicitly convert type 'Lexicon.Api.Entities.User' to 'Lexicon.Frontend.Models.User"
-
-
-        if (currentUser != null)
+        try
         {
-            //isTeacher = currentUser.Role == Lexicon.Api.Entities.UserRole.Teacher;
-            isTeacher = currentUser.Role == UserRole.Teacher;
-            // Get all courses from database
-            var allCourses = await Services.CourseService.GetCoursesAsync();
+            currentUser = await Services.UserService.GetUserByIdAsync(userId);
 
-            if (isTeacher)
+            if (currentUser != null)
             {
-                // Fetch courses for teacher (simulate or retrieve from local data)
-                courses = GetCoursesForTeacher(allCourses, currentUser.UserId);
+                isTeacher = currentUser.Role == UserRole.Teacher;
+                // Get all courses from database
+                var allCourses = await Services.CourseService.GetCoursesAsync();
+
+                if (isTeacher)
+                {
+                    // Fetch courses for teacher (simulate or retrieve from local data)
+                    courses = GetCoursesForTeacher(allCourses, currentUser.UserId);
+                }
+                else
+                {
+                    // Fetch courses for student (simulate or retrieve from local data)
+                    courses = GetCoursesForStudent(allCourses, currentUser.UserId);
+                }
             }
             else
             {
-                // Fetch courses for student (simulate or retrieve from local data)
-                courses = GetCoursesForStudent(allCourses, currentUser.UserId);
+                // Handle users that are not logged in
+                Navigation.NavigateTo("/login1");
             }
         }
-        else
+        catch (Exception ex)
         {
-            // Handle users that are not logged in
-            Navigation.NavigateTo("/login1");
+            // Log exception
+            Console.Error.WriteLine($"Error fetching user: {ex.Message}");
+            Navigation.NavigateTo("/error"); // Example error handling
         }
     }
 
@@ -96,7 +105,6 @@ else
     {
         return allCourses.Where(c => c.Users.Any(u => u.UserId == studentId && u.Role == UserRole.Student)).ToList();
     }
-
 
     private void NavigateToNewModule()
     {
