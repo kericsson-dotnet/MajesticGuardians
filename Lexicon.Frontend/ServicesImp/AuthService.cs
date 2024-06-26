@@ -10,14 +10,14 @@ namespace Lexicon.Frontend.ServicesImp
     public class AuthService : IAuthService
     {
         private readonly HttpClient _httpClient;
-        private readonly SessionStorageService _localStorageService;
+        private readonly ISessionStorageService _sessionStorageService;
         private string? _token;
         private bool _isAuthenticated; 
 
-        public AuthService(HttpClient httpClient, SessionStorageService localStorageService)
+        public AuthService(HttpClient httpClient, ISessionStorageService sessionStorageService)
         {
             _httpClient = httpClient;
-            _localStorageService = localStorageService;
+            _sessionStorageService = sessionStorageService;
             _token = string.Empty;
             _isAuthenticated = false;
         }
@@ -34,7 +34,7 @@ namespace Lexicon.Frontend.ServicesImp
                     var token = await response.Content.ReadAsStringAsync();
                     _token = token;
 
-                    await _localStorageService.SetItemAsync("authToken", token);
+                    await _sessionStorageService.SetItemAsync("authToken", token);
                     _isAuthenticated = true;
                     return token;
                 }
@@ -54,7 +54,7 @@ namespace Lexicon.Frontend.ServicesImp
         {
             _token = null;
             _isAuthenticated = false;
-            await _localStorageService.RemoveItemAsync("authToken");
+            await _sessionStorageService.RemoveItemAsync("authToken");
         }
 
     }

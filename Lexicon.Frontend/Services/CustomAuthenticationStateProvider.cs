@@ -8,13 +8,13 @@ namespace Lexicon.Frontend.Services
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly HttpClient _httpClient;
-        private readonly LocalStorageService _localStorageService;
+        private readonly IUnitOfWork _services;
         private bool _isInitialized;
 
-        public CustomAuthenticationStateProvider(HttpClient httpClient, LocalStorageService localStorageService)
+        public CustomAuthenticationStateProvider(HttpClient httpClient, IUnitOfWork services)
         {
             _httpClient = httpClient;
-            _localStorageService = localStorageService;
+            _services = services;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -24,7 +24,7 @@ namespace Lexicon.Frontend.Services
             {
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
-            var token = await _localStorageService.GetItemAsync("authToken");
+            var token = await _services.SessionStorageService.GetItemAsync("authToken");
             var identity = string.IsNullOrWhiteSpace(token)
                 ? new ClaimsIdentity()
                 : new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(token), "jwt");
@@ -40,7 +40,7 @@ namespace Lexicon.Frontend.Services
 
         public async Task MarkUserAsAuthenticated(string token)
         {
-            await _localStorageService.SetItemAsync("authToken", token);
+            await _services.SessionStorageService.SetItemAsync("authToken", token);
             var identity = new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(token), "jwt");
             var user = new ClaimsPrincipal(identity);
 
@@ -49,7 +49,7 @@ namespace Lexicon.Frontend.Services
 
         public async Task MarkUserAsLoggedOut()
         {
-            await _localStorageService.RemoveItemAsync("authToken");
+            await _services.SessionStorageService.RemoveItemAsync("authToken");
             var identity = new ClaimsIdentity();
             var user = new ClaimsPrincipal(identity);
 

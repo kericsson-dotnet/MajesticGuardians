@@ -5,7 +5,6 @@
 @inject IUnitOfWork Services
 @inject NavigationManager Navigation
 @inject HttpClient Http
-@inject SessionStorageService SessionStorageService;
 
 @rendermode InteractiveServer
 
@@ -49,7 +48,7 @@ else
     {
         if (firstRender)
         {
-            var token = await SessionStorageService.GetItemAsync("authToken");
+            var token = await Services.SessionStorageService.GetItemAsync("authToken");
             isAuthenticated = !string.IsNullOrEmpty(token);
             StateHasChanged();
         }
@@ -67,8 +66,8 @@ else
 
             if (!string.IsNullOrEmpty(response))
             {
-                await SessionStorageService.SetItemAsync("authToken", response);
-                var storedToken = await SessionStorageService.GetItemAsync("authToken");
+                await Services.SessionStorageService.SetItemAsync("authToken", response);
+                var storedToken = await Services.SessionStorageService.GetItemAsync("authToken");
                 isAuthenticated = true;
                 Navigation.NavigateTo("/");
             }
@@ -86,7 +85,7 @@ else
     private async Task Logout()
     {
         await Services.AuthService.LogoutAsync();
-        await SessionStorageService.RemoveItemAsync("authToken");
+        await Services.SessionStorageService.RemoveItemAsync("authToken");
         isAuthenticated = false;
         Navigation.NavigateTo("/login1");
     }
