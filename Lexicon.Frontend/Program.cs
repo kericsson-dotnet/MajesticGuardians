@@ -50,7 +50,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 //});
 
 ////Add Services for Authorization
-builder.Services.AddScoped<LocalStorageService>();
+builder.Services.AddScoped<SessionStorageService>();
 builder.Services.AddScoped<CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<CustomAuthenticationStateProvider>());
 

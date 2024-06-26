@@ -18,6 +18,7 @@ namespace Lexicon.Api.Controllers
         public LoginController(IUserRepository userRepository, IConfiguration configuration, IMapper mapper)
         {
             _userRepository = userRepository;
+            _configuration = configuration;
             _tokenService = new TokenService(configuration);
             _mapper = mapper;
         }
