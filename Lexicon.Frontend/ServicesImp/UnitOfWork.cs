@@ -17,7 +17,7 @@ namespace Lexicon.Frontend.ServicesImp
         }
 
         public ISessionStorageService SessionStorageService => new SessionStorageService(_jsRuntime);
-        public IUserService UserService => new UserService(_httpClient);
+        public IUserService UserService => new UserService(_httpClient, SessionStorageService);
         public IModuleService ModuleService => new ModuleService(_httpClient);
         public IActivityService ActivityService => new ActivityService(_httpClient);
         public ICourseService CourseService => new CourseService(_httpClient);
