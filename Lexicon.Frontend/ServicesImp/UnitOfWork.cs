@@ -8,12 +8,12 @@ namespace Lexicon.Frontend.ServicesImp
     {
 
         private readonly HttpClient _httpClient;
-        private readonly LocalStorageService _localStorageService;
+        private readonly SessionStorageService _localStorageService;
 
         public UnitOfWork(HttpClient httpClient, IJSRuntime jsRuntime)
         {
             _httpClient = httpClient;
-            _localStorageService = new LocalStorageService(jsRuntime);
+            _localStorageService = new SessionStorageService(jsRuntime);
         }
 
         public IUserService UserService => new UserService(_httpClient);

@@ -10,11 +10,11 @@ namespace Lexicon.Frontend.ServicesImp
     public class AuthService : IAuthService
     {
         private readonly HttpClient _httpClient;
-        private readonly LocalStorageService _localStorageService;
+        private readonly SessionStorageService _localStorageService;
         private string? _token;
         private bool _isAuthenticated; 
 
-        public AuthService(HttpClient httpClient, LocalStorageService localStorageService)
+        public AuthService(HttpClient httpClient, SessionStorageService localStorageService)
         {
             _httpClient = httpClient;
             _localStorageService = localStorageService;

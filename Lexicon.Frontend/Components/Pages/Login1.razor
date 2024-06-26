@@ -5,8 +5,7 @@
 @inject IUnitOfWork Services
 @inject NavigationManager Navigation
 @inject HttpClient Http
-@inject IUnitOfWork Services
-@inject LocalStorageService LocalStorageService;
+@inject SessionStorageService SessionStorageService;
 
 @rendermode InteractiveServer
 
@@ -19,7 +18,6 @@
     <p>You are already logged in.</p>
     <button class="btn btn-primary" @onclick="Logout">Logout</button>
 }
-
 else
 {
     <div class="login-form">
@@ -51,8 +49,9 @@ else
     {
         if (firstRender)
         {
-            isAuthenticated = !string.IsNullOrEmpty(await LocalStorageService.GetItemAsync("authToken"));
-            StateHasChanged(); 
+            var token = await SessionStorageService.GetItemAsync("authToken");
+            isAuthenticated = !string.IsNullOrEmpty(token);
+            StateHasChanged();
         }
     }
 
@@ -68,9 +67,11 @@ else
 
             if (!string.IsNullOrEmpty(response))
             {
+                await SessionStorageService.SetItemAsync("authToken", response);
+                var storedToken = await SessionStorageService.GetItemAsync("authToken");
+                isAuthenticated = true;
                 Navigation.NavigateTo("/");
             }
-
             else
             {
                 Console.WriteLine("Login failed");
@@ -85,11 +86,10 @@ else
     private async Task Logout()
     {
         await Services.AuthService.LogoutAsync();
-        await LocalStorageService.RemoveItemAsync("authToken");
+        await SessionStorageService.RemoveItemAsync("authToken");
         isAuthenticated = false;
         Navigation.NavigateTo("/login1");
     }
-
 
     private void NavigateToRegister()
     {
