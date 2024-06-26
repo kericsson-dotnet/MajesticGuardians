@@ -1,0 +1,58 @@
+﻿@page "/file-upload"
+
+<h2>File Upload</h2>
+
+@if (Message.Length > 0)
+{
+	<p class="alert alert-secondary" role="alert">@Message</p>
+}
+<EditForm Model="@LoadFile" method="post" OnValidSubmit="@OnSubmit" enctype="multipart/form-data" FormName="fileUpload">
+	<DataAnnotationsValidator />
+	<ValidationSummary />
+	<InputText class="form-control mb-4" placeholder="Title" @bind-Value="@LoadFile.Title" />
+	<InputText class="form-control mb-4" placeholder="Description" @bind-Value="@LoadFile.Description" />
+	<InputFile class="form-control mb-4" multiple OnChange="@OnInputFileChange"/>
+	<button class="btn btn-primary" type="submit">Submit</button>
+</EditForm>
+
+
+
+
+
+@code {
+	[SupplyParameterFromForm(FormName ="fileUpload")]
+	private FileUploadWeb LoadFile { get; set; } = new();
+	private long maxFileSize = 1024 * 15;
+	private int maxAllowedFiles = 3;
+	private string Message { get; set; } = String.Empty;
+	private List<IBrowserFile> selectedFiles = new();
+
+	private async Task OnSubmit()
+	{
+		//TODO Handle file here, send request to API 
+		Console.WriteLine("File upload");
+	}
+
+	private void OnInputFileChange(InputFileChangeEventArgs e)
+	{
+		var newFiles = e.GetMultipleFiles().ToList();
+		if (selectedFiles.Count + newFiles.Count > maxAllowedFiles)
+		{
+			Message = $"You can only upload a maximum of {maxAllowedFiles} files. Please reselect.";
+			//selectedFiles.Clear();  // clear the existing files if needed
+		}
+		else
+		{
+			selectedFiles.AddRange(newFiles);
+			Message = String.Empty; 
+		}
+	}
+
+	private class FileUploadWeb
+	{
+		public string Title { get; set; } = String.Empty;
+		public string Description { get; set; } = String.Empty;
+		public IReadOnlyList<IBrowserFile> Attachments { get; set; }
+
+	}
+}
