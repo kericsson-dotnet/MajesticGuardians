@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Lexicon.Api.Dtos.UserDtos;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -14,15 +15,17 @@ namespace Lexicon.Api.Services
             _configuration = configuration;
         }
 
-        public string GenerateToken(string email, string role)
+        public string GenerateToken(UserDto userDto)
         {
 
             var claims = new[]
             {
-                new Claim("email",email ),
-                new Claim("role", role),
+                new Claim("userId", userDto.UserId.ToString()),
+                new Claim("email",userDto.Email ),
+                new Claim("role", userDto.Role.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
             var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
             var creds = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
             var token = new JwtSecurityToken(
@@ -33,7 +36,7 @@ namespace Lexicon.Api.Services
                signingCredentials: creds);
 
             // var tokenHandler = new JwtSecurityTokenHandler();
-            //var token = tokenHandler.CreateToken(tokenDescriptor);
+            // var token = tokenHandler.CreateToken(tokenDescriptor);
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
