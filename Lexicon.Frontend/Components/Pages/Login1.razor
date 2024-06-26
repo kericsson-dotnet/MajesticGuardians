@@ -52,7 +52,7 @@ else
         if (firstRender)
         {
             isAuthenticated = !string.IsNullOrEmpty(await LocalStorageService.GetItemAsync("authToken"));
-            StateHasChanged(); // Ensure UI reflects changes
+            StateHasChanged(); 
         }
     }
 
