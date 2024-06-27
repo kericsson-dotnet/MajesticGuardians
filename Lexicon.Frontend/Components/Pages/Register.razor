@@ -6,51 +6,55 @@
 @inject HttpClient Http
 @using Lexicon.Frontend.ServicesImp
 @using Microsoft.AspNetCore.Components.Forms
-
-
-
-
-@inject IAuthService AuthService
-
+@using Lexicon.Frontend.Models
 
 
 <PageTitle>Register</PageTitle>
 <h3>Register</h3>
 
-<EditForm Model="@User" OnValidSubmit="HandleRegister" FormName="logintest">
-    <div class="register-form">
-        <div class="mb-3">
-            <label for="firstName">First Name</label>
-            <InputText id="firstName" class="form-control" @bind-Value="User.FirstName" />
+@if (!loading)
+{
+    <p>Loading....</p>
+}
+else
+{
+    <EditForm Model="@User" OnValidSubmit="HandleRegister" FormName="logintest">
+        <div class="register-form">
+            <div class="mb-3">
+                <label for="firstName">First Name</label>
+                <InputText id="firstName" class="form-control" @bind-Value="User.FirstName" />
+            </div>
+            <div class="mb-3">
+                <label for="lastName">Last Name</label>
+                <InputText id="lastName" class="form-control" @bind-Value="User.LastName" />
+            </div>
+            <div class="mb-3">
+                <label for="email">Email</label>
+                <InputText id="email" class="form-control" @bind-Value="User.Email" />
+            </div>
+            <div class="mb-3">
+                <label for="password">Password</label>
+                <InputText id="password" class="form-control" @bind-Value="User.Password" />
+            </div>
+            <div class="mb-3">
+                <label for="role">Role</label>
+                <InputSelect id="role" class="form-control" @bind-Value="User.Role">
+                    @foreach (var role in User.AllRoles)
+                    {
+                        <option value="@role">@role</option>
+                    }
+                </InputSelect>
+            </div>
         </div>
-        <div class="mb-3">
-            <label for="lastName">Last Name</label>
-            <InputText id="lastName" class="form-control" @bind-Value="User.LastName" />
-        </div>
-        <div class="mb-3">
-            <label for="email">Email</label>
-            <InputText id="email" class="form-control" @bind-Value="User.Email" />
-        </div>
-        <div class="mb-3">
-            <label for="password">Password</label>
-            <InputText id="password" class="form-control" @bind-Value="User.Password" />
-        </div>
-        <div class="mb-3">
-            <label for="role">Role</label>
-            <InputSelect id="role" class="form-control" @bind-Value="User.Role">
-                @foreach (UserRole role in Enum.GetValues(typeof(UserRole)))
-                {
-                    <option value="@role">@role</option>
-                }
-            </InputSelect>
-        </div> 
-    </div>
-    <button type="submit" class="btn btn-primary">Register</button>
-</EditForm>
+        <button type="submit" class="btn btn-primary">Register</button>
+    </EditForm>
+}
 
 @code {
     [SupplyParameterFromForm]
     private User User { get; set; }
+    private bool loading = false;
+
 
     protected async override Task OnInitializedAsync()
     {
@@ -61,8 +65,10 @@
                 Password = string.Empty,
                 Email = string.Empty,
                 Role = 0,
-                Documents = []
+                Documents = new List<Document>()
             };
+            loading = true;
+        
     }
 
 
@@ -76,8 +82,8 @@
                     LastName = User.LastName,
                     Email = User.Email,
                     Password = User.Password,
-                    Role = 0,
-                    Documents = []
+                    Role = User.Role,
+                    Documents = new List<Document>()
                 };
 
             await Services.UserService.CreateUserAsync(User);

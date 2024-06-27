@@ -15,8 +15,9 @@ namespace Lexicon.Frontend.Models
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
 
-        public UserRole Role { get; set; } = UserRole.Student;
+        public UserRole Role { get; set; }
         public List<Document>? Documents { get; set; } = [];
+        public List<UserRole> AllRoles { get { return new List<UserRole>((UserRole[])Enum.GetValues(typeof(UserRole))); } }
 
     }
 }
