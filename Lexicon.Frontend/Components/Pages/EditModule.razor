@@ -1,0 +1,46 @@
+﻿@page "/edit_module"
+@inject IUnitOfWork Services
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+
+<PageTitle>Edit Module</PageTitle>
+<h3>EditModul</h3>
+<div >
+    <EditForm Model="ModuleModel" OnValidSubmit="OnSubmit" FormName="EditModule">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group mb-3">
+            <label for="name">Name</label>
+            <InputText id="nameT" class="form-control" @bind-Value="ModuleModel.Name" />
+        </div>
+		<div class="form-group mb-3">
+            <label for="beskrivining">Beskrivining</label>
+            <InputText id="beskrivningT" class="form-control" @bind-Value="ModuleModel.Description" />
+        </div>
+		<div class="form-group mb-3">
+            <label for="startDate">Start datum</label>
+            <InputDate id="startDateT"  class="form-control" @bind-Value="ModuleModel.StartDate" />
+        </div>
+		<div class="form-group mb-3">
+			<label for="endtDate">Slut datum</label>
+			<InputDate id="endDateT" class="form-control" @bind-Value="ModuleModel.EndDate" />
+		</div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </EditForm>
+</div>
+
+
+@code {
+	[SupplyParameterFromForm(FormName ="EditModule")]
+	private Module ModuleModel { get; set; }
+
+	protected override void OnInitialized()
+	{
+		ModuleModel = new();
+	}
+	private async Task OnSubmit()
+	{
+		//Send request to API
+	}
+}
