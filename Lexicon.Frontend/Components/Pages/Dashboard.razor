@@ -1,0 +1,90 @@
+@page "/dashboard"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Sections
+
+<SectionContent SectionName="page-title">Instrumentpanel</SectionContent>
+
+<section class="page-section">
+    <h2 class="h3">Översikt</h2>
+    <div class="container py-0">
+        <div class="row gap-3 align-items-stretch">
+            <div class="card col text-center p-3">
+                <div class="hstack gap-3 fs-1 fw-medium mx-auto mb-1">
+                    <i class="bi bi-book"></i>
+                    10
+                </div>
+                <span class="fw-medium text-secondary">KURSER</span>
+            </div>
+            <div class="card col text-center p-3">
+                <div class="hstack gap-3 fs-1 fw-medium mx-auto mb-1">
+                    <i class="bi bi-people"></i>
+                    20
+                </div>
+                <span class="fw-medium text-secondary">LÄRARE</span>
+            </div>
+            <div class="card col text-center p-3">
+                <div class="hstack gap-3 fs-1 fw-medium mx-auto mb-1">
+                    <i class="bi bi-people"></i>
+                    80
+                </div>
+                <span class="fw-medium text-secondary">ELEVER</span>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="page-section">
+    <h2 class="h3">Mina kurser</h2>
+    <div class="card p-3">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Namn</th>
+                    <th scope="col">Start datum</th>
+                    <th scope="col">Slut datum</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Hello World</td>
+                    <td>2024-07-28</td>
+                    <td>2025-06-03</td>
+                </tr>
+                <tr>
+                    <td>C# Programming</td>
+                    <td>2024-07-28</td>
+                    <td>2024-07-28</td>
+                </tr>
+                <tr>
+                    <td>Fullstack Javascript</td>
+                    <td>2025-06-03</td>
+                    <td>2025-06-03</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+<section class="page-section">
+    <h2 class="h3">Lägg till</h2>
+    <div class="container py-0">
+        <div class="row gap-3 align-items-stretch">
+            <div class="btn btn-outline-primary col text-center p-3">
+                <div class="fs-1 fw-medium mx-auto mb-1">
+                    <i class="bi bi-plus-lg"></i>
+                </div>
+                <span class="fw-medium">NY KURS</span>
+            </div>
+            <div class="btn btn-outline-primary col text-center p-3">
+                <div class="fs-1 fw-medium mx-auto mb-1">
+                    <i class="bi bi-plus-lg"></i>
+                </div>
+                <span class="fw-medium">NY LÄRARE</span>
+            </div>
+            <div class="btn btn-outline-primary col text-center p-3">
+                <div class="fs-1 fw-medium mx-auto mb-1">
+                    <i class="bi bi-plus-lg"></i>
+                </div>
+                <span class="fw-medium">NY ELEV</span>
+            </div>
+        </div>
+    </div>
+</section>
