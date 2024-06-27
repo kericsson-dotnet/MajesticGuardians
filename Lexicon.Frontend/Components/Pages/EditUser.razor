@@ -1,4 +1,4 @@
-﻿@* @page "/edit_user"
+﻿@page "/edit_user/{userId:int}"
 @inject IUnitOfWork Services
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
@@ -9,114 +9,140 @@
 
 <h3>Edit User</h3>
 
-<div class="edit-user-form">
-    <EditForm Model="@user" OnValidSubmit="HandleSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else if (loadingError != null)
+{
+    <p>Error loading user: @loadingError</p>
+}
+else
+{
+    <div class="edit-user-form">
+        <EditForm Model="@userModel" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-        <div class="form-group">
-            <label for="firstName">First Name</label>
-            <InputText id="firstName" class="form-control" @bind-Value="user.FirstName" />
-        </div>
-        <div class="form-group">
-            <label for="lastName">Last Name</label>
-            <InputText id="lastName" class="form-control" @bind-Value="user.LastName" />
-        </div>
-        <div class="form-group">
-            <label for="email">Email</label>
-            <InputText id="email" type="email" class="form-control" @bind-Value="user.Email" />
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <InputText id="password" type="password" class="form-control" @bind-Value="user.Password" />
-        </div>
-        <div class="form-group">
-            <label for="role">Role</label>
-            <InputSelect id="role" class="form-control" @bind-Value="user.Role">
-                @foreach (var role in Enum.GetValues(typeof(UserRole)))
-                {
-                    <option value="@role">@role</option>
-                }
-            </InputSelect>
-        </div>
-        <div class="form-group">
-            <label for="course">Course</label>
-            <InputSelect id="course" class="form-control" @bind-Value="selectedCourseId">
-                @foreach (var course in courses)
-                {
-                    <option value="@course.CourseId">@course.Name</option>
-                }
-            </InputSelect>
-        </div>
-        <button type="submit" class="btn btn-primary">Save</button>
-    </EditForm>
-    <p>
-        <a @onclick="NavigateToHome">Go to Home</a>
-    </p>
-</div>
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <InputText id="firstName" class="form-control" @bind-Value="userModel.FirstName" />
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <InputText id="lastName" class="form-control" @bind-Value="userModel.LastName" />
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <InputText id="email" type="email" class="form-control" @bind-Value="userModel.Email" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <InputText id="password" type="password" class="form-control" @bind-Value="userModel.Password" />
+            </div>
+
+            <div class="form-group">
+                <label for="role">Role</label>
+                <InputSelect id="role" class="form-control" @bind-Value="userModel.Role">
+                    @foreach (var role in userModel.AllRoles)
+                    {
+                        <option value="@role">@role</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="form-group">
+                <label for="course">Course</label>
+                <InputSelect id="course" class="form-control" @bind-Value="selectedCourseId">
+                    @foreach (var course in courses)
+                    {
+                        <option value="@course.CourseId">@course.Name</option>
+                    }
+                </InputSelect>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </EditForm>
+        <p>
+            <a @onclick="NavigateToHome">Go to Home</a>
+        </p>
+    </div>
+}
 
 @code {
-    private User user = new User();
+    [Parameter]
+    public int userId { get; set; }
+
+    private User userModel = new User();
+    private bool isLoading = true;
+    private string? loadingError = null;
     private List<Course> courses = new List<Course>();
-    private int selectedCourseId; // Stores the selected course ID
+    private int selectedCourseId;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        await LoadUserData();
-        await LoadCourses();
-    }
+        try
+        {
+            isLoading = true;
+            loadingError = null;
+            // Load the user data from the API or services using the userId parameter
+            userModel = await Services.UserService.GetUserAsync(userId);
 
-    private async Task LoadUserData()
-    {
-        var userId = 1; // Replace with actual user ID logic
-        user = await Http.GetFromJsonAsync<User>($"api/users/{userId}");
-        selectedCourseId = GetSelectedCourseId(user); // Initialize selectedCourseId from user
-    }
+            // Get all courses from the database
+            courses = await Services.CourseService.GetCoursesAsync();
 
-    private async Task LoadCourses()
-    {
-        courses = await Http.GetFromJsonAsync<List<Course>>("api/courses");
-    }
-
-    private int GetSelectedCourseId(User user)
-    {
-        // Implement your logic to get the selected course ID for the user
-        // For example, you might have a service or repository method to retrieve this
-        // This example assumes a simple scenario where we just take the first course ID
-        // Adjust this logic based on how you determine which course is selected for the user
-        return 0; // Default value if no course is selected
+            // If the user is already enrolled in a course, set the selectedCourseId
+            var userCourse = userModel.Courses.FirstOrDefault();
+            if (userCourse != null)
+            {
+                selectedCourseId = userCourse.CourseId;
+            }
+        }
+        catch (Exception ex)
+        {
+            loadingError = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
     private async Task HandleSubmit()
     {
         try
         {
-            // Update user with selectedCourseId before saving
-            UpdateUserCourse(user, selectedCourseId);
+            // Uppdatera användaren
+            await Services.UserService.UpdateUserAsync(userModel);
 
-            var response = await Http.PutAsJsonAsync($"api/users/{user.UserId}", user);
-            if (response.IsSuccessStatusCode)
+            // Uppdatera användarens kurser
+            await UpdateUserCourses();
+
+            Navigation.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving user or course changes: {ex.Message}");
+        }
+    }
+
+    private async Task UpdateUserCourses()
+    {
+        try
+        {
+            var selectedCourse = courses.FirstOrDefault(c => c.CourseId == selectedCourseId);
+            if (selectedCourse != null)
             {
-                // Redirect to a different page upon successful save
-                Navigation.NavigateTo("/");
-            }
-            else
-            {
-                // Handle save failure (e.g., display an error message)
-                Console.WriteLine("Failed to save user changes");
+                var courseIds = userModel.Courses.Select(c => c.CourseId).ToList();
+                courseIds.Add(selectedCourse.CourseId);
+
+                var response = await Http.PutAsJsonAsync($"api/users/{userModel.UserId}/courses", courseIds);
+                response.EnsureSuccessStatusCode(); // Throw an exception if the response is not successful
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error saving user changes: {ex.Message}");
+            Console.WriteLine($"Error updating user courses: {ex.Message}");
         }
-    }
-
-    private void UpdateUserCourse(User user, int courseId)
-    {
-        // Implement logic to update the user's selected course
-        // For simplicity, assuming we replace the entire Courses list
-        // This example assumes there is no direct Course property on User
     }
 
     private void NavigateToHome()
@@ -124,4 +150,3 @@
         Navigation.NavigateTo("/");
     }
 }
- *@
