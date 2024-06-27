@@ -32,6 +32,19 @@ a,
   border-color: var(--primary-light) !important;
 }
 
+.btn-outline-primary {
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:active,
+.btn-outline-primary:focus {
+    color: #fff !important;
+    border-color: var(--primary) !important;
+    background-color: var(--primary) !important;
+}
+
 .btn:focus,
 .btn:active:focus,
 .btn-link.nav-link:focus,
@@ -43,6 +56,26 @@ a,
 .dropdown-item:hover {
   background-color: hsla(var(--primary-hsl), 0.15);
   color: var(--primary);
+}
+
+.page-section:not(:last-of-type) {
+    margin-bottom: 3rem;
+}
+
+.page-section > h1,
+.page-section > h2,
+.page-section > h3{
+    margin-bottom: 1.5rem;
+}
+
+.table tbody td {
+    padding-block: 0.75rem;
+}
+
+.table-hover > tbody > tr:hover > * {
+    cursor: pointer;
+    --bs-table-color-state: var(--primary);
+    --bs-table-bg-state: hsla(var(--primary-hsl), 0.15);
 }
 
 .content {
