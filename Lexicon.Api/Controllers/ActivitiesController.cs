@@ -54,7 +54,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutActivity([FromRoute] int id, [FromBody] ActivityPostDto activityPostDto)
+    public async Task<IActionResult> PutActivity([FromRoute] int id, [FromBody] Activity activity)
     {
         if (id <= 0)
         {
@@ -69,11 +69,19 @@ public class ActivitiesController : ControllerBase
         try
         {
             var existingActivity = await _UoW.Activities.GetAsync(id);
-            _mapper.Map(activityPostDto, existingActivity);
+			ActivityPostDto activityPostDto = new ActivityPostDto
+			{
+				Type = existingActivity.Type,
+				Name = activity.Name,
+				StartDate = activity.StartDate,
+				EndDate = activity.EndDate
+			};
+			_mapper.Map(activityPostDto, existingActivity);
 
             _UoW.Activities.Update(existingActivity);
             await _UoW.SaveAsync();
-        }
+			return NoContent();
+		}
 
         catch (DbUpdateConcurrencyException)
         {
@@ -97,7 +105,6 @@ public class ActivitiesController : ControllerBase
             return StatusCode(500, ex.Message);
         }
 
-        return NoContent();
     }
 
     [HttpPost]
