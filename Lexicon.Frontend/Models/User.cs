@@ -18,6 +18,6 @@ namespace Lexicon.Frontend.Models
         public UserRole Role { get; set; } 
         public List<Document>? Documents { get; set; } = [];
         public List<UserRole> AllRoles { get { return new List<UserRole>((UserRole[])Enum.GetValues(typeof(UserRole))); } }
-
+        public List<Course> Courses { get; set; } = new List<Course>();
     }
 }
