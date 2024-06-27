@@ -1,0 +1,43 @@
+﻿@page "/edit_activity"
+@inject IUnitOfWork Services
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+
+<PageTitle>Edit Activity</PageTitle>
+<h3>Edit Activity</h3>
+
+<div>
+	<EditForm Model="ActivityModel" OnValidSubmit="OnSubmit" FormName="EditModule">
+		<DataAnnotationsValidator />
+		<ValidationSummary />
+
+		<div class="form-group mb-3">
+			<label for="name">Name</label>
+			<InputText id="nameT" class="form-control" @bind-Value="ActivityModel.Name" />
+		</div>
+		<div class="form-group mb-3">
+			<label for="startDate">Start datum</label>
+			<InputDate id="startDateT" class="form-control" @bind-Value="ActivityModel.StartDate" />
+		</div>
+		<div class="form-group mb-3">
+			<label for="endtDate">Slut datum</label>
+			<InputDate id="endDateT" class="form-control" @bind-Value="ActivityModel.EndDate" />
+		</div>
+		<button type="submit" class="btn btn-primary">Save</button>
+	</EditForm>
+</div>
+
+
+@code {
+	[SupplyParameterFromForm(FormName = "EditModule")]
+	private Activity ActivityModel { get; set; }
+
+	protected override void OnInitialized()
+	{
+		ActivityModel = new();
+	}
+	private async Task OnSubmit()
+	{
+		//Send request to API
+	}
+}
