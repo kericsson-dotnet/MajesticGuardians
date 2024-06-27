@@ -64,7 +64,7 @@ else
     {
         try
         {
-            currentUser = await Services.UserService.GetUserByIdAsync(userId);
+            currentUser = await Services.UserService.GetUserAsync(userId);
 
             if (currentUser != null)
             {
