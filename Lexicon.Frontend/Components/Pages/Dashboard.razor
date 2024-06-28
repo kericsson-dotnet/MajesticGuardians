@@ -1,6 +1,7 @@
 @page "/dashboard"
 @rendermode InteractiveServer
 @inject IUnitOfWork services
+@inject NavigationManager Navigation
 @using Microsoft.AspNetCore.Components.Sections
 
 <SectionContent SectionName="page-title">Översikt</SectionContent>
@@ -57,8 +58,7 @@
                 {
                     foreach (var course in myCourses)
                     {
-                        // TODO: navigera till vald kurs
-                        <tr>
+                        <tr @onclick="() => NavigateToCourse(course.CourseId)">
                             <td>@course.Name</td>
                             <td>@course.StartDate</td>
                             <td>@course.EndDate</td>
@@ -101,25 +101,38 @@
     private int studentsCount = 0;
     private List<Course>? myCourses;
 
-    private User? currentUser;
-
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        // TODO: replace with currently logged in user
-        currentUser = (await services.UserService.GetUserAsync(1));
-
-        var courses = (await services.CourseService.GetCoursesAsync()).ToList();
-        if (courses != null)
+        if (firstRender)
         {
-            coursesCount = courses.Count;
-            myCourses = courses.Where(c => c.Users.Find(u => u.UserId == currentUser.UserId) != null).ToList();
-        }
+            User? currentUser = await services.UserService.GetCurrentUserAsync();
 
-        var users = (await services.UserService.GetUsersAsync()).ToList();
-        if (users != null)
-        {
-            teachersCount = users.Where(x => x.Role == Models.UserRole.Teacher).Count();
-            studentsCount = users.Where(x => x.Role == Models.UserRole.Student).Count();
+            if (currentUser == null || currentUser.Role != Models.UserRole.Teacher)
+            {
+                Navigation.NavigateTo("/");
+                return;
+            }
+
+            var courses = (await services.CourseService.GetCoursesAsync()).ToList();
+            if (courses != null)
+            {
+                coursesCount = courses.Count;
+                myCourses = courses.Where(c => c.UserIds.Contains(currentUser.UserId)).ToList();
+            }
+
+            var users = (await services.UserService.GetUsersAsync()).ToList();
+            if (users != null)
+            {
+                teachersCount = users.Where(x => x.Role == Models.UserRole.Teacher).Count();
+                studentsCount = users.Where(x => x.Role == Models.UserRole.Student).Count();
+            }
+
+            StateHasChanged();
         }
+    }
+
+    private void NavigateToCourse(int id)
+    {
+        Navigation.NavigateTo($"courses/{id}");
     }
 }
