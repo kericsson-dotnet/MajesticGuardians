@@ -109,12 +109,15 @@ else
 
     private async Task HandleSubmit()
     {
+        // We need to be able to add user to a course, that part dont exist yet.
+
+
         try
         {
-            // Uppdatera användaren
+            // Update user
             await Services.UserService.UpdateUserAsync(userModel);
 
-            // Uppdatera användarens kurser
+            // Update users course
             await UpdateUserCourses();
 
             Navigation.NavigateTo("/");
