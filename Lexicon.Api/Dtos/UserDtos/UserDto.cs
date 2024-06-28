@@ -30,7 +30,5 @@ namespace Lexicon.Api.Dtos.UserDtos
 
         public List<int> DocumentIds { get; set; } = [];
 
-        //public List<int> CourseIds { get; set; } = [];
-
     }
 }
