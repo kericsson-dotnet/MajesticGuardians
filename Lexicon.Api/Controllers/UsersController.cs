@@ -4,6 +4,7 @@ using Lexicon.Api.Entities;
 using Lexicon.Api.Repositories;
 using AutoMapper;
 using Lexicon.Api.Dtos.UserDtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lexicon.Api.Controllers;
 
@@ -22,6 +23,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Teacher")]
     public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
     {
         var users = await _UoW.Users.GetAllAsync();
@@ -35,6 +37,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "Teacher, Student")]
     public async Task<ActionResult<UserDto>> GetUser([FromRoute] int id)
     {
         try
@@ -55,6 +58,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Teacher")]
     public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] UserPostDto userPostDto)
     {
         if (id <= 0)
@@ -141,6 +145,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Teacher")]
     public async Task<IActionResult> DeleteUser([FromRoute] int id)
     {
         if (id <= 0)

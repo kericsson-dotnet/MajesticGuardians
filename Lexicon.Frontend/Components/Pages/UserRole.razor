@@ -12,8 +12,10 @@
 @if (isAuthenticated && user.HasClaim(c => c.Type == "role" && c.Value == "Teacher"))
 {
     <p>You are authorized as a Teacher.</p>
-    <p>Email: @userData.Email</p>
     <p>User Id: @userData.UserId</p>
+    <p>Email: @userData.Email</p>
+    <p>FirstName: @userData.FirstName</p>
+    <p>LastName: @userData.LastName</p>
 }
 
 else
@@ -21,11 +23,10 @@ else
     <p>You are not authorized to access this page.</p>
 }
 
-
 @code {
     private bool isAuthenticated;
     private ClaimsPrincipal user;
-    private User userData;
+    private User userData = new User();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -42,11 +43,7 @@ else
 
             if (int.TryParse(userIdClaim, out int userId))
             {
-                userData = new User
-                    {
-                        UserId = userId,
-                        Email = user.FindFirst("email")?.Value
-                    };
+                userData = await Services.UserService.GetUserAsync(userId);
             }
 
             StateHasChanged(); // Ensure state update
