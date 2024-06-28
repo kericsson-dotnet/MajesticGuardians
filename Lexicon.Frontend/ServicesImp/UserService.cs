@@ -61,5 +61,7 @@ namespace Lexicon.Frontend.ServicesImp
 
             return user;
         }
-    }
+
+		public async Task<User> GetUserAsync(int id) => await _httpClient.GetFromJsonAsync<User>($"api/users/{id}");
+	}
 }

@@ -1,45 +1,55 @@
-﻿
-@page "/user-role"
-@inject CustomAuthenticationStateProvider AuthenticationStateProvider
-@using Microsoft.AspNetCore.Authorization
+﻿@page "/user-role"
+@using Lexicon.Frontend.ServicesImp
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
+
+@inject IUnitOfWork Services
+@inject CustomAuthenticationStateProvider CustomAuthStateProvider
+@rendermode InteractiveServer
+
 <h3>User Role</h3>
 
-<AuthorizeView>
-	<Authorized>
-		<p>Your role is: @role</p>
-	</Authorized>
-	<NotAuthorized>
-		<p>You are not authorized.</p>
-	</NotAuthorized>
-</AuthorizeView>
+@if (isAuthenticated && user.HasClaim(c => c.Type == "role" && c.Value == "Teacher"))
+{
+    <p>You are authorized as a Teacher.</p>
+    <p>Email: @userData.Email</p>
+    <p>User Id: @userData.UserId</p>
+}
+
+else
+{
+    <p>You are not authorized to access this page.</p>
+}
+
 
 @code {
-	private string role;
+    private bool isAuthenticated;
+    private ClaimsPrincipal user;
+    private User userData;
 
-	protected override async Task OnInitializedAsync()
-	{
-		
-		var authState = await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).GetAuthenticationStateAsync();
-		var user = authState.User;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            //Importan to use this
+            CustomAuthStateProvider.SetInitialized();
 
-		if (user.Identity.IsAuthenticated)
-		{
-			var roleClaim = user.FindFirst(c => c.Type == ClaimTypes.Role);
-			if (roleClaim != null)
-			{
-				role = roleClaim.Value;
-			}
-			else
-			{
-				role = "No role found";
-			}
-		}
-		else
-		{
-			role = "Not authenticated";
-		}
-}
-	
+            var authState = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            user = authState.User;
+            isAuthenticated = user.Identity.IsAuthenticated;
+
+            var userIdClaim = user.FindFirst("userId")?.Value;
+
+            if (int.TryParse(userIdClaim, out int userId))
+            {
+                userData = new User
+                    {
+                        UserId = userId,
+                        Email = user.FindFirst("email")?.Value
+                    };
+            }
+
+            StateHasChanged(); // Ensure state update
+        }
+    }
 }

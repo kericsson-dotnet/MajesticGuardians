@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Lexicon.Frontend.Services
 {
@@ -19,11 +20,11 @@ namespace Lexicon.Frontend.Services
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            // Wait until render done
             if (!_isInitialized)
             {
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
+
             var token = await _services.SessionStorageService.GetItemAsync("authToken");
             var identity = string.IsNullOrWhiteSpace(token)
                 ? new ClaimsIdentity()
@@ -35,7 +36,6 @@ namespace Lexicon.Frontend.Services
                     : new AuthenticationHeaderValue("Bearer", token);
 
             return new AuthenticationState(new ClaimsPrincipal(identity));
-
         }
 
         public async Task MarkUserAsAuthenticated(string token)
