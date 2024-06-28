@@ -2,6 +2,7 @@
 using Lexicon.Frontend.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 namespace Lexicon.Frontend.ServicesImp
 {
     public class UserService : IUserService
@@ -15,7 +16,21 @@ namespace Lexicon.Frontend.ServicesImp
             _sessionStorageService = sessionStorageService;
         }
 
-        public async Task<IEnumerable<User>> GetUsersAsync() => await _httpClient.GetFromJsonAsync<IEnumerable<User>>("api/users");
+        private async Task AddTokenToRequestHeader()
+        {
+            var token = await _sessionStorageService.GetItemAsync("authToken");
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+        }
+
+        public async Task<IEnumerable<User>> GetUsersAsync()
+        {
+            await AddTokenToRequestHeader();
+            return await _httpClient.GetFromJsonAsync<IEnumerable<User>>("api/users");
+        }
 
         public async Task CreateUserAsync(User user) => await _httpClient.PostAsJsonAsync("api/users", user);
 
