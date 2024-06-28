@@ -46,8 +46,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 //Set up roles
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
-    options.AddPolicy("User", policy => policy.RequireRole("User", "Admin"));
+    options.AddPolicy("Teacher", policy => policy.RequireRole("Teacher"));
+    options.AddPolicy("Student", policy => policy.RequireRole("Student", "Teacher"));
 });
 
 var app = builder.Build();
