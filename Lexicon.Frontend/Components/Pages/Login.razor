@@ -1,63 +1,68 @@
 ﻿@page "/login"
+
+@layout EmptyLayout
+
 @using Lexicon.Api.Models
 @using Lexicon.Frontend.ServicesImp
 
 @inject IUnitOfWork Services
 @inject NavigationManager Navigation
-@inject HttpClient Http
 
 @rendermode InteractiveServer
 
 <PageTitle>Login</PageTitle>
 
-<h3>Login</h3>
-
-@if (isAuthenticated)
+@if (loading)
 {
-    <p>You are already logged in.</p>
-    <button class="btn btn-primary" @onclick="Logout">Logout</button>
-}
-
-else if (!loading)
+    <p>Laddar...</p>
+} else
 {
-    <p>loading...</p>
-}
-
-else
-{
-    <div class="login-form">
-        <EditForm Model="@loginModel" OnValidSubmit="HandleSubmit">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-
-            <div class="form-group">
-                <label for="email">Email</label>
-                <InputText id="email" class="form-control" @bind-Value="loginModel.Email" />
+    <div class="container h-100 align-content-center">
+        <div class="row card mx-auto p-0" id="login-card">
+            <div class="logo-container">
+                <img class="logo" src="logo.png" width="232" height="80" alt="Lexicon" />
             </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" />
+            <div class="card-body p-4 pb-5">
+                <h1 class="h3 mb-4">Logga in</h1>
+                <EditForm Model="@loginModel" OnValidSubmit="HandleSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="form-group mb-3">
+                        <label class="form-label" for="email">Email address</label>
+                        <InputText id="email" class="form-control" @bind-Value="loginModel.Email" />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label" for="password">Lösenord</label>
+                        <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Logga in</button>
+                </EditForm>
+                @if (error != null)
+                {
+                    <p class="text-danger mt-3">@error</p>
+                }
             </div>
-            <button type="submit" class="btn btn-primary">Login</button>
-        </EditForm>
-        <p>
-            <a @onclick="NavigateToRegister">Register</a>
-        </p>
+        </div>
     </div>
 }
 
 @code {
     private LoginModel loginModel = new LoginModel();
-    private bool isAuthenticated = false;
-    private bool loading = false;
+    private bool loading = true;
+    private string? error;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             var token = await Services.SessionStorageService.GetItemAsync("authToken");
-            isAuthenticated = !string.IsNullOrEmpty(token);
-            loading = true;
+            bool isAuthenticated = !string.IsNullOrEmpty(token);
+            if (isAuthenticated)
+            {
+                Navigation.NavigateTo("/");
+            }
+            loading = false;
             StateHasChanged();
         }
     }
@@ -74,32 +79,22 @@ else
 
             if (!string.IsNullOrEmpty(response))
             {
+                // Loggin success
                 await Services.SessionStorageService.SetItemAsync("authToken", response);
-                var storedToken = await Services.SessionStorageService.GetItemAsync("authToken");
-                isAuthenticated = true;
                 Navigation.NavigateTo("/");
             }
             else
             {
-                Console.WriteLine("Login failed");
+                error = "Inloggning misslyckades. Försök igen";
+                StateHasChanged();
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error logging in: {ex.Message}");
+            error = "Inloggning misslyckades. Försök igen";
+            StateHasChanged();
         }
-    }
-
-    private async Task Logout()
-    {
-        await Services.AuthService.LogoutAsync();
-        isAuthenticated = false;
-        Navigation.NavigateTo("/login");
-    }
-
-    private void NavigateToRegister()
-    {
-        Navigation.NavigateTo("/register");
     }
 
     public class LoginModel

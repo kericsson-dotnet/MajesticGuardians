@@ -1,0 +1,14 @@
+﻿#login-card {
+    max-width: 600px;
+    overflow: hidden;
+    box-shadow: 5px 5px 30px -5px rgba(159, 159, 159, 0.1);
+    border: none;
+    border-radius: 12px;
+}
+
+.logo-container {
+    display: grid;
+    place-items: center;
+    background-color: var(--primary);
+    padding: 24px 16px;
+}
