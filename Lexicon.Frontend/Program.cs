@@ -40,7 +40,7 @@ builder.Services.AddServerSideBlazor(options =>
     options.DetailedErrors = true;
 });
 
-
+builder.Services.AddScoped<ISessionStorageService,SessionStorageService>();
 builder.Services.AddScoped<CustomAuthenticationStateProvider>();
 
 builder.Services.AddAuthorization();
