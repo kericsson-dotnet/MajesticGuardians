@@ -26,8 +26,14 @@ namespace Lexicon.Api.Mapper
             CreateMap<UserPostDto, User>();
 
             // Course mapper
-            CreateMap<CourseDto, Course>();
-            CreateMap<Course, CourseDto>();
+            // Course mapper
+            CreateMap<Course, CourseDto>()
+                .ForMember(dest => dest.UserIds, opt => opt.MapFrom(src => src.Users.Select(u => u.UserId)))
+                .ForMember(dest => dest.DocumentIds, opt => opt.MapFrom(src => src.Documents.Select(d => d.DocumentId)));
+            CreateMap<CourseDto, Course>()
+                .ForMember(dest => dest.Users, opt => opt.Ignore())  
+                .ForMember(dest => dest.Documents, opt => opt.Ignore());  
+
             CreateMap<Course, CoursePostDto>();
             CreateMap<CoursePostDto, Course>();
 
