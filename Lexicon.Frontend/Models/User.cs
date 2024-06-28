@@ -1,5 +1,4 @@
-﻿using Lexicon.Api.Entities;
-
+﻿
 namespace Lexicon.Frontend.Models
 {
     public enum UserRole
@@ -7,6 +6,7 @@ namespace Lexicon.Frontend.Models
         Teacher,
         Student
     }
+
     public class User
     {
         public int UserId { get; set; }
@@ -15,7 +15,7 @@ namespace Lexicon.Frontend.Models
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
 
-        public UserRole Role { get; set; }
+        public UserRole Role { get; set; } 
         public List<Document>? Documents { get; set; } = [];
         public List<UserRole> AllRoles { get { return new List<UserRole>((UserRole[])Enum.GetValues(typeof(UserRole))); } }
 

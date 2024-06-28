@@ -9,10 +9,10 @@ namespace Lexicon.Frontend.Services
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly HttpClient _httpClient;
-        private readonly IUnitOfWork _services;
+        private readonly ISessionStorageService _services;
         private bool _isInitialized;
 
-        public CustomAuthenticationStateProvider(HttpClient httpClient, IUnitOfWork services)
+        public CustomAuthenticationStateProvider(HttpClient httpClient, ISessionStorageService services)
         {
             _httpClient = httpClient;
             _services = services;
@@ -25,7 +25,7 @@ namespace Lexicon.Frontend.Services
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
 
-            var token = await _services.SessionStorageService.GetItemAsync("authToken");
+            var token = await _services.GetItemAsync("authToken");
             var identity = string.IsNullOrWhiteSpace(token)
                 ? new ClaimsIdentity()
                 : new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(token), "jwt");
@@ -40,7 +40,7 @@ namespace Lexicon.Frontend.Services
 
         public async Task MarkUserAsAuthenticated(string token)
         {
-            await _services.SessionStorageService.SetItemAsync("authToken", token);
+            await _services.SetItemAsync("authToken", token);
             var identity = new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(token), "jwt");
             var user = new ClaimsPrincipal(identity);
 
@@ -49,7 +49,7 @@ namespace Lexicon.Frontend.Services
 
         public async Task MarkUserAsLoggedOut()
         {
-            await _services.SessionStorageService.RemoveItemAsync("authToken");
+            await _services.RemoveItemAsync("authToken");
             var identity = new ClaimsIdentity();
             var user = new ClaimsPrincipal(identity);
 
