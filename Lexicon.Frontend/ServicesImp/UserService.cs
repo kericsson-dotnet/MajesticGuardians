@@ -1,4 +1,4 @@
-﻿using Lexicon.Frontend.Models;
+using Lexicon.Frontend.Models;
 using Lexicon.Frontend.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
