@@ -10,16 +10,14 @@ using System;
 using System.Net.Http;
 using System.Text;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-
 builder.Services.AddMvc();
-builder.Services.AddHttpClient<IUnitOfWork, UnitOfWork> (client =>
+builder.Services.AddHttpClient<IUnitOfWork, UnitOfWork>(client =>
 {
     var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
 
@@ -37,28 +35,11 @@ builder.Services.AddHttpClient<IUnitOfWork, UnitOfWork> (client =>
     };
 });
 
-
 builder.Services.AddServerSideBlazor(options =>
 {
     options.DetailedErrors = true;
 });
 
-//builder.Services.AddAuthentication(options =>
-//{
-//	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-//}).AddJwtBearer(options =>
-//{
-//	options.TokenValidationParameters = new TokenValidationParameters
-//	{
-//		ValidateIssuerSigningKey = true,
-//		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("l6WeAA9dzO7YCWEVYxYPBIwjQN4PZV6mnCLWbmB")),
-//		ValidateIssuer = false,
-//		ValidateAudience = false,
-//	};
-
-//    //options.TokenValidationParameters.RoleClaimType = "role";
-//}); 
 
 builder.Services.AddScoped<CustomAuthenticationStateProvider>();
 
