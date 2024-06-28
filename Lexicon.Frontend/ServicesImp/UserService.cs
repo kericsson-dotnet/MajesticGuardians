@@ -64,5 +64,12 @@ namespace Lexicon.Frontend.ServicesImp
             return userData;
         }
 
+        public async Task UpdateUserAsync(User user)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/users/{user.UserId}", user);
+            response.EnsureSuccessStatusCode();
+        }
+
+
     }
 }
