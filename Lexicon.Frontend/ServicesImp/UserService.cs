@@ -3,17 +3,19 @@ using Lexicon.Frontend.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 namespace Lexicon.Frontend.ServicesImp
 {
     public class UserService : IUserService
     {
         private readonly HttpClient _httpClient;
         private readonly ISessionStorageService _sessionStorageService;
-
+        private readonly CustomAuthenticationStateProvider _customAuthStateProvider;
         public UserService(HttpClient httpClient, ISessionStorageService sessionStorageService)
         {
             _httpClient = httpClient;
             _sessionStorageService = sessionStorageService;
+            _customAuthStateProvider = new CustomAuthenticationStateProvider(_httpClient, _sessionStorageService);
         }
 
         private async Task AddTokenToRequestHeader()
@@ -34,49 +36,33 @@ namespace Lexicon.Frontend.ServicesImp
 
         public async Task CreateUserAsync(User user) => await _httpClient.PostAsJsonAsync("api/users", user);
 
+        public async Task<User> GetUserAsync(int id) => await _httpClient.GetFromJsonAsync<User>($"api/users/{id}");
+
         public async Task<User?> GetCurrentUserAsync()
         {
-            var token = await _sessionStorageService.GetItemAsync("authToken");
+            User userData = new User();
+            ClaimsPrincipal user;
+            
 
-            if (string.IsNullOrEmpty(token))
-            {
-                Console.WriteLine("Token is null or empty");
-                return null;
-            }
+            _customAuthStateProvider.SetInitialized();
+            var authState = await _customAuthStateProvider.GetAuthenticationStateAsync();
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var jwtToken = tokenHandler.ReadJwtToken(token);
+            user = authState.User;
 
-            Console.WriteLine("JWT Token: " + jwtToken);
-
-            var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
-            var roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
-            var emailClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
-
-            Console.WriteLine("UserId Claim: " + userIdClaim);
-            Console.WriteLine("Role Claim: " + roleClaim);
-            Console.WriteLine("Email Claim: " + emailClaim);
-
-            if (!int.TryParse(userIdClaim, out var userId) || string.IsNullOrEmpty(roleClaim) || emailClaim == null)
+            if (!user.Identity.IsAuthenticated)
             {
                 return null;
             }
 
-            if (!Enum.TryParse(roleClaim, out UserRole role))
+            var userIdClaim = user.FindFirst("userId")?.Value;
+
+            if (int.TryParse(userIdClaim, out int userId))
             {
-                return null;
+                userData = await GetUserAsync(userId);
             }
 
-            var user = new User
-            {
-                UserId = userId,
-                Role = role,
-                Email = emailClaim,
-            };
-
-            return user;
+            return userData;
         }
 
-		public async Task<User> GetUserAsync(int id) => await _httpClient.GetFromJsonAsync<User>($"api/users/{id}");
-	}
+    }
 }

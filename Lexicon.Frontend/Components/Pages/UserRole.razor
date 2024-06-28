@@ -2,6 +2,7 @@
 @using Lexicon.Frontend.ServicesImp
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
+@using Lexicon.Frontend.Models;
 
 @inject IUnitOfWork Services
 @inject CustomAuthenticationStateProvider CustomAuthStateProvider
@@ -9,13 +10,22 @@
 
 <h3>User Role</h3>
 
-@if (isAuthenticated && user.HasClaim(c => c.Type == "role" && c.Value == "Teacher"))
+@if (currentUser != null)
 {
-    <p>You are authorized as a Teacher.</p>
-    <p>User Id: @userData.UserId</p>
-    <p>Email: @userData.Email</p>
-    <p>FirstName: @userData.FirstName</p>
-    <p>LastName: @userData.LastName</p>
+    if (currentUser.Role.ToString().Equals("Teacher") && currentUser.UserId >0)
+    {
+        <p>You are authorized as a Teacher.</p>
+        <p>User Id: @currentUser.UserId</p>
+        <p>Email: @currentUser.Email</p>
+        <p>FirstName: @currentUser.FirstName</p>
+        <p>LastName: @currentUser.LastName</p>
+    }
+
+    else
+    {
+        <p>You are not authorized to access this page2.</p>
+
+    }
 }
 
 else
@@ -24,29 +34,13 @@ else
 }
 
 @code {
-    private bool isAuthenticated;
-    private ClaimsPrincipal user;
-    private User userData = new User();
-
+    private User? currentUser;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            //Importan to use this
-            CustomAuthStateProvider.SetInitialized();
-
-            var authState = await CustomAuthStateProvider.GetAuthenticationStateAsync();
-            user = authState.User;
-            isAuthenticated = user.Identity.IsAuthenticated;
-
-            var userIdClaim = user.FindFirst("userId")?.Value;
-
-            if (int.TryParse(userIdClaim, out int userId))
-            {
-                userData = await Services.UserService.GetUserAsync(userId);
-            }
-
-            StateHasChanged(); // Ensure state update
+            currentUser = await Services.UserService.GetCurrentUserAsync();
+            StateHasChanged();
         }
     }
 }
