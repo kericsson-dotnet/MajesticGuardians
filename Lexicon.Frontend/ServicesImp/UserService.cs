@@ -36,14 +36,17 @@ namespace Lexicon.Frontend.ServicesImp
 
         public async Task CreateUserAsync(User user) => await _httpClient.PostAsJsonAsync("api/users", user);
 
-        public async Task<User> GetUserAsync(int id) => await _httpClient.GetFromJsonAsync<User>($"api/users/{id}");
+        public async Task<User> GetUserAsync(int id)
+        {
+            await AddTokenToRequestHeader();
+            return await _httpClient.GetFromJsonAsync<User>($"api/users/{id}");
+        }
 
         public async Task<User?> GetCurrentUserAsync()
         {
             User userData = new User();
             ClaimsPrincipal user;
-            
-
+           
             _customAuthStateProvider.SetInitialized();
             var authState = await _customAuthStateProvider.GetAuthenticationStateAsync();
 

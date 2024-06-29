@@ -176,6 +176,11 @@ public class CoursesController : ControllerBase
         {
             var users = await _UoW.Courses.GetAllUsersInCourse(id);
 
+            if (users == null || !users.Any())
+            {
+                return NotFound("No users found for the course.");
+            }
+
             return Ok(_mapper.Map<IEnumerable<UserWithIdDto>>(users));
         }
 
