@@ -135,72 +135,6 @@ public class CoursesController : ControllerBase
         return CreatedAtAction("GetCourse", new { id = course.CourseId }, course);
     }
 
-    [HttpPost("{id}/addUserToCourse")]
-    public async Task<IActionResult> AddUserToCourse([FromRoute] int id, [FromBody] UserPostWithIdDto userPostWithIdDto)
-    {
-        if (id <= 0 || userPostWithIdDto.Id <= 0)
-        {
-            return BadRequest();
-        }
-
-        try
-        {
-            var course = await _UoW.Courses.GetAsync(id);
-
-            if (course == null)
-            {
-                return NotFound();
-            }
-
-            var user = await _UoW.Users.GetAsync(userPostWithIdDto.Id);
-
-            if (user == null)
-            {
-                return NotFound($"User with id {userPostWithIdDto.Id} not found.");
-            }
-
-            _UoW.Courses.AddUserToCourse(id, user);
-            await _UoW.SaveAsync();
-
-            return Ok($"User with id {userPostWithIdDto.Id} successfully added to course {id}.");
-        }
-        catch (InvalidOperationException ex)
-        {
-            return NotFound(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ex.Message);
-        }
-    }
-
-    [HttpDelete("{id}/removeUserFromCourse")]
-    public async Task<IActionResult> RemoveUserFromCourse([FromRoute] int id, UserPostWithIdDto userPostWithIdDto)
-    {
-        if(id<= 0 || userPostWithIdDto.Id <= 0)
-        {
-            return BadRequest();
-        }
-
-        try
-        {
-            _UoW.Courses.RemoveUserFromCourse(id, userPostWithIdDto.Id);
-             await _UoW.SaveAsync();
-        }
-
-        catch (InvalidOperationException ex)
-        {
-            return NotFound(ex.Message);
-        }
-
-        catch (Exception ex)
-        {
-            return StatusCode(500, ex.Message);
-        }
-
-        return NoContent();
-    }
-
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCourse([FromRoute] int id)
     {
@@ -229,4 +163,97 @@ public class CoursesController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpGet("{id}/getAllUsersInCourse")]
+    public async Task<ActionResult<IEnumerable<UserWithIdDto>>> GetAllUsersInCourse([FromRoute] int id)
+    {
+        if (id <= 0)
+        {
+            return BadRequest();
+        }
+
+        try
+        {
+            var users = await _UoW.Courses.GetAllUsersInCourse(id);
+
+            return Ok(_mapper.Map<IEnumerable<UserWithIdDto>>(users));
+        }
+
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpPost("{id}/addUserToCourse")]
+    public async Task<IActionResult> AddUserToCourse([FromRoute] int id, [FromBody] UserWithIdDto userWithIdDto)
+    {
+        if (id <= 0 || userWithIdDto.UserId <= 0)
+        {
+            return BadRequest();
+        }
+
+        try
+        {
+            var course = await _UoW.Courses.GetAsync(id);
+
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _UoW.Users.GetAsync(userWithIdDto.UserId);
+
+            if (user == null)
+            {
+                return NotFound($"User with id {userWithIdDto.UserId} not found.");
+            }
+
+            _UoW.Courses.AddUserToCourse(id, user);
+            await _UoW.SaveAsync();
+
+            return Ok($"User with id {userWithIdDto.UserId} successfully added to course {id}.");
+        }
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpDelete("{id}/removeUserFromCourse")]
+    public async Task<IActionResult> RemoveUserFromCourse([FromRoute] int id, UserWithIdDto userWithIdDto)
+    {
+        if (id <= 0 || userWithIdDto.UserId <= 0)
+        {
+            return BadRequest();
+        }
+
+        try
+        {
+            _UoW.Courses.RemoveUserFromCourse(id, userWithIdDto.UserId);
+            await _UoW.SaveAsync();
+        }
+
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+
+        return NoContent();
+    }
+
 }
