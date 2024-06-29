@@ -57,6 +57,14 @@ else if (currentUser != null)
                                                 <a class="btn btn-secondary me-2" role="button" href="@DetailsCourseUrl(course.CourseId)">
                                                     <i class="bi bi-card-list"></i>
                                                 </a>
+
+                                                <button class="btn btn-danger"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="@($"#deleteModal-{course.CourseId}")">
+                                                    <i class="bi bi-x-lg"></i>
+                                                </button>
+                                                <DeleteCourse Course="@course" />
+                                         
                                             </div>
                                         </td>
                                     </tr>

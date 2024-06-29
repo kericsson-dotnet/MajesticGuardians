@@ -13,4 +13,6 @@ public interface ICourseService
     Task UpdateCourseAsync(Course course);
 
     Task<List<User>> GetAllUsersInCourse(int id);
+
+    Task DeleteCourseAsync(int id);
 }
