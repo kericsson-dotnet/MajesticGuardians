@@ -1,10 +1,9 @@
 ﻿@page "/courses/{userId:int}"
-@inject IUnitOfWork Services
 @rendermode InteractiveServer
+
 @inject NavigationManager Navigation
-@using System.Net.Http.Json
-@using Lexicon.Frontend.ServicesImp
-@using Lexicon.Frontend.Models
+@inject IUnitOfWork Services
+
 
 <h3>Course Overview</h3>
 

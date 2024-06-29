@@ -1,0 +1,174 @@
+﻿@page "/edit_course"
+@page "/edit_course/{CourseId:int}"
+@inject IUnitOfWork Services
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>@titleText</PageTitle>
+
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+
+else if (loadingError != null)
+{
+    <p>Error loading course: @loadingError</p>
+}
+
+else if(currentUser != null)
+{
+    if (currentUser.Role.ToString().Equals("Teacher") && currentUser.UserId > 0)
+    {
+        <h3>@titleText</h3>
+
+        <div class="edit-course-form">
+            <EditForm Model="@Course" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <InputText id="name" class="form-control" @bind-Value="Course.Name" />
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <InputText id="description" class="form-control" @bind-Value="Course.Description" />
+                </div>
+                <div class="form-group">
+                    <label for="startDate">Start Date</label>
+                    <InputDate id="startDate" class="form-control" @bind-Value="Course.StartDate" />
+                </div>
+                <div class="form-group">
+                    <label for="password">End Date</label>
+                    <InputDate id="endDate" class="form-control" @bind-Value="Course.EndDate" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">@((CourseId == null) ? "Save" : "Update")</button>
+            </EditForm>
+            <p>
+                <a href="/dashboard" role="button" class="btn btn-secondary">Go to Home</a>
+            </p>
+        </div>
+    }
+
+    else
+    {
+        NavigateToHome();
+    }
+}
+
+@code {
+
+    [SupplyParameterFromForm]
+    private Course? Course { get; set; }
+
+    [Parameter]
+    public int? CourseId { get; set; }
+
+    private User? currentUser;
+
+    private bool isLoading = true;
+    private bool courseNotFound = false;
+
+    private string? loadingError = null;
+    private string? titleText = null;
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            currentUser = await Services.UserService.GetCurrentUserAsync();
+
+            if(currentUser == null)
+            {
+                NavigateToHome();
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadCourseAsync();
+    }
+
+    private async Task LoadCourseAsync()
+    {
+
+        if (Course != null)
+        {
+            return;
+        }
+
+        if (CourseId != null)
+        {
+            try
+            {
+                titleText = "Edit Course";
+                Course = await Services.CourseService.GetCourseAsync(CourseId.Value);
+
+                if (Course == null)
+                {
+                    courseNotFound = true;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                loadingError = ex.Message;
+                courseNotFound = true;
+            }
+        }
+
+        else
+        {
+            titleText = "Add Course";
+
+            Course = new Course()
+            {
+                Name = string.Empty,
+                EndDate = DateTime.UtcNow,
+                StartDate = DateTime.UtcNow,
+                Description = string.Empty
+            };
+        }
+
+        isLoading = false;
+    }
+
+    private async Task HandleSubmit()
+    {
+        ArgumentNullException.ThrowIfNull(Course);
+
+        try
+        {
+            if (CourseId == null)
+            {
+                await Services.CourseService.AddCourseAsync(Course);
+            }
+
+            else
+            {
+                Course.CourseId = CourseId.Value;
+                await Services.CourseService.UpdateCourseAsync(Course);
+            }
+
+            Navigation.NavigateTo("/dashboard");
+
+        }
+
+        catch (Exception ex)
+        {
+            loadingError = ex.Message;
+
+        }
+
+    }
+
+    private void NavigateToHome()
+    {
+        Navigation.NavigateTo("/", true);
+    }
+}
