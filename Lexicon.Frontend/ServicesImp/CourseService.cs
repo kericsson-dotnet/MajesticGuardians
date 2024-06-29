@@ -21,4 +21,6 @@ public class CourseService : ICourseService
     public async Task AddCourseAsync(Course course) => await _httpClient.PostAsJsonAsync($"api/courses", course);
 
     public async Task<List<User>> GetAllUsersInCourse(int id) => await _httpClient.GetFromJsonAsync<List<User>>($"api/courses/{id}/getAllUsersInCourse");
+
+    public async Task DeleteCourseAsync(int id) => await _httpClient.DeleteAsync($"api/courses/{id}");
 }
