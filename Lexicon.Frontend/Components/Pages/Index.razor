@@ -7,25 +7,35 @@
 
 @rendermode InteractiveServer
 
-@* This page determines which page to redirect the user based on authentication state and role *@
 
 @code {
+    private User? currentUser;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        User? currentUser = await Services.UserService.GetCurrentUserAsync();
+        if (firstRender)
+        {
+            currentUser = await Services.UserService.GetCurrentUserAsync();
 
-        if (currentUser != null)
-        {
-            if (currentUser.Role == Models.UserRole.Teacher)
+            if (currentUser != null)
             {
-                NavigationManager.NavigateTo($"/dashboard");
-            } else if (currentUser.Role == Models.UserRole.Student)
-            {
-                NavigationManager.NavigateTo($"/courses/{currentUser.UserId}");
+                if (currentUser.Role == Models.UserRole.Teacher)
+                {
+                    NavigationManager.NavigateTo($"/dashboard");
+                }
+
+                else if (currentUser.Role == Models.UserRole.Student)
+                {
+                    NavigationManager.NavigateTo($"/courses/{currentUser.UserId}");
+                }
             }
-        } else
-        {
-            NavigationManager.NavigateTo("/login");
+
+            else
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+
+            StateHasChanged();
         }
     }
 }
