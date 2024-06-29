@@ -234,17 +234,17 @@ public class CoursesController : ControllerBase
         }
     }
 
-    [HttpDelete("{id}/removeUserFromCourse")]
-    public async Task<IActionResult> RemoveUserFromCourse([FromRoute] int id, UserWithIdDto userWithIdDto)
+    [HttpDelete("{id}/removeUserFromCourse/{userId}")]
+    public async Task<IActionResult> RemoveUserFromCourse([FromRoute] int id, [FromRoute] int userId)
     {
-        if (id <= 0 || userWithIdDto.UserId <= 0)
+        if (id <= 0 || userId <= 0)
         {
             return BadRequest();
         }
 
         try
         {
-            _UoW.Courses.RemoveUserFromCourse(id, userWithIdDto.UserId);
+            _UoW.Courses.RemoveUserFromCourse(id, userId);
             await _UoW.SaveAsync();
         }
 

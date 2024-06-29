@@ -15,4 +15,6 @@ public interface ICourseService
     Task<List<User>> GetAllUsersInCourse(int id);
 
     Task DeleteCourseAsync(int id);
+
+    Task RemoveUserFromCourse(int id, int userId);
 }
