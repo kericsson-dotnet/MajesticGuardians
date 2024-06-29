@@ -138,6 +138,11 @@ public class CoursesController : ControllerBase
     [HttpPost("{id}/addUserToCourse")]
     public async Task<IActionResult> AddUserToCourse([FromRoute] int id, [FromBody] UserPostWithIdDto userPostWithIdDto)
     {
+        if (id <= 0 || userPostWithIdDto.Id <= 0)
+        {
+            return BadRequest();
+        }
+
         try
         {
             var course = await _UoW.Courses.GetAsync(id);
@@ -169,6 +174,33 @@ public class CoursesController : ControllerBase
         }
     }
 
+
+    [HttpDelete("{id}/removeUserFromCourse")]
+    public async Task<IActionResult> RemoveUserFromCourse([FromRoute] int id, UserPostWithIdDto userPostWithIdDto)
+    {
+        if(id<= 0 || userPostWithIdDto.Id <= 0)
+        {
+            return BadRequest();
+        }
+
+        try
+        {
+            _UoW.Courses.RemoveUserFromCourse(id, userPostWithIdDto.Id);
+             await _UoW.SaveAsync();
+        }
+
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+
+        return NoContent();
+    }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCourse([FromRoute] int id)
