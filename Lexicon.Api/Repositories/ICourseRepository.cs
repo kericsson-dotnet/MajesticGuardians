@@ -7,5 +7,7 @@ namespace Lexicon.Api.Repositories
         void AddUserToCourse(int courseId, User user);
 
         void RemoveUserFromCourse(int courseId, int userId);
+
+        Task<IEnumerable<User>> GetAllUsersInCourse(int courseId);
     }
 }
