@@ -174,7 +174,6 @@ public class CoursesController : ControllerBase
         }
     }
 
-
     [HttpDelete("{id}/removeUserFromCourse")]
     public async Task<IActionResult> RemoveUserFromCourse([FromRoute] int id, UserPostWithIdDto userPostWithIdDto)
     {
