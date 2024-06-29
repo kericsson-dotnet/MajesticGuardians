@@ -1,0 +1,140 @@
+﻿@page "/course_details/{CourseId:int}"
+@inject NavigationManager Navigation
+@inject IUnitOfWork Services
+@rendermode InteractiveServer
+
+@if (isLoading)
+{
+    <p><em>Loading...</em></p>
+}
+else if (Course == null)
+{
+    <p><em>Course not available</em></p>
+}
+else if (currentUser != null)
+{
+    if (currentUser.Role.ToString().Equals("Teacher") && currentUser.UserId > 0)
+    {
+        <h3 class="mt-3">Details</h3>
+
+        <div class="mt-2">
+            <NavLink class="btn btn-primary" href="/add_user_toCourse">Add User</NavLink>
+            <NavLink class="btn btn-secondary" href="/course_dashboard">Return back</NavLink>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="name" class="form-label"><strong>Name:</strong> @Course.Name</label>
+                </div>
+
+                <div class="mb-3">
+                    <label for="status" class="form-label"><strong>Description: </strong> @Course.Description </label>
+                </div>
+
+                <div class="mb-3">
+                    <label for="date" class="form-label"><strong>Start Date: </strong> @Course.StartDate.ToShortDateString() </label>
+                </div>
+
+                <div class="mb-3">
+                    <label for="date" class="form-label"><strong>End Date: </strong> @Course.EndDate.ToShortDateString() </label>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="mt-3">Users</h3>
+
+        <div class="row">
+            @if (Users == null || !Users.Any())
+            {
+                <p>No users exist</p>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Role</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Users)
+                        {
+                            <tr>
+                                <td>@user.UserId</td>
+                                <td>@user.Email</td>
+                                <td>@user.Role</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    }
+    else
+    {
+        NavigateToHome();
+    }
+}
+else
+{
+    NavigateToHome();
+}
+
+@code {
+    [Parameter]
+    public int CourseId { get; set; }
+
+    private User? currentUser;
+    private bool isLoading = true;
+
+    public Course? Course { get; set; }
+    public List<User> Users { get; set; } = new List<User>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            currentUser = await Services.UserService.GetCurrentUserAsync();
+            if (currentUser == null)
+            {
+                NavigateToHome();
+                return;
+            }
+
+            Course = await Services.CourseService.GetCourseAsync(CourseId);
+            if (Course == null)
+            {
+                Navigation.NavigateTo("/course_dashboard", true);
+                return;
+            }
+
+            var users = await Services.CourseService.GetAllUsersInCourse(CourseId);
+            if (users.Any())
+            {
+                var userTasks = users.Select(user => Services.UserService.GetUserAsync(user.UserId));
+                var allUsersWithDetails = await Task.WhenAll(userTasks);
+
+                Users = allUsersWithDetails.Where(user => user != null).ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
+
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void NavigateToHome()
+    {
+        Navigation.NavigateTo("/", true);
+    }
+}
