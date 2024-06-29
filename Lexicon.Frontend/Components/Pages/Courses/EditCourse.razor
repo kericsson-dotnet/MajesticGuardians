@@ -44,11 +44,13 @@ else if(currentUser != null)
                     <InputDate id="endDate" class="form-control" @bind-Value="Course.EndDate" />
                 </div>
 
-                <button type="submit" class="btn btn-primary">@((CourseId == null) ? "Save" : "Update")</button>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">@((CourseId == null) ? "Save" : "Update")</button>
+                    <a href="/course_dashboard" role="button" class="btn btn-secondary">Return back</a>
+                </div>
+
             </EditForm>
-            <p>
-                <a href="/dashboard" role="button" class="btn btn-secondary">Go to Home</a>
-            </p>
+            
         </div>
     }
 
@@ -155,7 +157,7 @@ else if(currentUser != null)
                 await Services.CourseService.UpdateCourseAsync(Course);
             }
 
-            Navigation.NavigateTo("/dashboard");
+            Navigation.NavigateTo("/course_dashboard");
 
         }
 
