@@ -67,6 +67,14 @@ else if (currentUser != null)
                                 <td>@user.UserId</td>
                                 <td>@user.Email</td>
                                 <td>@user.Role</td>
+                                <td>
+                                    <button class="btn btn-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="@($"#deleteModal-{user.UserId}")">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                    <DeleteUserFromCourse User="@user" CourseId="@CourseId" />
+                                </td>
                             </tr>
                         }
                     </tbody>
