@@ -1,85 +1,118 @@
-﻿<div>
-    <div class="top-row navbar navbar-dark px-3">
-    <div class="container-fluid px-0">
-        <a class="navbar-brand" href="">
-            <img class="logo" src="logo.png" width="232" height="80" alt="Lexicon" />
-        </a>
-        <button type="button" title="Navigation menu" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarScroll" />
-    </div>
-</div>
+﻿@rendermode InteractiveServer
+@inject IUnitOfWork services
+@inject NavigationManager navigation
 
-<div class="collapse navbar-collapse" id="navbarScroll" >
-    <div class="user vstack gap-0">
-        <div class="role">@user.Role.ToString()</div>
-        <div class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle align-items-center gap-1" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
-                <i class="bi bi-person-circle"></i>
-                <span>@($"{user.FirstName} {user.LastName}")</span>
+<div>
+    <div class="top-row navbar navbar-dark px-3">
+        <div class="container-fluid px-0">
+            <a class="navbar-brand" href="">
+                <img class="logo" src="logo.png" width="232" height="80" alt="Lexicon" />
             </a>
-            <ul class="dropdown-menu w-100">
-                <li><a class="dropdown-item" href="edit_user"><i class="bi bi-pen"></i> Ändra uppgifter</a></li>
-                <li><a class="dropdown-item" @onclick="Logout"><i class="bi bi-box-arrow-left"></i> Logga ut</a></li>
-            </ul>
+            <button type="button" title="Navigation menu" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarScroll" />
         </div>
     </div>
-    <nav class="flex-column">
-        @if (user.Role == UserRole.Teacher)
-        {
-            <li class="nav-item px-2">
-                <NavLink class="nav-link" href="course_over_view" Match="NavLinkMatch.All">
-                    <i class="bi bi-book"></i> Hantera kurser
-                </NavLink>
-            </li>
 
-            <li class="nav-item px-2">
-                <!-- TODO: Navigare till användare sida -->
-                <NavLink class="nav-link" href="edit_user">
-                    <i class="bi bi-person"></i> Hantera användare
-                </NavLink>
-            </li>
+     @if (user != null) {
+        <div class="collapse navbar-collapse" id="navbarScroll">
+            <div class="user vstack gap-0">
+                <div class="role">@(user.Role == UserRole.Teacher ? "Lärare" : "Elev")</div>
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle align-items-center gap-1" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+                        <i class="bi bi-person-circle"></i>
+                         <span>@($"{user.FirstName} {user.LastName}")</span>
+                    </a>
+                    <ul class="dropdown-menu w-100">
+                        <li><a class="dropdown-item" href="edit_user"><i class="bi bi-pen"></i> Ändra uppgifter</a></li>
+                        <li><a class="dropdown-item" @onclick="Logout" href=""><i class="bi bi-box-arrow-left"></i> Logga ut</a></li>
+                    </ul>
+                </div>
+                @if (user.Role == UserRole.Student && course != null)
+                {
+                    <div class="px-2 py-2 fw-medium vstack gap-1">
+                        <span class="text-secondary" style="font-size: 14px;">Kurs</span>
+                        <span class="fs-6">@course.Name</span>
+                    </div>
+                }
+            </div>
+            <nav class="flex-column">
+                @if (user.Role == UserRole.Teacher)
+                {
+                    <li class="nav-item px-2">
+                        <NavLink class="nav-link" href="dashboard" Match="NavLinkMatch.All">
+                            <i class="bi bi-house-door"></i> Översikt
+                        </NavLink>
+                    </li>
 
-            <li class="nav-item px-2">
-                    <!-- TODO: Navigare till Uppladdningar sida -->
-                <NavLink class="nav-link" href="new_or_register_activity">
-                    <i class="bi bi-archive"></i> Hantera uppladdningar
-                </NavLink>
-            </li>
-        }
-        else
-        {
-            <li class="nav-item px-2">
-                <NavLink class="nav-link" href="course_over_view" Match="NavLinkMatch.All">
-                    <i class="bi bi-book"></i> Kursöversikt
-                </NavLink>
-            </li>
-            <li class="nav-item px-2">
-                <NavLink class="nav-link" href="#">
-                    <i class="bi bi-archive"></i> Mina uppladdningar
-                </NavLink>
-            </li>
-            <li class="nav-item px-2">
-                <!-- TODO: Navigera till Elever sida -->
-                <NavLink class="nav-link" href="#">
-                    <i class="bi bi-people"></i> Kursdeltagare
-                </NavLink>
-            </li>
-                <li class="nav-item px-2">
-                <!-- TODO: Navigera till Lärare sida -->
-                <NavLink class="nav-link" href="#">
-                    <i class="bi bi-people"></i> Lärare
-                </NavLink>
-            </li>
-        }
-    </nav>
-</div>
+                    <li class="nav-item px-2">
+                        <NavLink class="nav-link" href="course_over_view" Match="NavLinkMatch.All">
+                            <i class="bi bi-book"></i> Hantera kurser
+                        </NavLink>
+                    </li>
+
+                    <li class="nav-item px-2">
+                        <!-- TODO: Navigare till användare sida -->
+                        <NavLink class="nav-link" href="edit_user">
+                            <i class="bi bi-person"></i> Hantera användare
+                        </NavLink>
+                    </li>
+
+                    <li class="nav-item px-2">
+                            <!-- TODO: Navigare till Uppladdningar sida -->
+                        <NavLink class="nav-link" href="new_or_register_activity">
+                            <i class="bi bi-archive"></i> Hantera uppladdningar
+                        </NavLink>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item px-2">
+                        <NavLink class="nav-link" href="course_over_view" Match="NavLinkMatch.All">
+                            <i class="bi bi-book"></i> Kursöversikt
+                        </NavLink>
+                    </li>
+                    <li class="nav-item px-2">
+                        <NavLink class="nav-link" href="#">
+                            <i class="bi bi-archive"></i> Mina uppladdningar
+                        </NavLink>
+                    </li>
+                    <li class="nav-item px-2">
+                        <!-- TODO: Navigera till Elever sida -->
+                        <NavLink class="nav-link" href="#">
+                            <i class="bi bi-people"></i> Kursdeltagare
+                        </NavLink>
+                    </li>
+                        <li class="nav-item px-2">
+                        <!-- TODO: Navigera till Lärare sida -->
+                        <NavLink class="nav-link" href="#">
+                            <i class="bi bi-people"></i> Lärare
+                        </NavLink>
+                    </li>
+                }
+            </nav>
+        </div>
+    }
 </div>
 
 @code {
-    // TODO: Get logged in user
-    private User user = new User(){FirstName = "John", LastName = "Doe", Role = UserRole.Student};
+    private User? user;
+    private Course? course;
 
-    private void Logout() {
-        // TODO: handle logout
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            user = await services.UserService.GetCurrentUserAsync();
+            if (user == null) return;
+            var courses = await services.CourseService.GetCoursesAsync();
+            course = courses.Find(c => c.UserIds.Contains(user.UserId));
+            StateHasChanged();
+        }
+    }
+
+    private async void Logout()
+    {
+        await services.AuthService.LogoutAsync();
+        navigation.NavigateTo("/login");
     }
 }
 

@@ -73,14 +73,18 @@
   border-bottom: 1px solid hsla(0, 0%, 0%, 0.15);
 }
 
+.user .nav-link {
+    font-size: 16px;
+}
+
 .user .bi {
-  font-size: 1.25rem;
+  font-size: 24px;
 }
 
 .user .role {
   margin-left: 8px;
   color: var(--primary);
-  font-size: 0.75rem;
+  font-size: 16px;
 }
 
 .user .nav-item {
@@ -90,6 +94,7 @@
 .user .dropdown-toggle::after {
   margin-left: auto;
 }
+
 
 @media (min-width: 641px) {
   .navbar-toggler {
