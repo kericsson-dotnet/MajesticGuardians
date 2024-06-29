@@ -64,5 +64,19 @@ namespace Lexicon.Api.Repositories
 
             course.Users.Remove(user);
         }
+
+        public async Task<IEnumerable<User>> GetAllUsersInCourse(int courseId)
+        {
+            var course = await _context.Set<Course>()
+                                       .Include(c => c.Users)
+                                       .FirstOrDefaultAsync(c => c.CourseId == courseId);
+
+            if (course == null)
+            {
+                throw new InvalidOperationException($"Course with id {courseId} not found");
+            }
+
+            return course.Users;
+        }
     }
 }
