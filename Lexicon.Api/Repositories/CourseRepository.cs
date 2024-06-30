@@ -14,8 +14,22 @@ public class CourseRepository : CrudRepository<Course> ,ICourseRepository
     public virtual async Task<IEnumerable<Course>> GetAllAsync()
     {
         return await _context.Set<Course>()
-            .Include(c => c.Users) // Include related entities if needed
+            .Include(c => c.Users)
+            .Include(c => c.Modules)
             .ToListAsync();
+    }
+
+    public virtual async Task<Course> GetAsync(object id)
+    {
+        if (id is int courseId)
+        {
+            return await _context.Set<Course>()
+                .Include(c => c.Users)
+                .Include(c => c.Modules)
+                .FirstOrDefaultAsync(c => c.CourseId == courseId) ?? throw new InvalidOperationException($"{typeof(Course).Name} Id {id} not found.");
+        }
+
+        throw new ArgumentException("Invalid ID type");
     }
 
     public void AddUserToCourse(int courseId, User user)
