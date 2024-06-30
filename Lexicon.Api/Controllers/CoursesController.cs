@@ -293,7 +293,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpGet("getAllUsersCourses/{userId}")]
-    public async Task<ActionResult<IEnumerable<CourseWithIdDto>>> GetAllUserCourses([FromRoute] int userId)
+    public async Task<ActionResult<IEnumerable<CourseWithIdDto>>> GetAllUsersCourses([FromRoute] int userId)
     {
         if (userId <= 0)
         {
