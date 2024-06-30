@@ -4,7 +4,6 @@ using Lexicon.Api.Entities;
 using Lexicon.Api.Repositories;
 using AutoMapper;
 using Lexicon.Api.Dtos.UserDtos;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Lexicon.Api.Controllers;
 

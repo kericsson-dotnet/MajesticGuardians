@@ -1,6 +1,5 @@
 ﻿using Lexicon.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Lexicon.Api.Models;
 using Lexicon.Api.Services;
 using Lexicon.Api.Dtos.UserDtos;
 using AutoMapper;

@@ -1,6 +1,5 @@
 ﻿using Lexicon.Api.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace Lexicon.Api.Repositories;
 
