@@ -8,6 +8,11 @@
     <p><em>Läser in...</em></p>
 }
 
+else if(Course == null && isLoading)
+{
+    <p><em>Läser in...</em></p>
+}
+
 else if (Course == null)
 {
     <p><em>Kursen är inte tillgängligt</em></p>
@@ -15,15 +20,18 @@ else if (Course == null)
 
 else if (currentUser != null)
 {
+    <h3>Kurs detaljer</h3>
+
     if (currentUser.Role.ToString().Equals("Teacher") && currentUser.UserId > 0)
     {
-
-        <div class="d-flex mb-2 gap-3">
-            <h3 class="mt-3">Kurs detaljer</h3>
+        <div class="d-flex gap-3">
             <NavLink class="btn btn-primary" href="@AddUserToCourseUrl()">Lägg användare till kursen</NavLink>
             <NavLink class="btn btn-secondary" href="@CourseDashboardUrl()">Återvända tillbaka</NavLink>
         </div>
+    }
 
+    if (currentUser.Role.ToString().Equals("Teacher") || currentUser.Role.ToString().Equals("Student"))
+    {
         <div class="row">
             <div class="col-md-4">
                 <div class="mb-3">
@@ -43,14 +51,14 @@ else if (currentUser != null)
                 </div>
             </div>
         </div>
-
-        <h3 class="mt-3">Användare i kursen</h3>
-
         <div class="row">
+            <h3 class="mt-3">Användare i kursen</h3>
+
             @if (Users == null || !Users.Any())
             {
                 <p>Det finns inga användare i kursen</p>
             }
+
             else
             {
                 <table class="table">
@@ -69,14 +77,18 @@ else if (currentUser != null)
                                 <td>@user.UserId</td>
                                 <td>@user.Email</td>
                                 <td>@user.Role</td>
-                                <td>
-                                    <button class="btn btn-danger"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="@($"#deleteModal-{user.UserId}")">
-                                        <i class="bi bi-x-lg"></i>
-                                    </button>
-                                    <DeleteUserFromCourse User="@user" CourseId="@CourseId" />
-                                </td>
+                                
+                                @if(currentUser.Role == Models.UserRole.Teacher){
+                                    <td>
+                                        <button class="btn btn-danger"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="@($"#deleteModal-{user.UserId}")">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                        <DeleteUserFromCourse User="@user" CourseId="@CourseId" />
+                                    </td>
+                                }
+
                             </tr>
                         }
                     </tbody>
@@ -112,6 +124,12 @@ else if (currentUser != null)
             {
                 NavigateToHome();
                 return;
+            }
+
+            if(currentUser.Role == Models.UserRole.Student)
+            {
+                var courses = await Services.CourseService.GetAllUsersCourses(currentUser.UserId);
+                CourseId = courses.FirstOrDefault().CourseId;
             }
 
             Course = await Services.CourseService.GetCourseAsync(CourseId);
