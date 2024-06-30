@@ -22,4 +22,5 @@ public interface ICourseService
 
     Task AddUserToCourse(int id, int userId);
 
+    Task<List<Course>> GetAllUsersCourses(int userId);
 }
