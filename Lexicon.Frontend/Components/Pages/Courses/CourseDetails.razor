@@ -5,51 +5,51 @@
 
 @if (isLoading)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Läser in...</em></p>
 }
 
 else if (Course == null)
 {
-    <p><em>Course not available</em></p>
+    <p><em>Kursen är inte tillgängligt</em></p>
 }
 
 else if (currentUser != null)
 {
     if (currentUser.Role.ToString().Equals("Teacher") && currentUser.UserId > 0)
     {
-        <h3 class="mt-3">Details</h3>
 
-        <div class="mt-2">
-            <NavLink class="btn btn-primary" href="@AddUserToCourseUrl()">Add User</NavLink>
-            <NavLink class="btn btn-secondary" href="@CourseDashboardUrl()">Return back</NavLink>
+        <div class="d-flex mb-2 gap-3">
+            <h3 class="mt-3">Kurs detaljer</h3>
+            <NavLink class="btn btn-primary" href="@AddUserToCourseUrl()">Lägg användare till kursen</NavLink>
+            <NavLink class="btn btn-secondary" href="@CourseDashboardUrl()">Återvända tillbaka</NavLink>
         </div>
 
         <div class="row">
             <div class="col-md-4">
                 <div class="mb-3">
-                    <label for="name" class="form-label"><strong>Name:</strong> @Course.Name</label>
+                    <label for="name" class="form-label"><strong>Namn:</strong> @Course.Name</label>
                 </div>
 
                 <div class="mb-3">
-                    <label for="status" class="form-label"><strong>Description: </strong> @Course.Description </label>
+                    <label for="status" class="form-label"><strong>Beskrivning: </strong> @Course.Description </label>
                 </div>
 
                 <div class="mb-3">
-                    <label for="date" class="form-label"><strong>Start Date: </strong> @Course.StartDate.ToShortDateString() </label>
+                    <label for="date" class="form-label"><strong>Start Datum: </strong> @Course.StartDate.ToShortDateString() </label>
                 </div>
 
                 <div class="mb-3">
-                    <label for="date" class="form-label"><strong>End Date: </strong> @Course.EndDate.ToShortDateString() </label>
+                    <label for="date" class="form-label"><strong>Slut Datum: </strong> @Course.EndDate.ToShortDateString() </label>
                 </div>
             </div>
         </div>
 
-        <h3 class="mt-3">Users</h3>
+        <h3 class="mt-3">Användare i kursen</h3>
 
         <div class="row">
             @if (Users == null || !Users.Any())
             {
-                <p>No users exist</p>
+                <p>Det finns inga användare i kursen</p>
             }
             else
             {
@@ -57,8 +57,8 @@ else if (currentUser != null)
                     <thead>
                         <tr>
                             <th scope="col">Id</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Role</th>
+                            <th scope="col">Epost</th>
+                            <th scope="col">Roll</th>
                             <th></th>
                         </tr>
                     </thead>

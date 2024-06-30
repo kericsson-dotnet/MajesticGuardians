@@ -5,29 +5,29 @@
 @inject IUnitOfWork Services
 
 
-<h3>Course Overview</h3>
+<h3>Kurs översikt</h3>
 
 @if (currentUser == null)
 {
-    <p><em>Loading courses...</em></p>
+    <p><em>Läser in kurser...</em></p>
 }
 else
 {
-    <p>Welcome, @currentUser.FirstName @currentUser.LastName!</p>
+    <p>Välkommen, @currentUser.FirstName @currentUser.LastName!</p>
 
     @if (!courses.Any())
     {
-        <p>No courses available.</p>
+        <p>Inga kurser är tillgängliga</p>
     }
     else
     {
         <table class="table">
             <thead>
                 <tr>
-                    <th>Course Name</th>
-                    <th>Description</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
+                    <th>Namn</th>
+                    <th>Beskrivning</th>
+                    <th>Start Datum</th>
+                    <th>Slut Datum</th>
                     @if (isTeacher)
                     {
                         <th>
