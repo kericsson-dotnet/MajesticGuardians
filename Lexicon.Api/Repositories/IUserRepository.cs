@@ -2,8 +2,7 @@
 
 namespace Lexicon.Api.Repositories;
 
-public interface IUserRepository
+public interface IUserRepository : ICrudRepository<User>
 {
-    
     Task<User?> ValidateCredentialsAsync(string email, string password);
 }
