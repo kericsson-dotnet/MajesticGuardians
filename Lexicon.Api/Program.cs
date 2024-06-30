@@ -5,6 +5,7 @@ using Lexicon.Api.Mapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Lexicon.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +26,7 @@ builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
 
 //builder.Services.AddScoped(typeof(ICrudRepository<>), typeof(CrudRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<DataGeneratorService>();
 
 //JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -60,13 +61,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    FakeDataGenerator.Initialize(services);
-}
-
 app.MapControllers();
 
 //For authorization
@@ -76,7 +70,8 @@ app.UseAuthorization();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    FakeDataGenerator.Initialize(services);
+    var seedingService = services.GetRequiredService<DataGeneratorService>();
+    await seedingService.GenerateDataAsync();
 }
 
 app.Run();
