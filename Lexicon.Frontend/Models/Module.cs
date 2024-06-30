@@ -1,6 +1,6 @@
-﻿namespace Lexicon.Frontend.Models
-{
-    public class Module
+﻿namespace Lexicon.Frontend.Models;
+
+public class Module
 {
     public int ModuleId { get; set; }
     public List<Activity> Activities { get; set; } = [];
@@ -10,5 +10,4 @@
     public DateTime StartDate { get; set; } = DateTime.Now;
     public DateTime EndDate { get; set; }
     // public List<Document> Documents { get; set; } = [];
-}
 }

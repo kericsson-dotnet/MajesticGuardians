@@ -1,11 +1,10 @@
-﻿namespace Lexicon.Frontend.Services
+﻿namespace Lexicon.Frontend.Services;
+
+public interface ISessionStorageService
 {
-    public interface ISessionStorageService
-    {
-        Task SetItemAsync(string key, string value);
+    Task SetItemAsync(string key, string value);
 
-        Task<string> GetItemAsync(string key);
+    Task<string> GetItemAsync(string key);
 
-        Task RemoveItemAsync(string key);
-    }
+    Task RemoveItemAsync(string key);
 }

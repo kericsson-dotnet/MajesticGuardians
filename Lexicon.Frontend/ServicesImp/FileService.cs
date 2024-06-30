@@ -1,17 +1,17 @@
 ﻿using Lexicon.Frontend.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Lexicon.Frontend.ServicesImp
+namespace Lexicon.Frontend.ServicesImp;
+
+public class FileService : IFileService
 {
-	public class FileService : IFileService
+	private readonly HttpClient _httpClient;
+	public FileService(HttpClient httpClient)
 	{
-		private readonly HttpClient _httpClient;
-		public FileService(HttpClient httpClient)
-		{
 			_httpClient = httpClient;
 		}
-		public async Task<string> PostFileAsync(MultipartFormDataContent content)
-		{
+	public async Task<string> PostFileAsync(MultipartFormDataContent content)
+	{
 			try
 			{
 				var response = await _httpClient.PostAsync("/api/file/upload", content);
@@ -30,5 +30,4 @@ namespace Lexicon.Frontend.ServicesImp
 				return $"Upload failed: {ex.Message}";
 			}
 		}
-	}
 }

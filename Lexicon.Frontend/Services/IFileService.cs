@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Lexicon.Frontend.Services
+namespace Lexicon.Frontend.Services;
+
+public interface IFileService
 {
-	public interface IFileService
-	{
-		Task<string> PostFileAsync(MultipartFormDataContent content);
-	}
+	Task<string> PostFileAsync(MultipartFormDataContent content);
 }
