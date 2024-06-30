@@ -1,9 +1,7 @@
 ﻿@page "/edit_user/{userId:int}"
 @inject IUnitOfWork Services
-@rendermode InteractiveServer
 @inject NavigationManager Navigation
-@using System.Net.Http.Json
-@inject HttpClient Http
+@rendermode InteractiveServer
 
 <PageTitle>Edit User</PageTitle>
 
@@ -13,10 +11,12 @@
 {
     <p>Loading...</p>
 }
+
 else if (loadingError != null)
 {
     <p>Error loading user: @loadingError</p>
 }
+
 else
 {
     <div class="edit-user-form">
@@ -85,23 +85,23 @@ else
         {
             isLoading = true;
             loadingError = null;
-            // Load the user data from the API or services using the userId parameter
+            
             userModel = await Services.UserService.GetUserAsync(userId);
-
-            // Get all courses from the database
             courses = await Services.CourseService.GetCoursesAsync();
 
-            // If the user is already enrolled in a course, set the selectedCourseId
             var userCourse = userModel.Courses.FirstOrDefault();
+            
             if (userCourse != null)
             {
                 selectedCourseId = userCourse.CourseId;
             }
         }
+
         catch (Exception ex)
         {
             loadingError = ex.Message;
         }
+
         finally
         {
             isLoading = false;
@@ -110,44 +110,38 @@ else
 
     private async Task HandleSubmit()
     {
-        // We need to be able to add user to a course, that part dont exist yet.
-
-
         try
         {
-            // Update user
             await Services.UserService.UpdateUserAsync(userModel);
-
-            // Update users course
-            await UpdateUserCourses();
-
+            //await UpdateUserCourses();
             Navigation.NavigateTo("/");
         }
+
         catch (Exception ex)
         {
             Console.WriteLine($"Error saving user or course changes: {ex.Message}");
         }
     }
 
-    private async Task UpdateUserCourses()
-    {
-        try
-        {
-            var selectedCourse = courses.FirstOrDefault(c => c.CourseId == selectedCourseId);
-            if (selectedCourse != null)
-            {
-                var courseIds = userModel.Courses.Select(c => c.CourseId).ToList();
-                courseIds.Add(selectedCourse.CourseId);
+    // private async Task UpdateUserCourses()
+    // {
+    //     try
+    //     {
+    //         var selectedCourse = courses.FirstOrDefault(c => c.CourseId == selectedCourseId);
+    //         if (selectedCourse != null)
+    //         {
+    //             var courseIds = userModel.Courses.Select(c => c.CourseId).ToList();
+    //             courseIds.Add(selectedCourse.CourseId);
 
-                var response = await Http.PutAsJsonAsync($"api/users/{userModel.UserId}/courses", courseIds);
-                response.EnsureSuccessStatusCode(); // Throw an exception if the response is not successful
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error updating user courses: {ex.Message}");
-        }
-    }
+    //             var response = await Http.PutAsJsonAsync($"api/users/{userModel.UserId}/courses", courseIds);
+    //             response.EnsureSuccessStatusCode(); // Throw an exception if the response is not successful
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Console.WriteLine($"Error updating user courses: {ex.Message}");
+    //     }
+    // }
 
     private void NavigateToHome()
     {

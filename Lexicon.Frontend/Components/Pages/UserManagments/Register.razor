@@ -2,11 +2,7 @@
 @inject IUnitOfWork Services
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
-@using System.Net.Http.Json
-@inject HttpClient Http
-@using Lexicon.Frontend.ServicesImp
-@using Microsoft.AspNetCore.Components.Forms
-@using Lexicon.Frontend.Models
+
 
 
 <PageTitle>Register</PageTitle>
@@ -16,6 +12,7 @@
 {
     <p>Loading....</p>
 }
+
 else
 {
     <EditForm Model="@User" OnValidSubmit="HandleRegister" FormName="logintest">
@@ -46,7 +43,12 @@ else
                 </InputSelect>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Register</button>
+
+        <div claass ="d-flex gap-3">
+            <button type="submit" class="btn btn-primary">Register</button>
+            <button @onclick="LoginPage" class="btn btn-secondary">Login Page</button>
+        </div>
+
     </EditForm>
 }
 
@@ -67,8 +69,8 @@ else
                 Role = 0,
                 Documents = new List<Document>()
             };
-            loading = true;
-        
+        loading = true;
+
     }
 
 
@@ -96,4 +98,6 @@ else
             Navigation.NavigateTo("/error");
         }
     }
+
+    private void LoginPage() => Navigation.NavigateTo("/login");
 }
