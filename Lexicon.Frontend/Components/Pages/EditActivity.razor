@@ -54,6 +54,7 @@
 	{
 		//Send request to API
 		//map model to activity post dto
+		ActivityModel.Module = new Module();
 		isSuccess = await Services.ActivityService.PutActivityAsync(Id, ActivityModel);	
 	}
 	private void GoToMainPage()

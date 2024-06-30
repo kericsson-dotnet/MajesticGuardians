@@ -54,7 +54,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutModule([FromRoute] int id, [FromBody] ModulePostDto modulePostDto)
+    public async Task<IActionResult> PutModule([FromRoute] int id, [FromBody] Module module)
     {
         if (id <= 0)
         {
@@ -69,10 +69,18 @@ public class ModulesController : ControllerBase
         try
         {
             var existingModule = await _UoW.Modules.GetAsync(id);
+            ModulePostDto modulePostDto = new ModulePostDto
+            {
+                Name = module.Name,
+                Description = module.Description,
+                StartDate = module.StartDate,
+                EndDate = module.EndDate,
+                CourseId = existingModule.CourseId             
+            };
             _mapper.Map(modulePostDto, existingModule);
-
             _UoW.Modules.Update(existingModule);
             await _UoW.SaveAsync();
+            return NoContent();
         }
         catch (DbUpdateConcurrencyException)
         {

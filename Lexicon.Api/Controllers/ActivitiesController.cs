@@ -73,8 +73,11 @@ public class ActivitiesController : ControllerBase
 			{
 				Type = existingActivity.Type,
 				Name = activity.Name,
+                Description = existingActivity.Description,
 				StartDate = activity.StartDate,
-				EndDate = activity.EndDate
+				EndDate = activity.EndDate,
+                ModuleId = existingActivity.ModuleId,
+               
 			};
 			_mapper.Map(activityPostDto, existingActivity);
 
