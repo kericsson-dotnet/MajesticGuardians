@@ -18,8 +18,8 @@ else if (currentUser != null)
         <h3 class="mt-3">Details</h3>
 
         <div class="mt-2">
-            <NavLink class="btn btn-primary" href="/add_user_toCourse">Add User</NavLink>
-            <NavLink class="btn btn-secondary" href="/course_dashboard">Return back</NavLink>
+            <NavLink class="btn btn-primary" href="@AddUserToCourseUrl()">Add User</NavLink>
+            <NavLink class="btn btn-secondary" href="@CourseDashboardUrl()">Return back</NavLink>
         </div>
 
         <div class="row">
@@ -107,6 +107,7 @@ else
         try
         {
             currentUser = await Services.UserService.GetCurrentUserAsync();
+
             if (currentUser == null)
             {
                 NavigateToHome();
@@ -114,6 +115,7 @@ else
             }
 
             Course = await Services.CourseService.GetCourseAsync(CourseId);
+
             if (Course == null)
             {
                 Navigation.NavigateTo("/course_dashboard", true);
@@ -121,6 +123,7 @@ else
             }
 
             var users = await Services.CourseService.GetAllUsersInCourse(CourseId);
+
             if (users.Any())
             {
                 var userTasks = users.Select(user => Services.UserService.GetUserAsync(user.UserId));
@@ -145,4 +148,8 @@ else
     {
         Navigation.NavigateTo("/", true);
     }
+
+    private string AddUserToCourseUrl() => $"/addUserToCourse/{CourseId}";
+    private string CourseDashboardUrl() => "/course_dashboard";
+
 }

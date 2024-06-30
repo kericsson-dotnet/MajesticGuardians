@@ -1,0 +1,79 @@
+﻿@page "/addUserToCourse/{CourseId:int}"
+@inject IUnitOfWork Services
+@inject NavigationManager Navigation
+
+<h3>AddUserToCourse</h3>
+
+
+<div class="mt-2">
+    <NavLink class="btn btn-secondary" href="@CourseDetailsUrl()">Return back</NavLink>
+</div>
+
+
+<div class="row">
+    @if (Users == null || !Users.Any())
+    {
+        <p>No available user</p>
+    }
+
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Role</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Users)
+                {
+                    <tr>
+                        <td>@user.UserId</td>
+                        <td>@user.Email</td>
+                        <td>@user.Role</td>
+                        <td>
+                            <button class="btn btn-primary">Add</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+
+@code {
+    [Parameter]
+    public int CourseId { get; set; }
+
+    private bool isLoading = true;
+
+
+    public List<User> Users { get; set; } = new List<User>();
+
+
+    protected async override Task OnParametersSetAsync()
+    {
+        var users = await Services.CourseService.GetAllUsersInCourse(CourseId);
+
+        if (users.Any())
+        {
+            var userTasks = users.Select(user => Services.UserService.GetUserAsync(user.UserId));
+            var allUsersWithDetails = await Task.WhenAll(userTasks);
+
+            Users = allUsersWithDetails.Where(user => user != null).ToList();
+        }
+    }
+
+    private string CourseDetailsUrl() => $"/course_details/{CourseId}";
+
+
+    private void NavigateToHome()
+    {
+        Navigation.NavigateTo("/", true);
+    }
+
+}
