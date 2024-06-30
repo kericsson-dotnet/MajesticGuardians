@@ -37,9 +37,11 @@ public class Mappings : Profile
                 .ForMember(dest => dest.Modules, opt => opt.Ignore());  
             CreateMap<Course, CoursePostDto>();
             CreateMap<CoursePostDto, Course>();
+            CreateMap<Course, CourseWithIdDto>();
+            CreateMap<CourseWithIdDto, Course>();
 
-            // Activity mapper
-            CreateMap<ActivityDto, Activity>();
+        // Activity mapper
+        CreateMap<ActivityDto, Activity>();
             CreateMap<Activity, ActivityDto>();
             CreateMap<Activity, ActivityPostDto>();
             CreateMap<ActivityPostDto, Activity>();
