@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lexicon.Api.Repositories;
 
-public class CourseRepository : CrudRepository<Course> ,ICourseRepository
+public class CourseRepository : CrudRepository<Course>, ICourseRepository
 {
     public CourseRepository(DbContext context) : base(context)
     {
@@ -12,7 +12,8 @@ public class CourseRepository : CrudRepository<Course> ,ICourseRepository
 
     public virtual async Task<IEnumerable<Course>> GetAllAsync()
     {
-        return await _context.Set<Course>()
+        return await _context
+            .Set<Course>()
             .Include(c => c.Users)
             .Include(c => c.Modules)
             .ToListAsync();
@@ -22,7 +23,8 @@ public class CourseRepository : CrudRepository<Course> ,ICourseRepository
     {
         if (id is int courseId)
         {
-            return await _context.Set<Course>()
+            return await _context
+                .Set<Course>()
                 .Include(c => c.Users)
                 .Include(c => c.Modules)
                 .FirstOrDefaultAsync(c => c.CourseId == courseId) ?? throw new InvalidOperationException($"{typeof(Course).Name} Id {id} not found.");
@@ -37,7 +39,8 @@ public class CourseRepository : CrudRepository<Course> ,ICourseRepository
         {
             if (user.Role == UserRole.Student)
             {
-                var isUserInAnyCourse = _context.Set<Course>()
+                var isUserInAnyCourse = _context
+                    .Set<Course>()
                     .Include(c => c.Users)
                     .Any(c => c.Users.Any(u => u.UserId == user.UserId));
 
@@ -47,7 +50,8 @@ public class CourseRepository : CrudRepository<Course> ,ICourseRepository
                 }
             }
 
-            var course = _context.Set<Course>()
+            var course = _context
+                .Set<Course>()
                 .Include(c => c.Users)
                 .FirstOrDefault(c => c.CourseId == courseId);
 
@@ -76,9 +80,11 @@ public class CourseRepository : CrudRepository<Course> ,ICourseRepository
             throw new Exception($"An unexpected error occurred: {ex.Message}");
         }
     }
+    
     public void RemoveUserFromCourse(int courseId, int userId)
     {
-        var course = _context.Set<Course>()
+        var course = _context
+            .Set<Course>()
             .Include(c => c.Users)
             .FirstOrDefault(c => c.CourseId == courseId);
 
@@ -99,7 +105,8 @@ public class CourseRepository : CrudRepository<Course> ,ICourseRepository
 
     public async Task<IEnumerable<User>> GetAllUsersInCourse(int courseId)
     {
-        var course = await _context.Set<Course>()
+        var course = await _context
+            .Set<Course>()
             .Include(c => c.Users)
             .FirstOrDefaultAsync(c => c.CourseId == courseId);
 
@@ -144,11 +151,21 @@ public class CourseRepository : CrudRepository<Course> ,ICourseRepository
             .Select(u => u.UserId)
             .ToListAsync();
 
-        var availableTeachers = await _context                                            .Set<User>()
+        var availableTeachers = await _context     
+            .Set<User>()
             .Where(u => u.Role == UserRole.Teacher && !teacherIdsInCourse.Contains(u.UserId))
             .ToListAsync();
 
         return availableTeachers.Concat(availableStudents);
 
+    }
+
+    public async Task<IEnumerable<Course>> GetAllUserCourses(int userId)
+    {
+        return await _context
+                .Set<Course>()
+                .Include(c => c.Users)
+                .Where(c => c.Users.Any(u => u.UserId == userId))
+                .ToListAsync();
     }
 }

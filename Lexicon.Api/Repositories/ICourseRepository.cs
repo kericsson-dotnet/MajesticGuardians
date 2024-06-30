@@ -12,4 +12,6 @@ public interface ICourseRepository : ICrudRepository<Course>
 
     Task<IEnumerable<User>> GetAllAvailableUserForCourse(int courseId);
 
+    Task<IEnumerable<Course>> GetAllUserCourses(int userId);
+
 }
