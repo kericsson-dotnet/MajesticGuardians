@@ -73,5 +73,6 @@ public class UserService : IUserService
             response.EnsureSuccessStatusCode();
         }
 
+    public async Task DeleteUserAsync(int id) => await _httpClient.DeleteAsync($"api/users/{id}");
 
 }
