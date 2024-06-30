@@ -36,7 +36,12 @@
                         <label class="form-label" for="password">Lösenord</label>
                         <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" />
                     </div>
-                    <button type="submit" class="btn btn-primary">Logga in</button>
+
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-primary">Logga in</button>
+                        <button @onclick="RegisterPage" class="btn btn-secondary">Register</button>
+                    </div>
+                   
                 </EditForm>
                 @if (error != null)
                 {
@@ -66,6 +71,8 @@
             StateHasChanged();
         }
     }
+
+    private void RegisterPage() => Navigation.NavigateTo("/register");
 
     private async Task HandleSubmit()
     {
