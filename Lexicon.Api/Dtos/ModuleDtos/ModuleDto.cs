@@ -1,5 +1,4 @@
-﻿using Lexicon.Api.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Lexicon.Api.Dtos.ModuleDtos;
 

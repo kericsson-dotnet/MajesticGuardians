@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Lexicon.Api.Entities;
 using Lexicon.Api.Data;
 
