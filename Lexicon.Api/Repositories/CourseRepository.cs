@@ -78,5 +78,46 @@ namespace Lexicon.Api.Repositories
 
             return course.Users;
         }
+
+        public async Task<IEnumerable<User>> GetAllAvailableUserForCourse(int courseId)
+        {
+
+            var studentIdsInCourses = await _context
+                                                .Set<Course>()
+                                                .SelectMany(c => c.Users)
+                                                .Where(u => u.Role == UserRole.Student)
+                                                .Select(u => u.UserId)
+                                                .ToListAsync();
+
+            var availableStudents = await _context
+                                            .Set<User>()
+                                            .Where(u => u.Role == UserRole.Student && !studentIdsInCourses.Contains(u.UserId))
+                                            .ToListAsync();
+
+
+            var course = await _context.Set<Course>()
+                                       .Include(c => c.Users)
+                                       .FirstOrDefaultAsync(c => c.CourseId == courseId);
+
+            if(course == null)
+            {
+                throw new InvalidOperationException($"Course with id {courseId} not found");
+            }
+
+            var teacherIdsInCourse = await _context
+                                            .Set<Course>()
+                                            .Where(c => c.CourseId == courseId)
+                                            .SelectMany(c => c.Users)
+                                            .Where(u => u.Role == UserRole.Teacher)
+                                            .Select(u => u.UserId)
+                                            .ToListAsync();
+
+            var availableTeachers = await _context                                            .Set<User>()
+                                            .Where(u => u.Role == UserRole.Teacher && !teacherIdsInCourse.Contains(u.UserId))
+                                            .ToListAsync();
+
+            return availableTeachers.Concat(availableStudents);
+
+        }
     }
 }

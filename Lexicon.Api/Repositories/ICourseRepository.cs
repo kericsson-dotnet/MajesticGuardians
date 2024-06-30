@@ -9,5 +9,8 @@ namespace Lexicon.Api.Repositories
         void RemoveUserFromCourse(int courseId, int userId);
 
         Task<IEnumerable<User>> GetAllUsersInCourse(int courseId);
+
+        Task<IEnumerable<User>> GetAllAvailableUserForCourse(int courseId);
+
     }
 }
