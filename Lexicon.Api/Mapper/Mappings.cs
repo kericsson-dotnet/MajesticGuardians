@@ -45,8 +45,10 @@ public class Mappings : Profile
             CreateMap<ActivityPostDto, Activity>();
 
             // Module mapper
-            CreateMap<ModuleDto, Module>();
-            CreateMap<Module, ModuleDto>();
+            CreateMap<Module, ModuleDto>()
+                .ForMember(dest => dest.ActivityIds, opt => opt.MapFrom(src => src.Activities.Select(a => a.ActivityId)));
+            CreateMap<ModuleDto, Module>()
+                .ForMember(dest => dest.Activities, opt => opt.Ignore());
             CreateMap<Module, ModulePostDto>();
             CreateMap<ModulePostDto, Module>();
         }
