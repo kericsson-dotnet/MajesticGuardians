@@ -26,7 +26,7 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             for (var i = 0; i < 4; i++)
             {
                 var module = new Faker<Module>("sv")
-                    .RuleFor(m => m.Course, f => course)
+                    .RuleFor(m => m.Course, _ => course)
                     .RuleFor(m => m.Name, f => f.Commerce.ProductName())
                     .RuleFor(m => m.Description, f => f.Commerce.ProductDescription())
                     .RuleFor(m => m.StartDate, f => f.Date.Past())
@@ -47,7 +47,7 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             for (var i = 0; i < 4; i++)
             {
                 var activity = new Faker<Activity>("sv")
-                    .RuleFor(a => a.Module, f => module)
+                    .RuleFor(a => a.Module, _ => module)
                     .RuleFor(a => a.Name, f => f.Name.JobTitle())
                     .RuleFor(a => a.Description, f => f.Name.JobDescriptor())
                     .RuleFor(a => a.Type, f => f.PickRandom<ActivityType>())
@@ -69,11 +69,22 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
         {
             Name = ".net 2024",
             Description = faker.Commerce.ProductDescription(),
-            Users = faker.PickRandom(await unitOfWork.Users.GetAllAsync(), 5).ToList(),
+            Users = faker.PickRandom(await unitOfWork.Users.GetAllAsync(), 10).ToList(),
             StartDate = faker.Date.Past(),
             EndDate = faker.Date.Future(),
             // Documents = null
         });
+        
+        unitOfWork.Courses.Add(new Course
+        {
+            Name = "Python 2024",
+            Description = faker.Commerce.ProductDescription(),
+            Users = faker.PickRandom(await unitOfWork.Users.GetAllAsync(), 10).ToList(),
+            StartDate = faker.Date.Past(),
+            EndDate = faker.Date.Future(),
+            // Documents = null
+        });
+        
         await unitOfWork.SaveAsync();
     }
 
@@ -105,21 +116,21 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
                 .RuleFor(u => u.LastName, f => f.Person.LastName)
                 .RuleFor(u => u.Email, f => f.Person.Email)
                 .RuleFor(u => u.Password, f => f.Internet.Password())
-                .RuleFor(u => u.Role, f => UserRole.Teacher)
+                .RuleFor(u => u.Role, _ => UserRole.Teacher)
                 .Generate();
 
             unitOfWork.Users.Add(user);
         }
 
         // Create 20 random students
-        for (int i = 0; i < 10; i++)
+        for (var i = 0; i < 20; i++)
         {
             var user = new Faker<User>(locale: "sv")
                 .RuleFor(u => u.FirstName, f => f.Person.FirstName)
                 .RuleFor(u => u.LastName, f => f.Person.LastName)
                 .RuleFor(u => u.Email, f => f.Person.Email)
                 .RuleFor(u => u.Password, f => f.Internet.Password())
-                .RuleFor(u => u.Role, f => UserRole.Student)
+                .RuleFor(u => u.Role, _ => UserRole.Student)
                 .Generate();
 
             unitOfWork.Users.Add(user);
