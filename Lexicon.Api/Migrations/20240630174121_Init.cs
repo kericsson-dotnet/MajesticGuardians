@@ -123,12 +123,12 @@ namespace Lexicon.Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AddedByUserId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TimeAdded = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModuleId = table.Column<int>(type: "int", nullable: true),
                     ActivityId = table.Column<int>(type: "int", nullable: true),
-                    CourseId = table.Column<int>(type: "int", nullable: true),
-                    ModuleId = table.Column<int>(type: "int", nullable: true)
+                    CourseId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -149,10 +149,11 @@ namespace Lexicon.Api.Migrations
                         principalTable: "Modules",
                         principalColumn: "ModuleId");
                     table.ForeignKey(
-                        name: "FK_Documents_Users_AddedByUserId",
-                        column: x => x.AddedByUserId,
+                        name: "FK_Documents_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "UserId");
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -171,11 +172,6 @@ namespace Lexicon.Api.Migrations
                 column: "ActivityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Documents_AddedByUserId",
-                table: "Documents",
-                column: "AddedByUserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Documents_CourseId",
                 table: "Documents",
                 column: "CourseId");
@@ -184,6 +180,11 @@ namespace Lexicon.Api.Migrations
                 name: "IX_Documents_ModuleId",
                 table: "Documents",
                 column: "ModuleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Documents_UserId",
+                table: "Documents",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Modules_CourseId",

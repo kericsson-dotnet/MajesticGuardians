@@ -110,9 +110,6 @@ namespace Lexicon.Api.Migrations
                     b.Property<int?>("ActivityId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("AddedByUserId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("CourseId")
                         .HasColumnType("int");
 
@@ -134,15 +131,18 @@ namespace Lexicon.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("DocumentId");
 
                     b.HasIndex("ActivityId");
 
-                    b.HasIndex("AddedByUserId");
-
                     b.HasIndex("CourseId");
 
                     b.HasIndex("ModuleId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Documents");
                 });
@@ -243,19 +243,23 @@ namespace Lexicon.Api.Migrations
                         .WithMany("Documents")
                         .HasForeignKey("ActivityId");
 
-                    b.HasOne("Lexicon.Api.Entities.User", "AddedBy")
-                        .WithMany("Documents")
-                        .HasForeignKey("AddedByUserId");
-
                     b.HasOne("Lexicon.Api.Entities.Course", null)
                         .WithMany("Documents")
                         .HasForeignKey("CourseId");
 
-                    b.HasOne("Lexicon.Api.Entities.Module", null)
+                    b.HasOne("Lexicon.Api.Entities.Module", "Module")
                         .WithMany("Documents")
                         .HasForeignKey("ModuleId");
 
+                    b.HasOne("Lexicon.Api.Entities.User", "AddedBy")
+                        .WithMany("Documents")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("AddedBy");
+
+                    b.Navigation("Module");
                 });
 
             modelBuilder.Entity("Lexicon.Api.Entities.Module", b =>
