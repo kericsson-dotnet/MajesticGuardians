@@ -23,4 +23,5 @@ public class ActivityPostDto
     public DateTime EndDate { get; set; }
 
     public List<int> DocumentIds { get; set; } = [];
+    public int ModuleId { get; set; }
 }
