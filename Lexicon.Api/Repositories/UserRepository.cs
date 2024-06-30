@@ -1,33 +1,19 @@
-﻿using Lexicon.Api.Data;
-using Lexicon.Api.Entities;
+﻿using Lexicon.Api.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lexicon.Api.Repositories;
 
-public class UserRepository:IUserRepository
+public class UserRepository(DbContext context) : CrudRepository<User>(context), IUserRepository
 
 {
-    private readonly LexiconLmsContext _dbContext;
-
-    public UserRepository(LexiconLmsContext dbContext)
-    {
-            _dbContext = dbContext;
-        }
-
-
-
     public async Task<User?> ValidateCredentialsAsync(string email, string password)
     {
-    
-            var normalizedEmail = email.ToLowerInvariant();
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == normalizedEmail);
+        var normalizedEmail = email.ToLowerInvariant();
+        var user = await _context.Set<User>().FirstOrDefaultAsync(u => u.Email.ToLower() == normalizedEmail);
 
-      
-            if (user == null || user.Password != password)
-                return null;
+        if (user == null || user.Password != password)
+            return null;
 
-            return user;
-        }
-
-
+        return user;
+    }
 }
