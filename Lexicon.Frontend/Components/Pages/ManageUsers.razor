@@ -1,0 +1,90 @@
+﻿@page "/manage_users"
+@rendermode InteractiveServer
+@inject IUnitOfWork services
+@inject NavigationManager Navigation
+
+<SectionContent SectionName="page-title">Hantera användare</SectionContent>
+
+<section class="page-section">
+    <div class="d-flex justify-content-between mb-4">
+        <h2 class="h4">Alla användare</h2>
+        <a class="btn btn-primary btn" href="/register">
+            <i class="bi bi-plus-lg"></i>
+            Registrerar användare
+        </a>
+    </div>
+    <div class="card p-3">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Roll</th>
+                    <th scope="col">Förnamn</th>
+                    <th scope="col">Efternamn</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Hantera</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (users == null)
+                {
+                    <p>Laddar användare...</p>
+                }
+                else if (users.Count == 0)
+                {
+                    <p>Inga användare hittades.</p>
+                }
+                else
+                {
+                    foreach (var user in users)
+                    {
+                        <tr>
+                            <td>@(user.Role == Models.UserRole.Teacher ? "Lärare" : "Elev")</td>
+                            <td>@user.FirstName</td>
+                            <td>@user.LastName</td>
+                            <td>@user.Email</td>
+                            <td>
+                                <div class="nav-item dropdown">
+                                    <a class="nav-link align-items-center gap-1" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu w-100">
+                                        <li><a class="dropdown-item p-2" href="edit_user/@user.UserId"><i class="bi bi-pen me-2"></i> Ändra</a></li>
+                                        <li><button class="dropdown-item p-2" @onclick="() => DeleteUser(user.UserId)"><i class="bi bi-trash me-2"></i> Radera</button></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+
+@code {
+    private List<User>? users;
+    private User? currentUser;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            currentUser = await services.UserService.GetCurrentUserAsync();
+
+            if (currentUser == null || currentUser.Role != Models.UserRole.Teacher)
+            {
+                Navigation.NavigateTo("/");
+                return;
+            }
+
+            users = (await services.UserService.GetUsersAsync()).ToList();
+
+            StateHasChanged();
+        }
+    }
+
+    private void DeleteUser(int id)
+    {
+        // TODO: Call API to delete user with id
+    }
+}
