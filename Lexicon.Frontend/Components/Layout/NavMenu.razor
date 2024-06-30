@@ -26,11 +26,11 @@
                         <li><a class="dropdown-item" @onclick="Logout" href=""><i class="bi bi-box-arrow-left"></i> Logga ut</a></li>
                     </ul>
                 </div>
-                @if (user.Role == UserRole.Student && course != null)
+                @if (user.Role == UserRole.Student)
                 {
                     <div class="px-2 py-2 fw-medium vstack gap-1">
                         <span class="text-secondary" style="font-size: 14px;">Kurs</span>
-                        <span class="fs-6">@course.Name</span>
+                        <span class="fs-6">@(course?.Name ?? "Ej inskriven i kurs")</span>
                     </div>
                 }
             </div>
