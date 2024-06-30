@@ -15,8 +15,31 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             await GenerateCoursesAsync();
             await GenerateModulesAsync();
             await GenerateActivitiesAsync();
+            await GenerateDocumentsAsync();
             await AddExampleUsersToCoursesAsync();
         }
+    }
+
+    private async Task GenerateDocumentsAsync()
+    {
+        var exampleTeacher = await unitOfWork.Users.GetAsync(1);
+        foreach (var module in await unitOfWork.Modules.GetAllAsync())
+        {
+            for (var i = 0; i < 4; i++)
+            {
+                var document = new Faker<Document>("sv")
+                    .RuleFor(d => d.Name, f => f.Hacker.Noun())
+                    .RuleFor(d => d.Description, f => f.Hacker.Phrase())
+                    .RuleFor(d => d.AddedBy, _ => exampleTeacher)
+                    .RuleFor(d => d.Module, _ => module)
+                    .RuleFor(d => d.Url, f => f.Internet.Url())
+                    .RuleFor(d => d.TimeAdded, f => f.Date.Past())
+                    .Generate();
+                unitOfWork.Documents.Add(document);
+            }
+        }
+
+        await unitOfWork.SaveAsync();
     }
 
     private async Task GenerateModulesAsync()
@@ -74,7 +97,7 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             EndDate = faker.Date.Future(),
             // Documents = null
         });
-        
+
         unitOfWork.Courses.Add(new Course
         {
             Name = "Python 2024",
@@ -84,7 +107,7 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             EndDate = faker.Date.Future(),
             // Documents = null
         });
-        
+
         await unitOfWork.SaveAsync();
     }
 
