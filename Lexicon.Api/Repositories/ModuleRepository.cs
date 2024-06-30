@@ -9,6 +9,7 @@ public class ModuleRepository(DbContext context) : CrudRepository<Module>(contex
     {
         return await _context.Set<Module>()
             .Include(m => m.Activities)
+            .Include(m => m.Documents)
             .ToListAsync();
     }
 
