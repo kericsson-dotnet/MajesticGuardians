@@ -8,12 +8,12 @@
 
 @if (isLoading)
 {
-    <p>Loading...</p>
+    <p>Läser in...</p>
 }
 
 else if (loadingError != null)
 {
-    <p>Error loading course: @loadingError</p>
+    <p> Det gick inte att läsa in kursen: @loadingError</p>
 }
 
 else if(currentUser != null)
@@ -28,24 +28,24 @@ else if(currentUser != null)
                 <ValidationSummary />
 
                 <div class="form-group">
-                    <label for="name">Name</label>
+                    <label for="name">Namn</label>
                     <InputText id="name" class="form-control" @bind-Value="Course.Name" />
                 </div>
                 <div class="form-group">
-                    <label for="description">Description</label>
+                    <label for="description">Beskrivning</label>
                     <InputText id="description" class="form-control" @bind-Value="Course.Description" />
                 </div>
                 <div class="form-group">
-                    <label for="startDate">Start Date</label>
+                    <label for="startDate">Start Datum</label>
                     <InputDate id="startDate" class="form-control" @bind-Value="Course.StartDate" />
                 </div>
                 <div class="form-group">
-                    <label for="password">End Date</label>
+                    <label for="password">Slut Datum</label>
                     <InputDate id="endDate" class="form-control" @bind-Value="Course.EndDate" />
                 </div>
 
                 <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">@((CourseId == null) ? "Save" : "Update")</button>
+                    <button type="submit" class="btn btn-primary">@((CourseId == null) ? "Spara" : "Updatera")</button>
                     <a href="/course_dashboard" role="button" class="btn btn-secondary">Return back</a>
                 </div>
 
@@ -108,7 +108,7 @@ else if(currentUser != null)
         {
             try
             {
-                titleText = "Edit Course";
+                titleText = "Uppdatera Kursen";
                 Course = await Services.CourseService.GetCourseAsync(CourseId.Value);
 
                 if (Course == null)
@@ -126,7 +126,7 @@ else if(currentUser != null)
 
         else
         {
-            titleText = "Add Course";
+            titleText = "Lägg till kurs";
 
             Course = new Course()
             {

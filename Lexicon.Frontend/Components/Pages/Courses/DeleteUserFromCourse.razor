@@ -12,7 +12,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <h5 class="modal-title flex-grow-1 text-start">Are you sure?</h5>
+                    <h5 class="modal-title flex-grow-1 text-start">Är du säker?</h5>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="@DeleteConfirm">
                         Delete
@@ -36,7 +36,7 @@
 
     protected override void OnParametersSet()
     {
-        title = $"Delete {User?.FirstName} {User?.LastName}?";
+        title = $"Ta bort användare: {User?.FirstName} {User?.LastName}?";
     }
 
     public static string GetModalId(User user)

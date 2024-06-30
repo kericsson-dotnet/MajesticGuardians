@@ -5,16 +5,17 @@
 
 @if (isLoading)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Läser in...</em></p>
 }
+
 else if (currentUser != null)
 {
     @if (currentUser.Role.ToString().Equals("Teacher") && currentUser.UserId > 0)
     {
-        <h3>AddUserToCourse</h3>
+        <h3>Lägg användare till kursen</h3>
 
         <div class="mt-2">
-            <NavLink class="btn btn-secondary" href="@CourseDetailsUrl()">Return back</NavLink>
+            <NavLink class="btn btn-secondary" href="@CourseDetailsUrl()">Återvända tillbaka</NavLink>
         </div>
 
         <div class="row">
@@ -28,8 +29,8 @@ else if (currentUser != null)
                     <thead>
                         <tr>
                             <th scope="col">Id</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Role</th>
+                            <th scope="col">Epost</th>
+                            <th scope="col">Roll</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -41,7 +42,7 @@ else if (currentUser != null)
                                 <td>@user.Email</td>
                                 <td>@user.Role</td>
                                 <td>
-                                    <button @onclick="() => HandleSubmit(user.UserId)" class="btn btn-primary">Add</button>
+                                    <button @onclick="() => HandleSubmit(user.UserId)" class="btn btn-primary">Lägg till</button>
                                 </td>
                             </tr>
                         }

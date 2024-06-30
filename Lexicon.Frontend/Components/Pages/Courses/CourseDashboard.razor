@@ -8,7 +8,7 @@
 
 @if (isLoading)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Läser in...</em></p>
 }
 
 else if (currentUser != null)
@@ -16,8 +16,8 @@ else if (currentUser != null)
     if (currentUser.Role.ToString().Equals("Teacher") && currentUser.UserId > 0)
     {
         <div class="mt-2">
-            <NavLink class="btn btn-primary" href="/edit_course">Add new course</NavLink>
-            <NavLink class="btn btn-secondary" href="/dashboard">Return to dashboard</NavLink>
+            <NavLink class="btn btn-primary" href="/edit_course">Lägg ny kurs</NavLink>
+            <NavLink class="btn btn-secondary" href="/dashboard">Återgå till instrumentpanelen</NavLink>
         </div>
 
         if (courses.Any())
@@ -30,10 +30,10 @@ else if (currentUser != null)
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>CourseId</th>
-                                    <th>Name</th>
-                                    <th>Start Date</th>
-                                    <th>End Date</th>
+                                    <th>Kurs Id</th>
+                                    <th>Namn</th>
+                                    <th>Start Datum</th>
+                                    <th>Slut Datum</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -78,7 +78,7 @@ else if (currentUser != null)
     
         else
         {
-            <h3>There are no courses in the system</h3>
+            <h3>Det finns inga kurser i systemet</h3>
         }
     }
 
