@@ -1,9 +1,5 @@
 ﻿using Lexicon.Api.Models;
 using Lexicon.Frontend.Services;
-using Microsoft.JSInterop;
-using System;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 
 namespace Lexicon.Frontend.ServicesImp;
 

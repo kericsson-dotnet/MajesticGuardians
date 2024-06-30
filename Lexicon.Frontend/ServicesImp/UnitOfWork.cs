@@ -1,5 +1,4 @@
 ﻿using Lexicon.Frontend.Services;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.JSInterop;
 
 namespace Lexicon.Frontend.ServicesImp;

@@ -1,14 +1,6 @@
 using Lexicon.Frontend.Components;
 using Lexicon.Frontend.Services;
 using Lexicon.Frontend.ServicesImp;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Net.Http;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 

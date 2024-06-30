@@ -1,8 +1,6 @@
 ﻿using Lexicon.Frontend.Models;
 using Lexicon.Frontend.Services;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Json;
 
 namespace Lexicon.Frontend.ServicesImp;
 
