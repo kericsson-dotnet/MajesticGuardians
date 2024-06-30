@@ -253,7 +253,7 @@ namespace Lexicon.Api.Migrations
             modelBuilder.Entity("Lexicon.Api.Entities.Module", b =>
                 {
                     b.HasOne("Lexicon.Api.Entities.Course", "Course")
-                        .WithMany()
+                        .WithMany("Modules")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -269,6 +269,8 @@ namespace Lexicon.Api.Migrations
             modelBuilder.Entity("Lexicon.Api.Entities.Course", b =>
                 {
                     b.Navigation("Documents");
+
+                    b.Navigation("Modules");
                 });
 
             modelBuilder.Entity("Lexicon.Api.Entities.Module", b =>

@@ -29,10 +29,12 @@ public class Mappings : Profile
             // Course mapper
             CreateMap<Course, CourseDto>()
                 .ForMember(dest => dest.UserIds, opt => opt.MapFrom(src => src.Users.Select(u => u.UserId)))
-                .ForMember(dest => dest.DocumentIds, opt => opt.MapFrom(src => src.Documents.Select(d => d.DocumentId)));
+                .ForMember(dest => dest.DocumentIds, opt => opt.MapFrom(src => src.Documents.Select(d => d.DocumentId)))
+                .ForMember(dest => dest.ModuleIds, opt => opt.MapFrom(src => src.Modules.Select(d => d.ModuleId)));
             CreateMap<CourseDto, Course>()
-                .ForMember(dest => dest.Users, opt => opt.Ignore())  
-                .ForMember(dest => dest.Documents, opt => opt.Ignore());  
+                .ForMember(dest => dest.Users, opt => opt.Ignore())
+                .ForMember(dest => dest.Documents, opt => opt.Ignore())
+                .ForMember(dest => dest.Modules, opt => opt.Ignore());  
             CreateMap<Course, CoursePostDto>();
             CreateMap<CoursePostDto, Course>();
 
