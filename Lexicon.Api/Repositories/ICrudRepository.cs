@@ -7,5 +7,6 @@ public interface ICrudRepository<T> where T : class
     void Add(T obj);
     void Update(T obj);
     void Delete(object id);
+    Task<int> CountAsync();
 }
 

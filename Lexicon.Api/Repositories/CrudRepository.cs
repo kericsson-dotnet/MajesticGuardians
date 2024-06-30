@@ -39,5 +39,10 @@ public class CrudRepository<T> : ICrudRepository<T> where T : class
         T existing = DbSet.Find(id) ?? throw new InvalidOperationException($"{typeof(T).Name}Id {id} not found.");
         DbSet.Remove(existing);
     }
+
+    public async Task<int> CountAsync()
+    {
+        return await DbSet.CountAsync();
+    }
 }
 
