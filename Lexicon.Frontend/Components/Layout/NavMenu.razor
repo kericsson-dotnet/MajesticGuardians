@@ -1,5 +1,5 @@
 ﻿@rendermode InteractiveServer
-@inject IUnitOfWork services
+@inject IUnitOfWork Services
 @inject NavigationManager navigation
 
 <div>
@@ -12,21 +12,22 @@
         </div>
     </div>
 
-     @if (user != null) {
+    @if (currentUser != null)
+    {
         <div class="collapse navbar-collapse" id="navbarScroll">
             <div class="user vstack gap-0">
-                <div class="role">@(user.Role == UserRole.Teacher ? "Lärare" : "Elev")</div>
+                <div class="role">@(currentUser.Role == UserRole.Teacher ? "Lärare" : "Elev")</div>
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle align-items-center gap-1" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
                         <i class="bi bi-person-circle"></i>
-                         <span>@($"{user.FirstName} {user.LastName}")</span>
+                        <span>@($"{currentUser.FirstName} {currentUser.LastName}")</span>
                     </a>
                     <ul class="dropdown-menu w-100">
-                        <li><a class="dropdown-item" href="edit_user/@user.UserId"><i class="bi bi-pen"></i> Ändra uppgifter</a></li>
+                        <li><a class="dropdown-item" href="edit_user/@currentUser.UserId"><i class="bi bi-pen"></i> Ändra uppgifter</a></li>
                         <li><a class="dropdown-item" @onclick="Logout" href=""><i class="bi bi-box-arrow-left"></i> Logga ut</a></li>
                     </ul>
                 </div>
-                @if (user.Role == UserRole.Student)
+                @if (currentUser.Role == UserRole.Student)
                 {
                     <div class="px-2 py-2 fw-medium vstack gap-1">
                         <span class="text-secondary" style="font-size: 14px;">Kurs</span>
@@ -35,7 +36,7 @@
                 }
             </div>
             <nav class="flex-column">
-                @if (user.Role == UserRole.Teacher)
+                @if (currentUser.Role == UserRole.Teacher)
                 {
                     <li class="nav-item px-2">
                         <NavLink class="nav-link" href="dashboard" Match="NavLinkMatch.All">
@@ -73,15 +74,24 @@
                             <i class="bi bi-archive"></i> Mina uppladdningar
                         </NavLink>
                     </li>
+
+                      
                     <li class="nav-item px-2">
-                        <!-- TODO: Navigera till Elever sida -->
-                        <NavLink class="nav-link" href="#">
-                            <i class="bi bi-people"></i> Kursdeltagare
+                        <NavLink class="nav-link" href="file-upload">
+                            <i class="bi bi-archive"></i> Mina uppladdningar
                         </NavLink>
                     </li>
-                        <li class="nav-item px-2">
-                        <!-- TODO: Navigera till Lärare sida -->
-                        <NavLink class="nav-link" href="#">
+
+
+                    <li class="nav-item px-2">
+                        <NavLink class="nav-link" href="@($"course_details/{course.CourseId}")">
+                            <i class="bi bi-people"></i> Kurs deltagare
+                        </NavLink>
+                    </li>
+
+
+                    <li class="nav-item px-2">
+                        <NavLink class="nav-link" href="file-upload">
                             <i class="bi bi-people"></i> Lärare
                         </NavLink>
                     </li>
@@ -92,24 +102,35 @@
 </div>
 
 @code {
-    private User? user;
+    private User? currentUser;
     private Course? course;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            user = await services.UserService.GetCurrentUserAsync();
-            if (user == null) return;
-            var courses = await services.CourseService.GetCoursesAsync();
-            course = courses.Find(c => c.UserIds.Contains(user.UserId));
+            currentUser = await Services.UserService.GetCurrentUserAsync();
+            if (currentUser == null) return;
+
+            if (currentUser.Role == Models.UserRole.Student)
+            {
+                var courses = await Services.CourseService.GetAllUsersCourses(currentUser.UserId);
+                course = courses.FirstOrDefault();
+            }
+
+            else
+            {
+                var courses = await Services.CourseService.GetCoursesAsync();
+                course = courses.Find(c => c.UserIds.Contains(currentUser.UserId));
+            }
+
             StateHasChanged();
         }
     }
 
     private async void Logout()
     {
-        await services.AuthService.LogoutAsync();
+        await Services.AuthService.LogoutAsync();
         navigation.NavigateTo("/login");
     }
 }
