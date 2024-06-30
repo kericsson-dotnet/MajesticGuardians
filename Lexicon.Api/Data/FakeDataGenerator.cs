@@ -2,12 +2,12 @@
 using Lexicon.Api.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Lexicon.Api.Data
+namespace Lexicon.Api.Data;
+
+public class FakeDataGenerator
 {
-    public class FakeDataGenerator
+    public static void Initialize(IServiceProvider serviceProvider)
     {
-        public static void Initialize(IServiceProvider serviceProvider)
-        {
             using (var context = new LexiconLmsContext(
                 serviceProvider.GetRequiredService<DbContextOptions<LexiconLmsContext>>()))
             {
@@ -96,5 +96,4 @@ namespace Lexicon.Api.Data
                 context.SaveChanges();
             }
         }
-    }
 }

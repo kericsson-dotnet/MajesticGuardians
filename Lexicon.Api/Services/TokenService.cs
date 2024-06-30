@@ -4,19 +4,19 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Lexicon.Api.Services
-{
-    public class TokenService
-    {
-        private readonly IConfiguration _configuration;
+namespace Lexicon.Api.Services;
 
-        public TokenService(IConfiguration configuration)
-        {
+public class TokenService
+{
+    private readonly IConfiguration _configuration;
+
+    public TokenService(IConfiguration configuration)
+    {
             _configuration = configuration;
         }
 
-        public string GenerateToken(UserDto userDto)
-        {
+    public string GenerateToken(UserDto userDto)
+    {
 
             var claims = new[]
             {
@@ -40,5 +40,4 @@ namespace Lexicon.Api.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-    }
 }

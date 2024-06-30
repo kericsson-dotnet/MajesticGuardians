@@ -1,19 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace Lexicon.Api.Controllers
+namespace Lexicon.Api.Controllers;
+
+[Route("api/[controller]")]
+public class FileController : Controller
 {
-	[Route("api/[controller]")]
-	public class FileController : Controller
+	private readonly IWebHostEnvironment _environment;
+	public FileController(IWebHostEnvironment environment)
 	{
-		private readonly IWebHostEnvironment _environment;
-		public FileController(IWebHostEnvironment environment)
-		{
 			_environment = environment;
 		}
-		[HttpPost("upload")]
-		public async Task<IActionResult> PostFileAsync([FromForm] FileUploadWeb files)
-		{
+	[HttpPost("upload")]
+	public async Task<IActionResult> PostFileAsync([FromForm] FileUploadWeb files)
+	{
 			var uploadPath = Path.Combine(_environment.ContentRootPath, "Uploads");
 			if (!Directory.Exists(uploadPath))
 			{
@@ -36,11 +36,10 @@ namespace Lexicon.Api.Controllers
 				return StatusCode(500, new { Message = $"Upload failed: {ex.Message}" });
 			}
 		}
-	}
-	public class FileUploadWeb()
-	{
-		public string Title { get; set; }
-		public string Description { get; set; }
-		public IFormFileCollection Attachments { get; set; }
-	}
+}
+public class FileUploadWeb()
+{
+	public string Title { get; set; }
+	public string Description { get; set; }
+	public IFormFileCollection Attachments { get; set; }
 }
