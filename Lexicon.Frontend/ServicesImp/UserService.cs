@@ -38,7 +38,7 @@ namespace Lexicon.Frontend.ServicesImp
 
         public async Task<User> GetUserAsync(int id)
         {
-            await AddTokenToRequestHeader();
+            //await AddTokenToRequestHeader(); Tog bort Authorize från API förtillfället
             return await _httpClient.GetFromJsonAsync<User>($"api/users/{id}");
         }
 
