@@ -1,7 +1,8 @@
 ﻿@page "/manage_users"
-@rendermode InteractiveServer
-@inject IUnitOfWork services
+@inject IUnitOfWork Services
 @inject NavigationManager Navigation
+
+@rendermode InteractiveServer
 
 <SectionContent SectionName="page-title">Hantera användare</SectionContent>
 
@@ -25,14 +26,17 @@
                 </tr>
             </thead>
             <tbody>
+                
                 @if (users == null)
                 {
                     <p>Laddar användare...</p>
                 }
+                
                 else if (users.Count == 0)
                 {
                     <p>Inga användare hittades.</p>
                 }
+
                 else
                 {
                     foreach (var user in users)
@@ -49,9 +53,18 @@
                                     </a>
                                     <ul class="dropdown-menu w-100">
                                         <li><a class="dropdown-item p-2" href="edit_user/@user.UserId"><i class="bi bi-pen me-2"></i> Ändra</a></li>
-                                        <li><button class="dropdown-item p-2" @onclick="() => DeleteUser(user.UserId)"><i class="bi bi-trash me-2"></i> Radera</button></li>
+                                        <li>
+                                            <button 
+                                                class="dropdown-item p-2" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="@($"#deleteModal-{user.UserId}")">
+                                                <i class="bi bi-trash-fill me-2"></i>
+                                                <i>Radera</i>
+                                            </button>
+                                        </li>
                                     </ul>
                                 </div>
+                                <DeleteUser User="@user" />
                             </td>
                         </tr>
                     }
@@ -69,7 +82,7 @@
     {
         if (firstRender)
         {
-            currentUser = await services.UserService.GetCurrentUserAsync();
+            currentUser = await Services.UserService.GetCurrentUserAsync();
 
             if (currentUser == null || currentUser.Role != Models.UserRole.Teacher)
             {
@@ -77,14 +90,9 @@
                 return;
             }
 
-            users = (await services.UserService.GetUsersAsync()).ToList();
+            users = (await Services.UserService.GetUsersAsync()).ToList();
 
             StateHasChanged();
         }
-    }
-
-    private void DeleteUser(int id)
-    {
-        // TODO: Call API to delete user with id
     }
 }
