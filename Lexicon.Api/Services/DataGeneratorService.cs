@@ -88,25 +88,38 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
     private async Task GenerateCoursesAsync()
     {
         var faker = new Faker("sv");
-        unitOfWork.Courses.Add(new Course
+        var allUsers = await unitOfWork.Users.GetAllAsync();
+        var availableUsers = new List<User>(allUsers);
+        var courses = new[]
         {
-            Name = ".net 2024",
-            Description = faker.Commerce.ProductDescription(),
-            Users = faker.PickRandom(await unitOfWork.Users.GetAllAsync(), 10).ToList(),
-            StartDate = faker.Date.Past(),
-            EndDate = faker.Date.Future(),
-            // Documents = null
-        });
+            new Course
+            {
+                Name = ".net 2024",
+                Description = faker.Commerce.ProductDescription(),
+                StartDate = faker.Date.Past(),
+                EndDate = faker.Date.Future(),
+                // Documents = null
+            },
+            new Course
+            {
+                Name = "Python 2024",
+                Description = faker.Commerce.ProductDescription(),
+                StartDate = faker.Date.Past(),
+                EndDate = faker.Date.Future(),
+                // Documents = null
+            }
+        };
+        foreach (var course in courses)
+        {
+            var usersToAdd = Math.Min(10, availableUsers.Count);
+            var selectedUsers = faker.PickRandom(availableUsers, usersToAdd).ToList();
+            
+            course.Users = selectedUsers;
+            unitOfWork.Courses.Add(course);
 
-        unitOfWork.Courses.Add(new Course
-        {
-            Name = "Python 2024",
-            Description = faker.Commerce.ProductDescription(),
-            Users = faker.PickRandom(await unitOfWork.Users.GetAllAsync(), 10).ToList(),
-            StartDate = faker.Date.Past(),
-            EndDate = faker.Date.Future(),
-            // Documents = null
-        });
+            // Remove selected users from the available pool
+            availableUsers.RemoveAll(u => selectedUsers.Contains(u));
+        }
 
         await unitOfWork.SaveAsync();
     }
@@ -166,7 +179,8 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
     {
         var exampleTeacher = await unitOfWork.Users.GetAsync(1);
         var exampleStudent = await unitOfWork.Users.GetAsync(2);
-        foreach (var course in await unitOfWork.Courses.GetAllAsync())
+        var courses = await unitOfWork.Courses.GetAllAsync();
+        foreach (var course in courses)
         {
             if (course.Users.All(u => u.UserId != exampleTeacher.UserId))
             {
