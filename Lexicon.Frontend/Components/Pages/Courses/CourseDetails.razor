@@ -7,10 +7,12 @@
 {
     <p><em>Loading...</em></p>
 }
+
 else if (Course == null)
 {
     <p><em>Course not available</em></p>
 }
+
 else if (currentUser != null)
 {
     if (currentUser.Role.ToString().Equals("Teacher") && currentUser.UserId > 0)
@@ -82,15 +84,13 @@ else if (currentUser != null)
             }
         </div>
     }
+
     else
     {
         NavigateToHome();
     }
 }
-else
-{
-    NavigateToHome();
-}
+
 
 @code {
     [Parameter]
@@ -144,11 +144,7 @@ else
         }
     }
 
-    private void NavigateToHome()
-    {
-        Navigation.NavigateTo("/", true);
-    }
-
+    private void NavigateToHome() => Navigation.NavigateTo("/", true);
     private string AddUserToCourseUrl() => $"/addUserToCourse/{CourseId}";
     private string CourseDashboardUrl() => "/course_dashboard";
 
