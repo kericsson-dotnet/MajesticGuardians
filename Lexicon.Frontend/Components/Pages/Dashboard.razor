@@ -85,11 +85,11 @@ else
         <div class="container py-0">
             <div class="row gap-3 align-items-stretch">
                 <!-- TODO: naviger till rätt sida för samtliga knappar nedan -->
-                <a class="btn btn-outline-primary col text-center p-3" href="/course_dashboard">
+                <a class="btn btn-outline-primary col text-center p-3" href="/edit_course">
                     <div class="fs-1 fw-medium mx-auto mb-1">
                         <i class="bi bi-plus-lg"></i>
                     </div>
-                    <span class="fw-medium">KURSER</span>
+                    <span class="fw-medium">NY KURS</span>
                 </a>
                 <a class="btn btn-outline-primary col text-center p-3" href="#">
                     <div class="fs-1 fw-medium mx-auto mb-1">
@@ -149,6 +149,6 @@ else
 
     private void NavigateToCourse(int id)
     {
-        Navigation.NavigateTo($"courses/{id}");
+        Navigation.NavigateTo($"course_details/{id}");
     }
 }
