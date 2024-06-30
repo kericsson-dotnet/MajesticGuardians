@@ -24,4 +24,6 @@ public class DocumentDto
 
     public int UserId { get; set; }
 
+    public int ModuleId { get; set; }
+
 }
