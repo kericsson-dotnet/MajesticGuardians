@@ -1,7 +1,6 @@
-﻿namespace Lexicon.Api.Dtos.UserDtos
+﻿namespace Lexicon.Api.Dtos.UserDtos;
+
+public class UserWithIdDto
 {
-    public class UserWithIdDto
-    {
-        public int UserId { get; set; }
-    }
+    public int UserId { get; set; }
 }

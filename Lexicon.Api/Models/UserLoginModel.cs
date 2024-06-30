@@ -1,8 +1,7 @@
-﻿namespace Lexicon.Api.Models
+﻿namespace Lexicon.Api.Models;
+
+public class UserLoginModel
 {
-    public class UserLoginModel
-    {
-        public string Email { get; set; }
-        public string Password { get; set; }
-    }
+    public string Email { get; set; }
+    public string Password { get; set; }
 }

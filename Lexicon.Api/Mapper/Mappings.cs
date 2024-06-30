@@ -6,12 +6,12 @@ using Lexicon.Api.Dtos.ModuleDtos;
 using Lexicon.Api.Dtos.UserDtos;
 using Lexicon.Api.Entities;
 
-namespace Lexicon.Api.Mapper
+namespace Lexicon.Api.Mapper;
+
+public class Mappings : Profile
 {
-    public class Mappings : Profile
+    public Mappings()
     {
-        public Mappings()
-        {
             // Document mapper
             CreateMap<DocumentDto, Document>();
             CreateMap<Document, DocumentDto>();
@@ -49,5 +49,4 @@ namespace Lexicon.Api.Mapper
             CreateMap<ModulePostDto, Module>();
         }
 
-    }
 }

@@ -5,27 +5,27 @@ using Lexicon.Api.Services;
 using Lexicon.Api.Dtos.UserDtos;
 using AutoMapper;
 
-namespace Lexicon.Api.Controllers
-{
-    [Route("api/[controller]")]
-    public class LoginController : Controller
-    {
-        private readonly IUserRepository _userRepository;
-        private readonly IConfiguration _configuration;
-        private readonly TokenService _tokenService;
-        private readonly IMapper _mapper;
+namespace Lexicon.Api.Controllers;
 
-        public LoginController(IUserRepository userRepository, IConfiguration configuration, IMapper mapper)
-        {
+[Route("api/[controller]")]
+public class LoginController : Controller
+{
+    private readonly IUserRepository _userRepository;
+    private readonly IConfiguration _configuration;
+    private readonly TokenService _tokenService;
+    private readonly IMapper _mapper;
+
+    public LoginController(IUserRepository userRepository, IConfiguration configuration, IMapper mapper)
+    {
             _userRepository = userRepository;
             _configuration = configuration;
             _tokenService = new TokenService(configuration);
             _mapper = mapper;
         }
 
-        [HttpPost("validate")]
-        public async Task<ActionResult> ValidateUser([FromBody] UserDto userDto)
-        {
+    [HttpPost("validate")]
+    public async Task<ActionResult> ValidateUser([FromBody] UserDto userDto)
+    {
             var user = await _userRepository.ValidateCredentialsAsync(userDto.Email, userDto.Password);
             
             if (user == null)
@@ -38,5 +38,4 @@ namespace Lexicon.Api.Controllers
             return Ok(token);
         }
 
-    }
 }
