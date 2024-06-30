@@ -63,4 +63,5 @@ public class CourseService : ICourseService
         }
     }
 
+    public async Task<List<Course>> GetAllUsersCourses(int userId) => await _httpClient.GetFromJsonAsync<List<Course>>($"api/courses/getAllUsersCourses/{userId}");
 }
