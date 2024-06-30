@@ -195,10 +195,10 @@ public class CoursesController : ControllerBase
         }
     }
 
-    [HttpPost("{id}/addUserToCourse")]
-    public async Task<IActionResult> AddUserToCourse([FromRoute] int id, [FromBody] UserWithIdDto userWithIdDto)
+    [HttpPost("{id}/addUserToCourse/{userId}")]
+    public async Task<IActionResult> AddUserToCourse([FromRoute] int id, [FromRoute] int userId)
     {
-        if (id <= 0 || userWithIdDto.UserId <= 0)
+        if (id <= 0 || userId <= 0)
         {
             return BadRequest();
         }
@@ -212,17 +212,17 @@ public class CoursesController : ControllerBase
                 return NotFound();
             }
 
-            var user = await _UoW.Users.GetAsync(userWithIdDto.UserId);
+            var user = await _UoW.Users.GetAsync(userId);
 
             if (user == null)
             {
-                return NotFound($"User with id {userWithIdDto.UserId} not found.");
+                return NotFound($"User with id {userId} not found.");
             }
 
             _UoW.Courses.AddUserToCourse(id, _mapper.Map<User>(user));
             await _UoW.SaveAsync();
 
-            return Ok($"User with id {userWithIdDto.UserId} successfully added to course {id}.");
+            return Ok($"User with id {userId} successfully added to course {id}.");
         }
         catch (InvalidOperationException ex)
         {

@@ -1,9 +1,9 @@
 ﻿@page "/addUserToCourse/{CourseId:int}"
 @inject IUnitOfWork Services
 @inject NavigationManager Navigation
+@rendermode InteractiveServer
 
 <h3>AddUserToCourse</h3>
-
 
 <div class="mt-2">
     <NavLink class="btn btn-secondary" href="@CourseDetailsUrl()">Return back</NavLink>
@@ -35,7 +35,7 @@
                         <td>@user.Email</td>
                         <td>@user.Role</td>
                         <td>
-                            <button class="btn btn-primary">Add</button>
+                            <button @onclick="() => HandleSubmit(user.UserId)" class="btn btn-primary">Add</button>
                         </td>
                     </tr>
                 }
@@ -57,7 +57,7 @@
 
     protected async override Task OnParametersSetAsync()
     {
-        var users = await Services.CourseService.GetAllUsersInCourse(CourseId);
+        var users = await Services.CourseService.GetAllAvailableUserForCourse(CourseId);
 
         if (users.Any())
         {
@@ -66,9 +66,17 @@
 
             Users = allUsersWithDetails.Where(user => user != null).ToList();
         }
+
+        StateHasChanged();
     }
 
     private string CourseDetailsUrl() => $"/course_details/{CourseId}";
+
+    private async Task HandleSubmit(int userId)
+    {
+        await Services.CourseService.AddUserToCourse(CourseId, userId);
+        Navigation.NavigateTo($"/addUserToCourse/{CourseId}", true);
+    }
 
 
     private void NavigateToHome()
