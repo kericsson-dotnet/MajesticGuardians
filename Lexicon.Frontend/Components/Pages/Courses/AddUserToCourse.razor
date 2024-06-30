@@ -3,85 +3,108 @@
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
-<h3>AddUserToCourse</h3>
-
-<div class="mt-2">
-    <NavLink class="btn btn-secondary" href="@CourseDetailsUrl()">Return back</NavLink>
-</div>
-
-
-<div class="row">
-    @if (Users == null || !Users.Any())
+@if (isLoading)
+{
+    <p><em>Loading...</em></p>
+}
+else if (currentUser != null)
+{
+    @if (currentUser.Role.ToString().Equals("Teacher") && currentUser.UserId > 0)
     {
-        <p>No available user</p>
-    }
+        <h3>AddUserToCourse</h3>
 
+        <div class="mt-2">
+            <NavLink class="btn btn-secondary" href="@CourseDetailsUrl()">Return back</NavLink>
+        </div>
+
+        <div class="row">
+            @if (Users == null || !Users.Any())
+            {
+                <p>No available user</p>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Role</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Users)
+                        {
+                            <tr>
+                                <td>@user.UserId</td>
+                                <td>@user.Email</td>
+                                <td>@user.Role</td>
+                                <td>
+                                    <button @onclick="() => HandleSubmit(user.UserId)" class="btn btn-primary">Add</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    }
     else
     {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Id</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Role</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var user in Users)
-                {
-                    <tr>
-                        <td>@user.UserId</td>
-                        <td>@user.Email</td>
-                        <td>@user.Role</td>
-                        <td>
-                            <button @onclick="() => HandleSubmit(user.UserId)" class="btn btn-primary">Add</button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+        NavigateToHome();
     }
-</div>
-
+}
 
 @code {
     [Parameter]
-    public int CourseId { get; set; }
+    public int? CourseId { get; set; }
 
+    private User? currentUser;
     private bool isLoading = true;
-
-
     public List<User> Users { get; set; } = new List<User>();
 
-
-    protected async override Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
-        var users = await Services.CourseService.GetAllAvailableUserForCourse(CourseId);
-
-        if (users.Any())
+        try
         {
-            var userTasks = users.Select(user => Services.UserService.GetUserAsync(user.UserId));
-            var allUsersWithDetails = await Task.WhenAll(userTasks);
+            currentUser = await Services.UserService.GetCurrentUserAsync();
 
-            Users = allUsersWithDetails.Where(user => user != null).ToList();
+            if (currentUser == null)
+            {
+                NavigateToHome();
+                return;
+            }
+
+            var users = await Services.CourseService.GetAllAvailableUserForCourse(CourseId.Value);
+
+            if (users.Any())
+            {
+                var userTasks = users.Select(user => Services.UserService.GetUserAsync(user.UserId));
+                var allUsersWithDetails = await Task.WhenAll(userTasks);
+
+                Users = allUsersWithDetails.Where(user => user != null).ToList();
+            }
         }
-
-        StateHasChanged();
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
     }
 
     private string CourseDetailsUrl() => $"/course_details/{CourseId}";
 
     private async Task HandleSubmit(int userId)
     {
-        await Services.CourseService.AddUserToCourse(CourseId, userId);
+        await Services.CourseService.AddUserToCourse(CourseId.Value, userId);
         Navigation.NavigateTo($"/addUserToCourse/{CourseId}", true);
+
     }
 
-
-    private void NavigateToHome()
-    {
-        Navigation.NavigateTo("/", true);
-    }
-
+    private void NavigateToHome() => Navigation.NavigateTo("/", true);
 }
