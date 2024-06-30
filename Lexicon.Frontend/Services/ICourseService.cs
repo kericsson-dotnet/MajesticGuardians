@@ -1,4 +1,5 @@
 ﻿using Lexicon.Frontend.Models;
+using System.Threading.Tasks;
 
 namespace Lexicon.Frontend.Services;
 
@@ -17,4 +18,6 @@ public interface ICourseService
     Task DeleteCourseAsync(int id);
 
     Task RemoveUserFromCourse(int id, int userId);
+
+    Task<List<User>> GetAllAvailableUserForCourse(int id);
 }

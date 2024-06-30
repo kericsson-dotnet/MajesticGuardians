@@ -1,5 +1,6 @@
 ﻿using Lexicon.Frontend.Models;
 using Lexicon.Frontend.Services;
+using System.Net.Http;
 
 namespace Lexicon.Frontend.ServicesImp;
 
@@ -25,4 +26,6 @@ public class CourseService : ICourseService
     public async Task DeleteCourseAsync(int id) => await _httpClient.DeleteAsync($"api/courses/{id}");
 
     public async Task RemoveUserFromCourse(int id, int userId) => await _httpClient.DeleteAsync($"api/courses/{id}/removeUserFromCourse/{userId}");
+
+    public async Task<List<User>> GetAllAvailableUserForCourse(int id) => await _httpClient.GetFromJsonAsync<List<User>>($"api/courses/{id}/getAllUsersInCourse");
 }
