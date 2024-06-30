@@ -219,7 +219,7 @@ public class CoursesController : ControllerBase
                 return NotFound($"User with id {userWithIdDto.UserId} not found.");
             }
 
-            _UoW.Courses.AddUserToCourse(id, user);
+            _UoW.Courses.AddUserToCourse(id, _mapper.Map<User>(user));
             await _UoW.SaveAsync();
 
             return Ok($"User with id {userWithIdDto.UserId} successfully added to course {id}.");

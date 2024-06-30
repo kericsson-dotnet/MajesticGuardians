@@ -22,6 +22,21 @@ namespace Lexicon.Api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("CourseUser", b =>
+                {
+                    b.Property<int>("CoursesCourseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsersUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CoursesCourseId", "UsersUserId");
+
+                    b.HasIndex("UsersUserId");
+
+                    b.ToTable("CourseUser");
+                });
+
             modelBuilder.Entity("Lexicon.Api.Entities.Activity", b =>
                 {
                     b.Property<int>("ActivityId")
@@ -168,9 +183,6 @@ namespace Lexicon.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
-                    b.Property<int?>("CourseId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -192,9 +204,22 @@ namespace Lexicon.Api.Migrations
 
                     b.HasKey("UserId");
 
-                    b.HasIndex("CourseId");
-
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("CourseUser", b =>
+                {
+                    b.HasOne("Lexicon.Api.Entities.Course", null)
+                        .WithMany()
+                        .HasForeignKey("CoursesCourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Lexicon.Api.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Lexicon.Api.Entities.Activity", b =>
@@ -236,13 +261,6 @@ namespace Lexicon.Api.Migrations
                     b.Navigation("Course");
                 });
 
-            modelBuilder.Entity("Lexicon.Api.Entities.User", b =>
-                {
-                    b.HasOne("Lexicon.Api.Entities.Course", null)
-                        .WithMany("Users")
-                        .HasForeignKey("CourseId");
-                });
-
             modelBuilder.Entity("Lexicon.Api.Entities.Activity", b =>
                 {
                     b.Navigation("Documents");
@@ -251,8 +269,6 @@ namespace Lexicon.Api.Migrations
             modelBuilder.Entity("Lexicon.Api.Entities.Course", b =>
                 {
                     b.Navigation("Documents");
-
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Lexicon.Api.Entities.Module", b =>

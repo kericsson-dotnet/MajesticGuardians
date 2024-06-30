@@ -1,5 +1,6 @@
 ﻿using Lexicon.Api.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Lexicon.Api.Repositories
 {
@@ -19,31 +20,49 @@ namespace Lexicon.Api.Repositories
 
         public void AddUserToCourse(int courseId, User user)
         {
-
-            if (user.Role == UserRole.Student)
+            try
             {
-
-                var isUserInAnyCourse = _context.Set<Course>()
-                                            .Include(c => c.Users)
-                                            .Any(c => c.Users.Any(u => u.UserId == user.UserId));
-
-                if(isUserInAnyCourse)
+                if (user.Role == UserRole.Student)
                 {
-                    throw new InvalidOperationException("Student is already register in a course");
+                    var isUserInAnyCourse = _context.Set<Course>()
+                                                .Include(c => c.Users)
+                                                .Any(c => c.Users.Any(u => u.UserId == user.UserId));
+
+                    if (isUserInAnyCourse)
+                    {
+                        throw new InvalidOperationException("Student is already registered in a course.");
+                    }
                 }
 
+                var course = _context.Set<Course>()
+                                .Include(c => c.Users)
+                                .FirstOrDefault(c => c.CourseId == courseId);
+
+                if (course == null)
+                {
+                    throw new InvalidOperationException($"Course with id {courseId} not found.");
+                }
+
+                if (!course.Users.Any(u => u.UserId == user.UserId))
+                {
+                    course.Users.Add(user);
+                }
+
+                else
+                {
+                    throw new InvalidOperationException($"User with id {user.UserId} is already registered in course {courseId}.");
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException($"Operation failed: {ex.Message}");
             }
 
-            var course = _context.Set<Course>()
-                            .Include(c => c.Users)
-                            .FirstOrDefault(c => c.CourseId == courseId);
-
-            if (course != null)
+            catch (Exception ex)
             {
-                course.Users.Add(user);
+                throw new Exception($"An unexpected error occurred: {ex.Message}");
             }
         }
-
         public void RemoveUserFromCourse(int courseId, int userId)
         {
             var course = _context.Set<Course>()
