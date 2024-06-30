@@ -1,6 +1,7 @@
 ﻿using Bogus;
 using Lexicon.Api.Entities;
 using Lexicon.Api.Repositories;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Lexicon.Api.Services;
 
@@ -14,6 +15,7 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             await GenerateCoursesAsync();
             await GenerateModulesAsync();
             await GenerateActivitiesAsync();
+            await AddExampleUsersToCoursesAsync();
         }
     }
 
@@ -72,7 +74,6 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             EndDate = faker.Date.Future(),
             // Documents = null
         });
-
         await unitOfWork.SaveAsync();
     }
 
@@ -110,7 +111,7 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             unitOfWork.Users.Add(user);
         }
 
-        // Create 10 random students
+        // Create 20 random students
         for (int i = 0; i < 10; i++)
         {
             var user = new Faker<User>(locale: "sv")
@@ -122,6 +123,26 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
                 .Generate();
 
             unitOfWork.Users.Add(user);
+        }
+
+        await unitOfWork.SaveAsync();
+    }
+
+    private async Task AddExampleUsersToCoursesAsync()
+    {
+        var exampleTeacher = await unitOfWork.Users.GetAsync(1);
+        var exampleStudent = await unitOfWork.Users.GetAsync(2);
+        foreach (var course in await unitOfWork.Courses.GetAllAsync())
+        {
+            if (course.Users.All(u => u.UserId != exampleTeacher.UserId))
+            {
+                course.Users.Add(exampleTeacher);
+            }
+        }
+
+        if (exampleStudent.Courses.IsNullOrEmpty())
+        {
+            unitOfWork.Courses.AddUserToCourse(1, exampleStudent);
         }
 
         await unitOfWork.SaveAsync();
