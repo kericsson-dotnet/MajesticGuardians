@@ -7,7 +7,7 @@ public class ActivityDto
 {
     [Key]
     public int ActivityId { get; set; }
-
+    
     [Required]
     public ActivityType Type { get; set; }
 
@@ -26,4 +26,5 @@ public class ActivityDto
     public DateTime EndDate { get; set; }
 
     public List<int> DocumentIds { get; set; } = [];
+    public int ModuleId { get; set; }
 }
