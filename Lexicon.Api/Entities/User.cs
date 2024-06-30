@@ -15,6 +15,8 @@ public class User
     public string Password { get; set; } = string.Empty;
     public UserRole Role { get; set; } = UserRole.Student;
     public List<Document>? Documents { get; set; } = [];
+    public List<Course> Courses { get; set; } = new List<Course>();
+
 }
 
 
