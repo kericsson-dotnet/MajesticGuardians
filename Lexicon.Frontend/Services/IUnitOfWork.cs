@@ -1,8 +1,4 @@
-﻿using Lexicon.Frontend.ServicesImp;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Cors.Infrastructure;
-
-namespace Lexicon.Frontend.Services;
+﻿namespace Lexicon.Frontend.Services;
 
 public interface IUnitOfWork
 {

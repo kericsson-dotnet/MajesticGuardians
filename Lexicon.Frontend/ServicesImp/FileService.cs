@@ -1,5 +1,4 @@
 ﻿using Lexicon.Frontend.Services;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Lexicon.Frontend.ServicesImp;
 

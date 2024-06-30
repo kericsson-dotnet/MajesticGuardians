@@ -1,7 +1,5 @@
 ﻿using Lexicon.Frontend.Models;
 using Lexicon.Frontend.Services;
-using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 namespace Lexicon.Frontend.ServicesImp;

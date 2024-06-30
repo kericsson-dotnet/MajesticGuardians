@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace Lexicon.Frontend.Services;
+﻿namespace Lexicon.Frontend.Services;
 
 public interface IFileService
 {

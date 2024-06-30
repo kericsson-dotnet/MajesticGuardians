@@ -1,6 +1,4 @@
-﻿using Lexicon.Api.Dtos.ActivityDtos;
-using Lexicon.Frontend.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Lexicon.Frontend.Models;
 
 namespace Lexicon.Frontend.Services;
 

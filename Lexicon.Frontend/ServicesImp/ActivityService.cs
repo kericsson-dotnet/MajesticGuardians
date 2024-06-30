@@ -1,9 +1,5 @@
-﻿using Lexicon.Api.Dtos.ActivityDtos;
-using Lexicon.Frontend.Models;
+﻿using Lexicon.Frontend.Models;
 using Lexicon.Frontend.Services;
-using Microsoft.AspNetCore.Mvc;
-using System.Text;
-using System.Text.Json;
 
 namespace Lexicon.Frontend.ServicesImp;
 

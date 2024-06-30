@@ -1,5 +1,4 @@
 ﻿using Lexicon.Frontend.Models;
-using System.Threading.Tasks;
 
 namespace Lexicon.Frontend.Services;
 
