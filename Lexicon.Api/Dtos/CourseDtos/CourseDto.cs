@@ -25,4 +25,6 @@ public class CourseDto
     public List<int> UserIds { get; set; } = [];
 
     public List<int> DocumentIds { get; set; } = [];
+
+    public List<int> ModuleIds { get; set; } = [];
 }
