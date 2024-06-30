@@ -20,4 +20,7 @@ public interface ICourseService
     Task RemoveUserFromCourse(int id, int userId);
 
     Task<List<User>> GetAllAvailableUserForCourse(int id);
+
+    Task AddUserToCourse(int id, int userId);
+
 }
