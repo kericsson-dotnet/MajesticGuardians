@@ -43,6 +43,6 @@
     private async Task DeleteConfirm()
     {
         await Services.UserService.DeleteUserAsync(User.UserId);
-        Navigation.NavigateTo("/dashboard", true);
+        Navigation.NavigateTo("/manage_users", true);
     }
 }
