@@ -292,4 +292,35 @@ public class CoursesController : ControllerBase
         }
     }
 
+    [HttpGet("getAllUsersCourses/{userId}")]
+    public async Task<ActionResult<IEnumerable<CourseWithIdDto>>> GetAllUserCourses([FromRoute] int userId)
+    {
+        if (userId <= 0)
+        {
+            return BadRequest();
+        }
+
+        try
+        {
+            var users = await _UoW.Courses.GetAllUserCourses(userId);
+
+            if (users == null || !users.Any())
+            {
+                return NotFound($"User with Id {userId} has no courses");
+            }
+
+            return Ok(_mapper.Map<IEnumerable<CourseWithIdDto>>(users));
+        }
+
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
+
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
 }
