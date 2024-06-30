@@ -13,6 +13,10 @@ public class ActivityPostDto
     public string Name { get; set; } = string.Empty;
 
     [Required]
+    [StringLength(500, ErrorMessage = "Description length can't be more than 500.")]
+    public string Description { get; set; } = string.Empty;
+
+    [Required]
     public DateTime StartDate { get; set; } = DateTime.Now;
 
     [Required]
