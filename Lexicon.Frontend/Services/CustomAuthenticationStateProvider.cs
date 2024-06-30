@@ -4,22 +4,22 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Lexicon.Frontend.Services
-{
-    public class CustomAuthenticationStateProvider : AuthenticationStateProvider
-    {
-        private readonly HttpClient _httpClient;
-        private readonly ISessionStorageService _services;
-        private bool _isInitialized;
+namespace Lexicon.Frontend.Services;
 
-        public CustomAuthenticationStateProvider(HttpClient httpClient, ISessionStorageService services)
-        {
+public class CustomAuthenticationStateProvider : AuthenticationStateProvider
+{
+    private readonly HttpClient _httpClient;
+    private readonly ISessionStorageService _services;
+    private bool _isInitialized;
+
+    public CustomAuthenticationStateProvider(HttpClient httpClient, ISessionStorageService services)
+    {
             _httpClient = httpClient;
             _services = services;
         }
 
-        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
-        {
+    public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+    {
             if (!_isInitialized)
             {
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
@@ -38,8 +38,8 @@ namespace Lexicon.Frontend.Services
             return new AuthenticationState(new ClaimsPrincipal(identity));
         }
 
-        public async Task MarkUserAsAuthenticated(string token)
-        {
+    public async Task MarkUserAsAuthenticated(string token)
+    {
             await _services.SetItemAsync("authToken", token);
             var identity = new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(token), "jwt");
             var user = new ClaimsPrincipal(identity);
@@ -47,8 +47,8 @@ namespace Lexicon.Frontend.Services
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
         }
 
-        public async Task MarkUserAsLoggedOut()
-        {
+    public async Task MarkUserAsLoggedOut()
+    {
             await _services.RemoveItemAsync("authToken");
             var identity = new ClaimsIdentity();
             var user = new ClaimsPrincipal(identity);
@@ -56,10 +56,9 @@ namespace Lexicon.Frontend.Services
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
         }
 
-        public void SetInitialized()
-        {
+    public void SetInitialized()
+    {
             _isInitialized = true;
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
-    }
 }

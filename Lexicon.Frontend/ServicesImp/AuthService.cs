@@ -5,26 +5,26 @@ using System;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-namespace Lexicon.Frontend.ServicesImp
-{
-    public class AuthService : IAuthService
-    {
-        private readonly HttpClient _httpClient;
-        private readonly ISessionStorageService _sessionStorageService;
-        private string? _token;
-        private bool _isAuthenticated; 
+namespace Lexicon.Frontend.ServicesImp;
 
-        public AuthService(HttpClient httpClient, ISessionStorageService sessionStorageService)
-        {
+public class AuthService : IAuthService
+{
+    private readonly HttpClient _httpClient;
+    private readonly ISessionStorageService _sessionStorageService;
+    private string? _token;
+    private bool _isAuthenticated; 
+
+    public AuthService(HttpClient httpClient, ISessionStorageService sessionStorageService)
+    {
             _httpClient = httpClient;
             _sessionStorageService = sessionStorageService;
             _token = string.Empty;
             _isAuthenticated = false;
         }
-        public bool IsAuthenticated() => _isAuthenticated && !string.IsNullOrEmpty(_token);
+    public bool IsAuthenticated() => _isAuthenticated && !string.IsNullOrEmpty(_token);
 
-        public async Task<string?> LoginAsync(UserLoginModel model)
-        {
+    public async Task<string?> LoginAsync(UserLoginModel model)
+    {
             try
             {
                 var response = await _httpClient.PostAsJsonAsync("api/login/validate", model);
@@ -50,12 +50,11 @@ namespace Lexicon.Frontend.ServicesImp
             }
         }
 
-        public async Task LogoutAsync()
-        {
+    public async Task LogoutAsync()
+    {
             _token = null;
             _isAuthenticated = false;
             await _sessionStorageService.RemoveItemAsync("authToken");
         }
 
-    }
 }
