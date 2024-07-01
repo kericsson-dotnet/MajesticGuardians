@@ -3,7 +3,10 @@
 public enum ActivityType
 {
     Lecture,
-    Assignment
+    ELearning,
+    Assignment,
+    Quiz,
+    GroupAssignment,
 }
 
 public class Activity
