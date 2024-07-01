@@ -28,7 +28,7 @@ public class DocumentsController : ControllerBase
     {
         var documents = await _unitOfWork.Documents.GetAllAsync();
 
-        if (!documents.Any() || documents == null)
+        if (documents == null || !documents.Any())
         {
             return BadRequest();
         }
