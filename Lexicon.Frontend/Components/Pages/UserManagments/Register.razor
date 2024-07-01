@@ -1,50 +1,68 @@
 ﻿@page "/register"
+@page "/register/{Student:int}/student"
+@page "/register/{Teacher:int}/teacher"
+
 @inject IUnitOfWork Services
-@rendermode InteractiveServer
 @inject NavigationManager Navigation
 
-<PageTitle>Register</PageTitle>
-<h3>Register</h3>
+@rendermode InteractiveServer
 
-@if (!loading)
+
+
+@if (loading)
 {
     <p>Läser in....</p>
 }
 
-else if (currentUser != null && currentUser.Role.ToString().Equals("Student"))
+else if (currentUser != null && currentUser.Role == Models.UserRole.Student)
 {
     <p>Läser in.....</p>
 }
 
 else
 {
+    <PageTitle>@titelText</PageTitle>
+
+    <h3>@titelText</h3>
+
     <EditForm Model="@User" OnValidSubmit="HandleRegister" FormName="logintest">
         <div class="register-form">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
             <div class="mb-3">
                 <label for="firstName">Förnamn</label>
                 <InputText id="firstName" class="form-control" @bind-Value="User.FirstName" />
             </div>
+            
             <div class="mb-3">
                 <label for="lastName">Efternamn</label>
                 <InputText id="lastName" class="form-control" @bind-Value="User.LastName" />
             </div>
+            
             <div class="mb-3">
                 <label for="email">Epost</label>
                 <InputText id="email" class="form-control" @bind-Value="User.Email" />
             </div>
+            
             <div class="mb-3">
                 <label for="password">Lösenord</label>
                 <InputText id="password" class="form-control" @bind-Value="User.Password" />
             </div>
-            <div class="mb-3">
-                <label for="role">Roll</label>
-                <InputSelect id="role" class="form-control" @bind-Value="User.Role">
-                    @foreach (var role in User.AllRoles)
-                    {
-                        <option value="@role">@role</option>
-                    }
-                </InputSelect>
-            </div>
+
+            @if (Student == null && Teacher == null)
+            {
+                <div class="mb-3">
+                    <label for="role">Roll</label>
+                    <InputSelect id="role" class="form-control" @bind-Value="User.Role">
+                        @foreach (var role in User.AllRoles)
+                        {
+                            <option value="@role">@role</option>
+                        }
+                    </InputSelect>
+                </div>
+            }
+
         </div>
 
         <div claass ="d-flex gap-3">
@@ -55,11 +73,19 @@ else
 }
 
 @code {
+
+    [Parameter]
+    public int? Student {get; set; }
+
+    [Parameter]
+    public int? Teacher { get; set; }
+
     [SupplyParameterFromForm]
     private User User { get; set; }
-    private bool loading = false;
-
     private User? currentUser;
+
+    private bool loading = true;
+    private string titelText => "Register " + (Student.HasValue ? "Student" : Teacher.HasValue ? "Teacher" : "");
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -70,29 +96,31 @@ else
             if (currentUser != null && currentUser.Role == Models.UserRole.Student)
             {
                 Navigation.NavigateTo("/");
-                loading = false;
+                loading = true;
                 return;
             }
+
+            if((Student.HasValue || Teacher.HasValue) && currentUser == null)
+            {
+                Navigation.NavigateTo("/register");
+                return;
+            }
+
+            User = new User()
+                {
+                    FirstName = string.Empty,
+                    LastName = string.Empty,
+                    Password = string.Empty,
+                    Email = string.Empty,
+                    Role = Student.HasValue ? Models.UserRole.Student : (Teacher.HasValue ? Models.UserRole.Teacher : Models.UserRole.Teacher),
+                    Documents = new List<Document>()
+                };
+
+            loading = false;
 
             StateHasChanged();
         }
     }
-
-    protected async override Task OnInitializedAsync()
-    {
-        User = new User()
-            {
-                FirstName = string.Empty,
-                LastName = string.Empty,
-                Password = string.Empty,
-                Email = string.Empty,
-                Role = 0,
-                Documents = new List<Document>()
-            };
-
-        loading = true;
-    }
-
 
     private async Task HandleRegister()
     {
