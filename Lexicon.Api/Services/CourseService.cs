@@ -1,11 +1,12 @@
 ﻿using Lexicon.Api.Entities;
+using Lexicon.Api.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace Lexicon.Api.Repositories;
+namespace Lexicon.Api.Services;
 
-public class CourseRepository : CrudRepository<Course>, ICourseRepository
+public class CourseService : CrudService<Course>, ICourseRepository
 {
-    public CourseRepository(DbContext context) : base(context)
+    public CourseService(DbContext context) : base(context)
     {
     }
 
