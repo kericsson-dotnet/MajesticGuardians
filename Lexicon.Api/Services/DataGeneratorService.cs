@@ -124,7 +124,7 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             new Module
             {
                 Name = "Blazor och Grundläggande LINQ i C#",
-                Description = "Ett maskinparkshanteringssystem är en mjukvaruplattform som används för att övervaka och hantera en flotta av maskiner och fordon. Systemet gör det möjligt för företag att effektivt spåra, underhålla och optimera användningen av sina maskiner och fordon, vilket resulterar i förbättrad driftseffektivitet och minskade driftkostnader. Genom att använda Blazor för frontend-utveckling och LINQ för datamanipulation i C# blir utvecklingen både modern och effektiv.",
+                Description = "Blazor och LINQ (Language Integrated Query) är två kraftfulla teknologier i C# som tillsammans kan användas för att bygga moderna och effektiva webbapplikationer. Blazor är ett ramverk för att skapa interaktiva webbgränssnitt med C#, medan LINQ är en uppsättning metoder och operatorer för att utföra datamanipulation och frågor på enhetliga sätt över olika datakällor.",            
                 StartDate = faker.Date.Past(),
                 EndDate = faker.Date.Future(),
                 // Documents = null
