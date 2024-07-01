@@ -10,14 +10,12 @@ namespace Lexicon.Api.Controllers;
 public class LoginController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IConfiguration _configuration;
     private readonly TokenService _tokenService;
     private readonly IMapper _mapper;
 
     public LoginController(IUnitOfWork unitOfWork, IConfiguration configuration, IMapper mapper)
     {
             _unitOfWork = unitOfWork;
-            _configuration = configuration;
             _tokenService = new TokenService(configuration);
             _mapper = mapper;
         }
