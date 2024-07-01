@@ -15,7 +15,18 @@ public class CourseService : ICourseService
 
     public async Task<List<Course>> GetCoursesAsync() => await _httpClient.GetFromJsonAsync<List<Course>>("api/courses");
 
-    public async Task<Course> GetCourseAsync(int id) => await _httpClient.GetFromJsonAsync<Course>($"api/courses/{id}");
+    public async Task<Course> GetCourseAsync(int id)
+    {
+		try
+		{
+			return await _httpClient.GetFromJsonAsync<Course>($"api/courses/{id}");
+		}
+
+		catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+		{
+			return null;
+		}
+	}
 
     public async Task UpdateCourseAsync(Course course) => await _httpClient.PutAsJsonAsync($"api/courses/{course.CourseId}", course);
 
