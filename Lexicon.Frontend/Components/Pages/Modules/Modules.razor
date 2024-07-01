@@ -2,14 +2,22 @@
 @inject IUnitOfWork Services
 @rendermode InteractiveServer
 
-@if (loading)
+@if (isLoading)
 {
     <p><em>Läser in...</em></p>
 }
 
+else if (loadingError != null)
+{
+    <p> Det gick inte att läsa in modulen: @loadingError</p>
+}
+
 else
 {
-    <h3>Modules</h3>
+    <h3>@titleText</h3>
+    <div class="mt-2">
+        <NavLink class="btn btn-primary" href="@($"/edit_module/{CourseId}")">Lägg ny module</NavLink>
+    </div>
 
     <div>
         <table>
@@ -19,6 +27,7 @@ else
                     <th>Beskrivning</th>
                     <th>Start Datum</th>
                     <th>Slut Datum</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -37,6 +46,11 @@ else
                             <td>@module.Description</td>
                             <td>@module.StartDate.ToString("yyyy-MM-dd")</td>
                             <td>@module.EndDate.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                <a class="btn btn-primary me-2" role="button" href="@EditModuleUrl(module.ModuleId)">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </td>
                         </tr>
                     }
                 }
@@ -54,13 +68,25 @@ else
     private List<Module>? modules;
     public Course? Course { get; set; }
 
-    private bool loading = true;
+    private bool isLoading = true;
+
+    private string? loadingError = null;
+    private string? titleText = null;
 
     protected async override Task OnInitializedAsync()
     {
         try
         {
             Course = await Services.CourseService.GetCourseAsync(CourseId);
+
+            if (Course == null)
+            {
+                loadingError = "Kursen existerar inte.";
+                isLoading = false;
+                return;
+            }
+
+            titleText = $"Module för kursen {Course.Name}";
 
             if (Course?.ModuleIds != null && Course.ModuleIds.Any())
             {
@@ -73,14 +99,16 @@ else
 
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading moduels: {ex.Message}");
+            loadingError = $"Error: {ex.Message}";
         }
 
         finally
         {
-            loading = false;
-            StateHasChanged();
+            isLoading = false;
         }
 
     }
+
+    private string EditModuleUrl(int id) => $"/edit_module/{CourseId}/{id}";
+
 }
