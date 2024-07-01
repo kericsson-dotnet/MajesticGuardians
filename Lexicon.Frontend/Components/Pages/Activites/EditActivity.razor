@@ -58,7 +58,7 @@ else if (currentUser != null)
 						</div>
 
 						<div class="mt-3">
-							<button type="submit" class="btn btn-primary">Spara</button>
+							<button type="submit" class="btn btn-primary">@(ActivityId == null ? "Spara" : "Uppdatera")</button>
 							<button @onclick="GoToActivityPage" class="btn btn-secondary">Till aktivitet sidan</button>
 						</div>
 					</EditForm>
