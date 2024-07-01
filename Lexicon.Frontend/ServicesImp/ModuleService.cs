@@ -13,10 +13,14 @@ public class ModuleService : IModuleService
     }
 
     public async Task<IEnumerable<Module>> GetModulesAsync() => await _httpClient.GetFromJsonAsync<IEnumerable<Module>>("api/modules");
+    
     public async Task<Module> GetModuleAsync(int id) => await _httpClient.GetFromJsonAsync<Module>($"api/modules/{id}");
-    public async Task<bool> PutModuleAsync(int id, Module module)
+    
+    public async Task<bool> UpdateModuleAsync(int id, Module module)
     {
         var res = await _httpClient.PutAsJsonAsync($"api/modules/{id}", module);
         return res.IsSuccessStatusCode;
     }
+
+    public async Task AddModule(Module module) => await _httpClient.PostAsJsonAsync("api/modules", module);
 }
