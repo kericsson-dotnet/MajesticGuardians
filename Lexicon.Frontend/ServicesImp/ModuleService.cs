@@ -22,5 +22,7 @@ public class ModuleService : IModuleService
         return res.IsSuccessStatusCode;
     }
 
-    public async Task AddModule(Module module) => await _httpClient.PostAsJsonAsync("api/modules", module);
+    public async Task AddModuleAsync(Module module) => await _httpClient.PostAsJsonAsync("api/modules", module);
+
+    public async Task DeleteModuleAsync(int id) => await _httpClient.DeleteAsync($"api/modules/{id}");
 }

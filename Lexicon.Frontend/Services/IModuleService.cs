@@ -10,5 +10,7 @@ public interface IModuleService
     
     Task<bool> UpdateModuleAsync(int id, Module module);
 
-    Task AddModule(Module module);
+    Task AddModuleAsync(Module module);
+
+    Task DeleteModuleAsync(int id);
 }
