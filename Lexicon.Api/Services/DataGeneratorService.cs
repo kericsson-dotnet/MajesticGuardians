@@ -302,6 +302,13 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             },
             new Activity
             {
+                Name = "Quiz",
+                Type = ActivityType.Quiz,
+                Description = "Quiz om det du har lärt dig"
+                // Documents = null
+            },
+            new Activity
+            {
                 Name = "Läxa: Industriell maskinpark –\r\nBlazor",
                 Type = ActivityType.Assignment,
                 Description = "Övning 16 – Industriell maskinpark –\r\nBlazor\r\n" +
@@ -331,6 +338,13 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             },
             new Activity
             {
+                Name = "Quiz",
+                Type = ActivityType.Quiz,
+                Description = "Quiz om det du har lärt dig"
+                // Documents = null
+            },
+            new Activity
+            {
                 Name = "Lecture",
                 Type = ActivityType.Lecture,
                 Description = "Blazor" 
@@ -341,6 +355,13 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
                 Name = "Läxa: Grundläggande LINQ i C#",
                 Type = ActivityType.Assignment,
                 Description = "#### Uppgift 1: Skapa en Lista\r\n1. Skapa en ny C#-konsolapplikation i Visual Studio.\r\n2. Skapa en klass `Person` med följande egenskaper:\r\n   - `Name` (string)\r\n   - `Age` (int)\r\n\r\n3. Skapa en lista av `Person`-objekt med minst fem olika personer med olika namn och åldrar.\r\n\r\n#### Uppgift 2: Använd LINQ för att Hämta Data\r\n1. Använd LINQ för att hitta alla personer som är äldre än 25 år. Skriv ut deras namn och åldrar till konsolen.\r\n2. Använd LINQ för att hitta personen med det längsta namnet. Skriv ut namnet och åldern till konsolen.\r\n\r\n#### Uppgift 3: Sortera och Gruppera Data\r\n1. Använd LINQ för att sortera listan av personer efter ålder i stigande ordning. Skriv ut den sorterade listan till konsolen.\r\n2. Använd LINQ för att gruppera personerna efter deras ålder. Skriv ut varje grupp och personerna i varje grupp till konsolen.\r\n\r\n#### Uppgift 4: Använd LINQ för att Transformera Data\r\n1. Använd LINQ för att skapa en ny lista av strängar som innehåller personernas namn i versaler. Skriv ut denna lista till konsolen.\r\n2. Använd LINQ för att skapa en ny lista av anonyma objekt som innehåller `Name` och en boolsk egenskap `IsAdult` (true om `Age` är 18 eller äldre, annars false). Skriv ut denna lista till konsolen.\r\n\r\n#### Bonusuppgift: Avancerad Fråga\r\n1. Använd LINQ för att hitta den genomsnittliga åldern av alla personer i listan. Skriv ut det genomsnittliga värdet till konsolen.\r\n2. Använd LINQ för att hitta alla personer vars namn börjar med bokstaven 'A'. Skriv ut deras namn och åldrar till konsolen.\r\n\r\n---\r\n\r\nLycka till med läxan!"
+                // Documents = null
+            },
+             new Activity
+            {
+                Name = "Quiz",
+                Type = ActivityType.Quiz,
+                Description = "Quiz om det du har lärt dig"
                 // Documents = null
             },
             // The Complete Python Bootcamp From Zero to Hero in Python
@@ -369,6 +390,13 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
                 Name = "E-learning",
                 Type = ActivityType.ELearning,
                 Description = "PluralSight"
+                // Documents = null
+            },
+            new Activity
+            {
+                Name = "Quiz",
+                Type = ActivityType.Quiz,
+                Description = "Quiz om det du har lärt dig"
                 // Documents = null
             },
             new Activity
@@ -411,9 +439,23 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             },
             new Activity
             {
+                Name = "Quiz",
+                Type = ActivityType.Quiz,
+                Description = "Quiz om det du har lärt dig"
+                // Documents = null
+            },
+            new Activity
+            {
                 Name = "Lecture",
                 Type = ActivityType.Lecture,
                 Description = "Python Selenium"
+                // Documents = null
+            },
+            new Activity
+            {
+                Name = "Quiz",
+                Type = ActivityType.Quiz,
+                Description = "Quiz om det du har lärt dig"
                 // Documents = null
             },
             new Activity
