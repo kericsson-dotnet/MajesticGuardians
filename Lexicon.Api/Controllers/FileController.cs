@@ -37,7 +37,7 @@ public class FileController : Controller
 			}
 		}
 }
-public class FileUploadWeb()
+public class FileUploadWeb
 {
 	public string Title { get; set; }
 	public string Description { get; set; }
