@@ -11,19 +11,19 @@ namespace Lexicon.Api.Controllers;
 [ApiController]
 public class ModulesController : ControllerBase
 {
-    private readonly IUnitOfWork _UoW;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
     public ModulesController(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _UoW = unitOfWork;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ModuleDto>>> GetModules()
     {
-        var modules = await _UoW.Modules.GetAllAsync();
+        var modules = await _unitOfWork.Modules.GetAllAsync();
 
         if(modules == null || !modules.Any())
         {
@@ -38,7 +38,7 @@ public class ModulesController : ControllerBase
     {
         try
         {
-            var module = await _UoW.Modules.GetAsync(id);
+            var module = await _unitOfWork.Modules.GetAsync(id);
             return Ok(_mapper.Map<ModuleDto>(module));
         }
 
@@ -68,7 +68,7 @@ public class ModulesController : ControllerBase
 
         try
         {
-            var existingModule = await _UoW.Modules.GetAsync(id);
+            var existingModule = await _unitOfWork.Modules.GetAsync(id);
             ModulePostDto modulePostDto = new ModulePostDto
             {
                 Name = module.Name,
@@ -78,13 +78,13 @@ public class ModulesController : ControllerBase
                 CourseId = existingModule.CourseId             
             };
             _mapper.Map(modulePostDto, existingModule);
-            _UoW.Modules.Update(existingModule);
-            await _UoW.SaveAsync();
+            _unitOfWork.Modules.Update(existingModule);
+            await _unitOfWork.SaveAsync();
             return NoContent();
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (await _UoW.Modules.GetAsync(id) == null)
+            if (await _unitOfWork.Modules.GetAsync(id) == null)
             {
                 return NotFound();
             }
@@ -119,8 +119,8 @@ public class ModulesController : ControllerBase
 
         try
         {
-            _UoW.Modules.Add(existingModule);
-            await _UoW.SaveAsync();
+            _unitOfWork.Modules.Add(existingModule);
+            await _unitOfWork.SaveAsync();
         }
 
         catch (InvalidOperationException ex)
@@ -146,9 +146,9 @@ public class ModulesController : ControllerBase
 
         try
         {
-            var module = await _UoW.Modules.GetAsync(id);
-            _UoW.Modules.Delete(module.ModuleId);
-            await _UoW.SaveAsync();
+            var module = await _unitOfWork.Modules.GetAsync(id);
+            _unitOfWork.Modules.Delete(module.ModuleId);
+            await _unitOfWork.SaveAsync();
         }
 
         catch (InvalidOperationException ex)

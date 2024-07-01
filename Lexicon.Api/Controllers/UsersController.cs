@@ -11,20 +11,20 @@ namespace Lexicon.Api.Controllers;
 [ApiController]
 public class UsersController : ControllerBase
 {
-    private readonly IUnitOfWork _UoW;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
 
     public UsersController(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _UoW = unitOfWork;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
     {
-        var users = await _UoW.Users.GetAllAsync();
+        var users = await _unitOfWork.Users.GetAllAsync();
 
         if (users == null || !users.Any())
         {
@@ -39,7 +39,7 @@ public class UsersController : ControllerBase
     {
         try
         {
-            var user = await _UoW.Users.GetAsync(id);
+            var user = await _unitOfWork.Users.GetAsync(id);
             return Ok(_mapper.Map<UserDto>(user));
         }
 
@@ -69,7 +69,7 @@ public class UsersController : ControllerBase
 
         try
         {
-            var existingUser = await _UoW.Users.GetAsync(id);
+            var existingUser = await _unitOfWork.Users.GetAsync(id);
 
             if (existingUser == null)
             {
@@ -83,12 +83,12 @@ public class UsersController : ControllerBase
 
             _mapper.Map(userPostDto, existingUser);
 
-            _UoW.Users.Update(existingUser);
-            await _UoW.SaveAsync();
+            _unitOfWork.Users.Update(existingUser);
+            await _unitOfWork.SaveAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (await _UoW.Users.GetAsync(id) == null)
+            if (await _unitOfWork.Users.GetAsync(id) == null)
             {
                 return NotFound();
             }
@@ -123,8 +123,8 @@ public class UsersController : ControllerBase
 
         try
         {
-            _UoW.Users.Add(user);
-            await _UoW.SaveAsync();
+            _unitOfWork.Users.Add(user);
+            await _unitOfWork.SaveAsync();
         }
 
         catch (InvalidOperationException ex)
@@ -150,9 +150,9 @@ public class UsersController : ControllerBase
 
         try
         {
-            var user = await _UoW.Users.GetAsync(id);
-            _UoW.Users.Delete(user.UserId);
-            await _UoW.SaveAsync();
+            var user = await _unitOfWork.Users.GetAsync(id);
+            _unitOfWork.Users.Delete(user.UserId);
+            await _unitOfWork.SaveAsync();
         }
 
         catch (InvalidOperationException ex)
