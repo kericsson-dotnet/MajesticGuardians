@@ -7,7 +7,6 @@
 
 @rendermode InteractiveServer
 
-
 @code {
     private User? currentUser;
 
@@ -26,7 +25,8 @@
 
                 else if (currentUser.Role == Models.UserRole.Student)
                 {
-                    NavigationManager.NavigateTo($"/modules");
+                    var courses = await Services.CourseService.GetAllUsersCourses(currentUser.UserId);
+                    NavigationManager.NavigateTo($"/modules/{courses.FirstOrDefault().CourseId}");
                 }
             }
 
