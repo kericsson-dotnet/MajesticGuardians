@@ -14,7 +14,9 @@ public class ActivityService : IActivityService
 
 	public async Task AddActivityAsync(Activity activity) => await _httpClient.PostAsJsonAsync("api/activities", activity);
 
-	public async Task<List<Activity>> GetActivitiesAsync() => await _httpClient.GetFromJsonAsync<List<Activity>>("api/activities");
+	public async Task DeleteActivityAsync(int id) => await _httpClient.DeleteAsync($"api/activities/{id}");
+
+    public async Task<List<Activity>> GetActivitiesAsync() => await _httpClient.GetFromJsonAsync<List<Activity>>("api/activities");
 
     public async Task<Activity> GetActivityAsync(int id) => await _httpClient.GetFromJsonAsync<Activity>($"api/activities/{id}");
     
