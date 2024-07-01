@@ -15,73 +15,70 @@ else if (loadingError != null)
 
 else if (currentUser != null)
 {
-    if (currentUser.Role.ToString().Equals("Teacher") || currentUser.Role.ToString().Equals("Student"))
+    @if (currentUser.Role.ToString().Equals("Teacher") || currentUser.Role.ToString().Equals("Student"))
     {
-        <h3>@titleText</h3>
+        <div class="container mt-4">
+            <h3>@titleText</h3>
 
-        if (currentUser.Role.ToString().Equals("Teacher") && currentUser.UserId > 0)
-        {
-            <div class="mt-2">
-                <NavLink class="btn btn-primary" href="@($"/edit_module/{CourseId}")">Lägg ny module</NavLink>
-            </div>
-        }
+            @if (currentUser.Role.ToString().Equals("Teacher") && currentUser.UserId > 0)
+            {
+                <div class="mt-3">
+                    <NavLink class="btn btn-primary" href="@($"/edit_module/{CourseId}")">Lägg ny modul</NavLink>
+                </div>
+            }
 
-        <div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Namn</th>
-                        <th>Beskrivning</th>
-                        <th>Start Datum</th>
-                        <th>Slut Datum</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    @if (modules == null || !modules.Any())
-                    {
-                        <p>Det finns inga tillgängliga moduler</p>
-                    }
-
-                    else
-                    {
-                        @foreach (var module in modules)
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover mt-3">
+                    <thead>
+                        <tr>
+                            <th scope="col">Namn</th>
+                            <th scope="col">Beskrivning</th>
+                            <th scope="col">Start Datum</th>
+                            <th scope="col">Slut Datum</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (modules == null || !modules.Any())
                         {
                             <tr>
-                                <td>@module.Name</td>
-                                <td>@module.Description</td>
-                                <td>@module.StartDate.ToString("yyyy-MM-dd")</td>
-                                <td>@module.EndDate.ToString("yyyy-MM-dd")</td>
-                                <td>
-                                        
-                                    <div class="d-flex">
-
-                                        <a class="btn btn-secondary me-2" role="button" href="@ActivityUrl(module.ModuleId)">
-                                            <i class="bi bi-card-list"></i>
-                                        </a>
-
-                                    @if (currentUser.Role == Models.UserRole.Teacher)
-                                    {
-                                        <a class="btn btn-primary me-2" role="button" href="@EditModuleUrl(module.ModuleId)">
-                                           <i class="bi bi-pencil"></i>
-                                        </a>
-
-                                        <button class="btn btn-danger"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="@($"#deleteModal-{module.ModuleId}")">
-                                            <i class="bi bi-x-lg"></i>
-                                        </button>
-                                        <DeleteModule Module="@module" />
-                                    }
-
-                                    </div>
-                                </td>
+                                <td colspan="5">Det finns inga tillgängliga moduler</td>
                             </tr>
                         }
-                    }
-                </tbody>
-            </table>
+                        else
+                        {
+                            @foreach (var module in modules)
+                            {
+                                <tr>
+                                    <td>@module.Name</td>
+                                    <td>@module.Description</td>
+                                    <td>@module.StartDate.ToString("yyyy-MM-dd")</td>
+                                    <td>@module.EndDate.ToString("yyyy-MM-dd")</td>
+                                    <td>
+                                        <div class="btn-group" role="group" aria-label="Module Actions">
+                                            <a class="btn btn-secondary me-2" href="@ActivityUrl(module.ModuleId)">
+                                                <i class="bi bi-card-list"></i>
+                                            </a>
+                                            @if (currentUser.Role == Models.UserRole.Teacher)
+                                            {
+                                                <a class="btn btn-primary me-2" href="@EditModuleUrl(module.ModuleId)">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <button class="btn btn-danger"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="@($"#deleteModal-{module.ModuleId}")">
+                                                    <i class="bi bi-x-lg"></i>
+                                                </button>
+                                                <DeleteModule Module="@module" />
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     }
 
@@ -132,7 +129,7 @@ else if (currentUser != null)
                 return;
             }
 
-            titleText = $"Module för kursen {Course.Name}";
+            titleText = $"Moduler för {Course.Name} kursen";
 
             if (Course?.ModuleIds != null && Course.ModuleIds.Any())
             {
