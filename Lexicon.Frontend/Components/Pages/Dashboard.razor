@@ -83,6 +83,14 @@ else
                                         <a class="btn btn-secondary me-2" role="button" href="@NavigateToCourse(course.CourseId)">
                                             Details
                                         </a>
+
+                                       <button class="btn btn-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="@($"#deleteModal-{course.CourseId}")">
+                                           <i class="bi bi-x-lg"></i>
+                                       </button>
+
+                                       <DeleteCourse Course="@course"  CurrentUser="@currentUser" />
                                     </div>
                                 </td>
                             </tr>
