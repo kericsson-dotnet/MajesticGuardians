@@ -67,9 +67,10 @@ else
             StateHasChanged();
         }
     }
-
+    
     public async Task LoadDocumentAsync()
     {
+        documents.Clear();
         if(currentUser!.Role == UserRole.Teacher)
         {
             documents = (await Services.DocumentService.GetDocumentsAsync()).ToList();
@@ -86,7 +87,11 @@ else
             }
         } 
     }
-
+    public async Task RefreshDocumentList()
+    {
+        await LoadDocumentAsync();
+        StateHasChanged(); // Notify the component to re-render
+    }
     private async Task DownloadFile(int id)
     {
         var document = await Services.DocumentService.GetDocumentAsync(id);
