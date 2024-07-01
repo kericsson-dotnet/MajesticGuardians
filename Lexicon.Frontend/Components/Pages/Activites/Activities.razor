@@ -16,13 +16,6 @@ else if (loadingError != null)
 
 else
 {
-    if (activities == null || !activities.Any())
-    {
-        <p>Det finns inga aktiviter i den här modulen</p>
-    }
-
-    else
-    {
         if(currentUser != null)
         {
             <PageTitle>Aktivitier</PageTitle>
@@ -50,6 +43,14 @@ else
                     </tr>
                 </thead>
                 <tbody>
+                   
+                @if (activities == null || !activities.Any())
+                {
+                  <p>Det finns inga aktiviter i den här modulen</p>
+                }
+
+                else
+                {
                     @foreach (var activity in activities)
                     {
                         <tr>
@@ -78,6 +79,8 @@ else
                             </td>
                         </tr>
                     }
+                }
+                   
                 </tbody>
             </table>
         }
@@ -86,7 +89,6 @@ else
         {
             NavigateToHome();
         }
-    }
 }
 
 @code {
