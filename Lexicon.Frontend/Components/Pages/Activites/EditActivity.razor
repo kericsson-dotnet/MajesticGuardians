@@ -1,37 +1,65 @@
-﻿@page "/edit_activity/{id:int}"
+﻿@page "/edit_activity/{ModuleId:int}"
+@page "/edit_activity/{ModuleId:int}/{ActivityId:int}"
 @inject IUnitOfWork Services
-@rendermode InteractiveServer
 @inject NavigationManager Navigation
+@rendermode InteractiveServer
 
-
-<PageTitle>Edit Activity</PageTitle>
-<h3>Edit Activity</h3>
-
-@if (isSuccess)
+@if (isLoading)
 {
-	<div class="alert alert-success" role="alert">
-		Successfully updated the activity!
-	</div>
-	<button class="btn btn-primary" @onclick="GoToMainPage">Return to Main Page</button>
-}else{
+	<p><em>Läser in...</em></p>
+}
+
+
+else if (loadingError != null)
+{
+	<p> Det gick inte att läsa in aktiviten: @loadingError</p>
+}
+
+else{
+
+	
+	<PageTitle>Edit Activity</PageTitle>
+	<h3>Edit Activity</h3>
+
 	<div>
-		<EditForm Model="@ActivityModel" OnValidSubmit="@OnSubmit" FormName="EditModule">
+		<EditForm Model="@Activity" OnValidSubmit="@HandleSubmit">
 			<DataAnnotationsValidator />
 			<ValidationSummary />
 
 			<div class="form-group mb-3">
-				<label for="name">Name</label>
-				<InputText id="nameT" class="form-control" @bind-Value="@ActivityModel.Name" />
+				<label for="name">Namn</label>
+				<InputText id="name" class="form-control" @bind-Value="@Activity.Name" />
 			</div>
+
+			<div class="form-group mb-3">
+				<label for="description">Beskrivning</label>
+				<InputText id="description" class="form-control" @bind-Value="@Activity.Description" />
+			</div>
+
+			<div class="mb-3">
+				<label for="type">Aktivitet</label>
+				<InputSelect id="type" class="form-control" @bind-Value="Activity.Type">
+					@foreach (var activity in Activity.AllActivities)
+					{
+						<option value="@activity">@activity</option>
+					}
+				</InputSelect>
+			</div>
+			
 			<div class="form-group mb-3">
 				<label for="startDate">Start datum</label>
-				<InputDate id="startDateT" class="form-control" @bind-Value="@ActivityModel.StartDate" />
+				<InputDate id="startDate" class="form-control" @bind-Value="@Activity.StartDate" />
 			</div>
+			
 			<div class="form-group mb-3">
 				<label for="endtDate">Slut datum</label>
-				<InputDate id="endDateT" class="form-control" @bind-Value="@ActivityModel.EndDate" />
+				<InputDate id="endDate" class="form-control" @bind-Value="@Activity.EndDate" />
 			</div>
-			<button type="submit" class="btn btn-primary">Save</button>
+
+			<div class="d-flex mt-2 gap-2">
+				<button type="submit" class="btn btn-primary">Spara</button>
+				<button @onclick="GoToActivityPage" class="btn btn-secondary">Till aktivitet sidan</button>
+			</div>
 		</EditForm>
 	</div>
 }
@@ -40,25 +68,91 @@
 
 @code {
 	[Parameter]
-	public int Id { get; set; }
-	[SupplyParameterFromForm(FormName = "EditModule")]
-	private Activity ActivityModel { get; set; }
-	private bool isSuccess = false;
+	public int? ActivityId { get; set; }
 
-	protected override void OnInitialized()
+	[Parameter]
+	public int? ModuleId { get; set; }
+
+	[SupplyParameterFromForm]
+	private Activity? Activity { get; set; }
+
+	private bool isLoading = true;
+
+	private string? loadingError = null;
+
+
+	protected async override Task OnInitializedAsync()
 	{
-		ActivityModel = new();
+		await LoadActivityAsync();
 	}
 
-	private async Task OnSubmit()
+	private async Task HandleSubmit()
 	{
-		//Send request to API
-		//map model to activity post dto
-		ActivityModel.Module = new Module();
-		isSuccess = await Services.ActivityService.PutActivityAsync(Id, ActivityModel);	
+		ArgumentNullException.ThrowIfNull(Activity);
+
+		try
+		{
+			if (ActivityId == null)
+			{
+				await Services.ActivityService.AddActivityAsync(Activity);
+			}
+
+			else
+			{
+				Activity.ActivityId = ActivityId.Value;
+				await Services.ActivityService.UpdateActivityAsync(ActivityId.Value, Activity);
+			}
+
+			Navigation.NavigateTo($"/activities/{ModuleId.Value}");
+
+		}
+
+		catch (Exception ex)
+		{
+			loadingError = ex.Message;
+		}
 	}
-	private void GoToMainPage()
+
+
+	private async Task LoadActivityAsync()
 	{
-		Navigation.NavigateTo("/");
+
+		if (Activity != null)
+		{
+			return;
+		}
+
+		if (ActivityId != null)
+		{
+			try
+			{
+				Activity = await Services.ActivityService.GetActivityAsync(ActivityId.Value);
+			}
+
+			catch (Exception ex)
+			{
+				loadingError = ex.Message;
+			}
+		}
+
+		else
+		{
+			Activity = new Activity()
+			{
+				Name = string.Empty,
+				Type = 0,
+				EndDate = DateTime.UtcNow,
+				StartDate = DateTime.UtcNow,
+				Description = string.Empty,
+				ModuleId = ModuleId.Value
+			};
+
+		}
+
+		isLoading = false;
 	}
+
+	private void GoToActivityPage() => Navigation.NavigateTo($"/activities/{ModuleId}");
+
+	private void GoToMainPage() => Navigation.NavigateTo("/");
 }
