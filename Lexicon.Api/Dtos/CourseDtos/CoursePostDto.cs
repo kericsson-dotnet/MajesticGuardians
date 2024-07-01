@@ -20,5 +20,8 @@ public class CoursePostDto
 
     public List<int> UserIds { get; set; } = [];
 
+    public List<int> ModuleIds { get; set; } = [];
+    
     public List<int> DocumentIds { get; set; } = [];
+    
 }
