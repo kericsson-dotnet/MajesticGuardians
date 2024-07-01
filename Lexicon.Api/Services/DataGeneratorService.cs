@@ -358,7 +358,7 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             new Activity
             {
                 Name = "Lecture",
-                Description = "Python object oriented"
+                Description = "Python object oriented 1"
                 // Documents = null
             },
         };
