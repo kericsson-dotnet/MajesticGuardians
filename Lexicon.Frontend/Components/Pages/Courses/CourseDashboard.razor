@@ -3,14 +3,12 @@
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
-
-<PageTitle>Course Details</PageTitle>
+<PageTitle>Course Dashboard</PageTitle>
 
 @if (isLoading)
 {
     <p><em>Läser in...</em></p>
 }
-
 else if (currentUser != null)
 {
     if (currentUser.Role.ToString().Equals("Teacher") && currentUser.UserId > 0)
@@ -20,82 +18,68 @@ else if (currentUser != null)
             <NavLink class="btn btn-secondary" href="/dashboard">Återgå till instrumentpanelen</NavLink>
         </div>
 
-        if (courses.Any())
+        @if (courses.Any())
         {
             <div class="container mt-3">
                 <div class="row">
-                    <div class="col-md-4">
-                        <h4>List of courses</h4>
-                        <table class="table table-striped table-bordered table-hover mt-3">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Kurs Id</th>
-                                    <th>Namn</th>
-                                    <th>Start Datum</th>
-                                    <th>Slut Datum</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                @foreach (var course in courses)
-                                {
+                    <div class="col-md-8">
+                        <h4>Lista av kurser </h4>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover mt-3">
+                                <thead>
                                     <tr>
-                                        <td></td>
-                                        <td>@course.CourseId</td>
-                                        <td>@course.Name</td>
-                                        <td>@course.StartDate</td>
-                                        <td>@course.EndDate</td>
-
-                                        <td>
-                                            <div class="d-flex">
-                                                <a class="btn btn-primary me-2" role="button" href="@EditCourseUrl(course.CourseId)">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-
-                                                <a class="btn btn-secondary me-2" role="button" href="@DetailsCourseUrl(course.CourseId)">
-                                                    <i class="bi bi-card-list"></i>
-                                                </a>
-
-                                                <button class="btn btn-danger"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="@($"#deleteModal-{course.CourseId}")">
-                                                    <i class="bi bi-x-lg"></i>
-                                                </button>
-
-                                                <DeleteCourse Course="@course"/>
-                                            </div>
-                                        </td>
+                                        <th scope="col">Kurs Id</th>
+                                        <th scope="col">Namn</th>
+                                        <th scope="col">Start Datum</th>
+                                        <th scope="col">Slut Datum</th>
+                                        <th scope="col"></th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach (var course in courses)
+                                    {
+                                        <tr>
+                                            <td>@course.CourseId</td>
+                                            <td>@course.Name</td>
+                                            <td>@course.StartDate</td>
+                                            <td>@course.EndDate</td>
+                                            <td>
+                                                <div class="btn-group" role="group" aria-label="Course Actions">
+                                                    <a class="btn btn-primary" href="@EditCourseUrl(course.CourseId)">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <a class="btn btn-secondary" href="@DetailsCourseUrl(course.CourseId)">
+                                                        <i class="bi bi-card-list"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@($"#deleteModal-{course.CourseId}")">
+                                                        <i class="bi bi-x-lg"></i>
+                                                    </button>
+                                                    <DeleteCourse Course="@course" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         }
-    
         else
         {
             <h3>Det finns inga kurser i systemet</h3>
         }
     }
-
     else
     {
         NavigateToHome();
-    } 
+    }
 }
 
 
-
-
-
 @code {
-
     private bool isLoading = true;
-
     private List<Course>? courses;
     private User? currentUser;
 
@@ -114,7 +98,6 @@ else if (currentUser != null)
         }
     }
 
-
     protected async override Task OnInitializedAsync()
     {
         courses = (await Services.CourseService.GetCoursesAsync()).ToList();
@@ -122,8 +105,6 @@ else if (currentUser != null)
     }
 
     private string EditCourseUrl(int id) => $"/edit_course/{id}";
-
     private string DetailsCourseUrl(int id) => $"/course_details/{id}";
-
     private void NavigateToHome() => Navigation.NavigateTo("/", true);
 }
