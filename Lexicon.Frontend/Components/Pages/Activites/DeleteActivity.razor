@@ -47,6 +47,6 @@
     private async Task DeleteConfirm()
     {
         await Services.ActivityService.DeleteActivityAsync(Activity.ActivityId);
-        Navigation.NavigateTo($"/activities/{CourseId}/{Activity.ModuleId}", true);
+        Navigation.NavigateTo($"/activities/{Activity.ModuleId}", true);
     }
 }
