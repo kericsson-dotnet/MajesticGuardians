@@ -30,6 +30,6 @@ public class UserDto
 
     public List<int> DocumentIds { get; set; } = [];
 
-    public List<int> Courseds { get; set; } = [];
+    public List<int> CourseIds { get; set; } = [];
 
 }
