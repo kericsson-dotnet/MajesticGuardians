@@ -18,9 +18,15 @@ else
 
     else
     {
-        <PageTitle>Activities</PageTitle>
+        <PageTitle>Aktivitier</PageTitle>
 
-        <h3>Activities</h3>
+        <h3>Aktivitier</h3>
+
+        <div class=" d-flex mt-2 gap-2">
+            <NavLink class="btn btn-primary" href="@($"/edit_activity/{ModuleId}")">Lägg till ny aktivitet</NavLink>
+            <NavLink class="btn btn-secondary" href="@GoToModulePage(ModuleId)">Till module sidan</NavLink>
+        </div>
+
         <table class="table">
             <thead>
                 <tr>
@@ -102,6 +108,7 @@ else
 
     }
 
-    private string EditActivityUrl(int id) => $"/edit_activity/{id}";
+    private string EditActivityUrl(int activityId) => $"/edit_activity/{ModuleId}/{activityId}";
+    private string GoToModulePage(int activityId) => $"/modules/{ModuleId}";
 
 }
