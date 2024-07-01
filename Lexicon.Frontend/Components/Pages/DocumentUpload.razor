@@ -3,7 +3,7 @@
 @using System.Net
 @using System.Net.Http.Headers
 @inject IUnitOfWork Services;
-<h2>File Upload</h2>
+<h2>Document Upload</h2>
 
 @if (Message.Length > 0)
 {
@@ -18,13 +18,14 @@
 	<button class="btn btn-primary" type="submit">Submit</button>
 </EditForm>
 
-<DocumentList></DocumentList>
+<DocumentList @ref="documentList"></DocumentList>
+
 @code {
 	[SupplyParameterFromForm(FormName ="fileUpload")]
 	private FileUploadWeb LoadFile { get; set; } = new();
 	private long maxFileSize = 1024 * 150;
 	private string Message { get; set; } = String.Empty;
-
+	private DocumentList documentList;
 	private User? currentUser;
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -36,8 +37,6 @@
 	}
 	private async Task OnSubmit()
 	{
-
-
 		try
 		{
 			using MultipartFormDataContent content = new();
@@ -45,7 +44,6 @@
 			content.Add(new StringContent(LoadFile.Name), "Title");
 			content.Add(new StringContent(LoadFile.Description), "Description");
 			content.Add(new StringContent(currentUser!.UserId.ToString()), "UserId");
-
 			foreach(var file in LoadFile.Attachments)
 			{
 				string safeFileName = WebUtility.HtmlEncode(file.Name);
@@ -55,6 +53,7 @@
 			}
 			Message = await Services.DocumentService.PostFileAsync(content);
 			LoadFile = new();
+			await documentList.RefreshDocumentList();
 		}catch(Exception e)
 		{
 			Message = "Upload failed. Error: " + e.Message;
@@ -72,6 +71,5 @@
 		public string UserId { get; set; } = String.Empty;
 		public string? ModuleId { get; set; } = String.Empty;
 		public IReadOnlyList<IBrowserFile> Attachments { get; set; }
-
 	}
 }

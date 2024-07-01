@@ -54,7 +54,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutModule([FromRoute] int id, [FromBody] Module module)
+    public async Task<IActionResult> PutModule([FromRoute] int id, [FromBody] ModulePostDto modulePostDto)
     {
         if (id <= 0)
         {
@@ -69,14 +69,6 @@ public class ModulesController : ControllerBase
         try
         {
             var existingModule = await _unitOfWork.Modules.GetAsync(id);
-            ModulePostDto modulePostDto = new ModulePostDto
-            {
-                Name = module.Name,
-                Description = module.Description,
-                StartDate = module.StartDate,
-                EndDate = module.EndDate,
-                CourseId = existingModule.CourseId             
-            };
             _mapper.Map(modulePostDto, existingModule);
             _unitOfWork.Modules.Update(existingModule);
             await _unitOfWork.SaveAsync();

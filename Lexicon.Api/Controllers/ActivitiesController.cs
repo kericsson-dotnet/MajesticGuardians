@@ -54,7 +54,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutActivity([FromRoute] int id, [FromBody] Activity activity)
+    public async Task<IActionResult> PutActivity([FromRoute] int id, [FromBody] ActivityPostDto activityPostDto)
     {
         if (id <= 0)
         {
@@ -69,19 +69,7 @@ public class ActivitiesController : ControllerBase
         try
         {
             var existingActivity = await _unitOfWork.Activities.GetAsync(id);
-
-			ActivityPostDto activityPostDto = new ActivityPostDto
-			{
-				Type = activity.Type,
-				Name = activity.Name,
-                Description = activity.Description,
-				StartDate = activity.StartDate,
-				EndDate = activity.EndDate,
-                ModuleId = existingActivity.ModuleId,
-               
-			};
 			_mapper.Map(activityPostDto, existingActivity);
-
             _unitOfWork.Activities.Update(existingActivity);
             await _unitOfWork.SaveAsync();
 			return NoContent();

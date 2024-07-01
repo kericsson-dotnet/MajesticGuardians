@@ -8,6 +8,5 @@ public interface IUnitOfWork
     IDocumentService DocumentService { get; }
     IAuthService AuthService { get; }
     ICourseService CourseService { get; }
-    IFileService FileService { get; }
     ISessionStorageService SessionStorageService { get; }
 }
