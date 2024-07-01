@@ -119,11 +119,25 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
                 EndDate = faker.Date.Future(),
                 // Documents = null
             },
+            new Module
+            {
+                Name = "Grundläggande LINQ i C#",
+                StartDate = faker.Date.Past(),
+                EndDate = faker.Date.Future(),
+                // Documents = null
+            },
 
             // The Complete Python Bootcamp From Zero to Hero in Python
             new Module
             {
                 Name = "Fel och Undantag i Python",
+                StartDate = faker.Date.Past(),
+                EndDate = faker.Date.Future(),
+                // Documents = null
+            },
+            new Module
+            {
+                Name = "Fel och Undantag i Python 2",
                 StartDate = faker.Date.Past(),
                 EndDate = faker.Date.Future(),
                 // Documents = null
