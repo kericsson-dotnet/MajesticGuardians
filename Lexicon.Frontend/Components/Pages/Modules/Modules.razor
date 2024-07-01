@@ -155,7 +155,7 @@ else if (currentUser != null)
 
     }
 
-    private string ActivityUrl(int id) => $"/activities/{id}";
+    private string ActivityUrl(int moduleId) => $"/activities/{moduleId}";
 
     private string EditModuleUrl(int id) => $"/edit_module/{CourseId}/{id}";
     private void NavigateToHome() => Navigation.NavigateTo("/", true);
