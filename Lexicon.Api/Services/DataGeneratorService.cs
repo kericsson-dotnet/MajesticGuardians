@@ -262,7 +262,7 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             // C# .net 2024 Course
             new Activity
             {
-                Name = "C# Lexicon LMS",
+                Name = "Läxa: C# Lexicon LMS",
                 Description = "Lexicon LMS\r\n" +
                 "Projektet ni skall arbeta med under den avslutande modulen är en lärplattform, ett så\r\n" +
                 "kallat LMS1 (Learning Management System), anpassat för Lexicons\r\npåbyggnadsutbildningar. " +
@@ -369,7 +369,7 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             },
             new Activity
             {
-                Name = "Industriell maskinpark –\r\nBlazor",
+                Name = "Läxa: Industriell maskinpark –\r\nBlazor",
                 Description = "Övning 16 – Industriell maskinpark –\r\nBlazor\r\n" +
                 "Du ska i denna laboration skapa en Blazor Web App. Applikation kommer även användas i andra\r\n" +
                 "laborationer framöver så det är viktigt att du genomför denna laboration.\r\n" +
