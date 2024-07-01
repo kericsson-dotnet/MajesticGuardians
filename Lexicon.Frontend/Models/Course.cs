@@ -17,7 +17,7 @@ public class Course
     [Required(ErrorMessage = "Start datum är obligatoriskt")]
     public DateTime StartDate { get; set; } = DateTime.Now;
 
-    [Required(ErrorMessage = "Slut datums är obligatoriskt")]
+    [Required(ErrorMessage = "Slut datum är obligatoriskt")]
     public DateTime EndDate { get; set; }
 
     public List<User> Users { get; set; } = [];
