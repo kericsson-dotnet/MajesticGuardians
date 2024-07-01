@@ -54,22 +54,28 @@ else if (currentUser != null)
                                 <td>@module.StartDate.ToString("yyyy-MM-dd")</td>
                                 <td>@module.EndDate.ToString("yyyy-MM-dd")</td>
                                 <td>
+                                        
+                                    <div class="d-flex">
+
+                                        <a class="btn btn-secondary me-2" role="button" href="@ActivityUrl(module.ModuleId)">
+                                            <i class="bi bi-card-list"></i>
+                                        </a>
+
                                     @if (currentUser.Role == Models.UserRole.Teacher)
                                     {
-                                        <div class="d-flex">
-                                            <a class="btn btn-primary me-2" role="button" href="@EditModuleUrl(module.ModuleId)">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
+                                        <a class="btn btn-primary me-2" role="button" href="@EditModuleUrl(module.ModuleId)">
+                                           <i class="bi bi-pencil"></i>
+                                        </a>
 
-                                            <button class="btn btn-danger"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="@($"#deleteModal-{module.ModuleId}")">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-
-                                            <DeleteModule Module="@module" />
-                                        </div>
+                                        <button class="btn btn-danger"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="@($"#deleteModal-{module.ModuleId}")">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                        <DeleteModule Module="@module" />
                                     }
+
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -148,6 +154,8 @@ else if (currentUser != null)
         }
 
     }
+
+    private string ActivityUrl(int id) => $"/activities/{id}";
 
     private string EditModuleUrl(int id) => $"/edit_module/{CourseId}/{id}";
     private void NavigateToHome() => Navigation.NavigateTo("/", true);
