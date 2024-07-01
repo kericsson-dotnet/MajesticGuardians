@@ -79,7 +79,7 @@ else
     {
         try
         {
-            User.Role = Models.UserRole.Teacher;
+            User.Role = Models.UserRole.Student;
 
             await Services.UserService.CreateUserAsync(User);
 
