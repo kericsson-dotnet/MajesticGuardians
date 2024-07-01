@@ -8,4 +8,7 @@ public class Document
     public User? AddedBy { get; set; }
     public string Url { get; set; } = string.Empty;
     public DateTime TimeAdded { get; set; } = DateTime.Now;
+    public int? UserId { get; set; }
+    public int? CourseId { get; set; }
+    public int? ActivityId { get; set; }
 }
