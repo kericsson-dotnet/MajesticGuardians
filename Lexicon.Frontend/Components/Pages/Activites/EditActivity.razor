@@ -20,54 +20,61 @@ else if (Module == null || ModuleId == null)
 	<p>Modulen existeras inte, så den har inga aktiviter</p>
 }
 
-else{
+else if (currentUser != null)
+{
+	if (currentUser.Role == UserRole.Teacher && currentUser.UserId > 0)
+	{
+		<PageTitle>@titleText</PageTitle>
 
-	
-	<PageTitle>@titleText</PageTitle>
-	
-	<h3>@titleText</h3>
+		<h3>@titleText</h3>
 
-	<div>
-		<EditForm Model="@Activity" OnValidSubmit="@HandleSubmit">
-			<DataAnnotationsValidator />
-			<ValidationSummary />
+		<div>
+			<EditForm Model="@Activity" OnValidSubmit="@HandleSubmit">
+				<DataAnnotationsValidator />
+				<ValidationSummary />
 
-			<div class="form-group mb-3">
-				<label for="name">Namn</label>
-				<InputText id="name" class="form-control" @bind-Value="@Activity.Name" />
-			</div>
+				<div class="form-group mb-3">
+					<label for="name">Namn</label>
+					<InputText id="name" class="form-control" @bind-Value="@Activity.Name" />
+				</div>
 
-			<div class="form-group mb-3">
-				<label for="description">Beskrivning</label>
-				<InputText id="description" class="form-control" @bind-Value="@Activity.Description" />
-			</div>
+				<div class="form-group mb-3">
+					<label for="description">Beskrivning</label>
+					<InputText id="description" class="form-control" @bind-Value="@Activity.Description" />
+				</div>
 
-			<div class="mb-3">
-				<label for="type">Aktivitet</label>
-				<InputSelect id="type" class="form-control" @bind-Value="Activity.Type">
-					@foreach (var activity in Activity.AllActivities)
-					{
-						<option value="@activity">@activity</option>
-					}
-				</InputSelect>
-			</div>
-			
-			<div class="form-group mb-3">
-				<label for="startDate">Start datum</label>
-				<InputDate id="startDate" class="form-control" @bind-Value="@Activity.StartDate" />
-			</div>
-			
-			<div class="form-group mb-3">
-				<label for="endtDate">Slut datum</label>
-				<InputDate id="endDate" class="form-control" @bind-Value="@Activity.EndDate" />
-			</div>
+				<div class="mb-3">
+					<label for="type">Aktivitet</label>
+					<InputSelect id="type" class="form-control" @bind-Value="Activity.Type">
+						@foreach (var activity in Activity.AllActivities)
+						{
+							<option value="@activity">@activity</option>
+						}
+					</InputSelect>
+				</div>
 
-			<div class="d-flex mt-2 gap-2">
-				<button type="submit" class="btn btn-primary">Spara</button>
-				<button @onclick="GoToActivityPage" class="btn btn-secondary">Till aktivitet sidan</button>
-			</div>
-		</EditForm>
-	</div>
+				<div class="form-group mb-3">
+					<label for="startDate">Start datum</label>
+					<InputDate id="startDate" class="form-control" @bind-Value="@Activity.StartDate" />
+				</div>
+
+				<div class="form-group mb-3">
+					<label for="endtDate">Slut datum</label>
+					<InputDate id="endDate" class="form-control" @bind-Value="@Activity.EndDate" />
+				</div>
+
+				<div class="d-flex mt-2 gap-2">
+					<button type="submit" class="btn btn-primary">Spara</button>
+					<button @onclick="GoToActivityPage" class="btn btn-secondary">Till aktivitet sidan</button>
+				</div>
+			</EditForm>
+		</div>
+	}
+
+	else
+	{
+		GoToMainPage();
+	}
 }
 
 
@@ -83,12 +90,27 @@ else{
 	private Activity? Activity { get; set; }
 
 	private Module? Module { get; set; }
+	private User? currentUser;
 
 	private bool isLoading = true;
 
 	private string? titleText = null;
 	private string? loadingError = null;
 
+	protected async override void OnAfterRender(bool firstRender)
+	{
+		if (firstRender)
+		{
+			currentUser = await Services.UserService.GetCurrentUserAsync();
+
+			if (currentUser == null || currentUser.Role != Models.UserRole.Teacher)
+			{
+				GoToMainPage();
+			}
+
+			StateHasChanged();
+		}
+	}
 
 	protected async override Task OnInitializedAsync()
 	{
