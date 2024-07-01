@@ -23,38 +23,40 @@ else if(currentUser != null)
         <div class="container mt-4">
             <h3>@titleText</h3>
 
-            <div class="edit-course-form">
-                <EditForm Model="@Course" OnValidSubmit="HandleSubmit">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
+            <div class="card mt-3">
+                <div class="card-body">
+                    <EditForm Model="@Course" OnValidSubmit="HandleSubmit">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
 
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Namn</label>
-                        <InputText id="name" class="form-control" @bind-Value="Course.Name" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Beskrivning</label>
-                        <InputText id="description" class="form-control" @bind-Value="Course.Description" />
-                    </div>
-
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="startDate" class="form-label">Start Datum</label>
-                            <InputDate id="startDate" class="form-control" @bind-Value="Course.StartDate" />
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Namn</label>
+                            <InputText id="name" class="form-control" @bind-Value="Course.Name" />
                         </div>
 
-                        <div class="col-md-6">
-                            <label for="endDate" class="form-label">Slut Datum</label>
-                            <InputDate id="endDate" class="form-control" @bind-Value="Course.EndDate" />
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Beskrivning</label>
+                            <InputText id="description" class="form-control" @bind-Value="Course.Description" />
                         </div>
-                    </div>
 
-                    <div class="mt-3">
-                        <button type="submit" class="btn btn-primary">@((CourseId == null) ? "Spara" : "Updatera")</button>
-                        <a href="/course_dashboard" role="button" class="btn btn-secondary">Återgå till kurslistan</a>
-                    </div>
-                </EditForm>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">Start Datum</label>
+                                <InputDate id="startDate" class="form-control" @bind-Value="Course.StartDate" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">Slut Datum</label>
+                                <InputDate id="endDate" class="form-control" @bind-Value="Course.EndDate" />
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-primary">@((CourseId == null) ? "Spara" : "Updatera")</button>
+                            <a href="/course_dashboard" role="button" class="btn btn-secondary">Återgå till kurslistan</a>
+                        </div>
+                    </EditForm>
+                </div>
             </div>
         </div>
     }
