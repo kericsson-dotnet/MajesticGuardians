@@ -1,0 +1,76 @@
+﻿@page "/course_details_Teachers/{CourseId:int}"
+@inject NavigationManager Navigation
+@inject IUnitOfWork Services
+@rendermode InteractiveServer
+
+@if (isLoading)
+{
+    <p><em>Läser in...</em></p>
+}
+else if (Course == null)
+{
+    <p><em>Kursen är inte tillgänglig</em></p>
+}
+else
+{
+    <h3>Lärare kopplade till kursen: @Course.Name</h3>
+
+    @if (Teachers == null || !Teachers.Any())
+    {
+        <p>Det finns inga lärare kopplade till kursen</p>
+    }
+    else
+    {
+        <ul class="list-group">
+            @foreach (var teacher in Teachers)
+            {
+                <li class="list-group-item">
+                    <strong>@teacher.FirstName @teacher.LastName</strong> - @teacher.Email
+                </li>
+            }
+        </ul>
+    }
+}
+
+@code {
+    [Parameter]
+    public int CourseId { get; set; }
+
+    private bool isLoading = true;
+    public Course? Course { get; set; }
+    public List<User> Teachers { get; set; } = new List<User>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            Course = await Services.CourseService.GetCourseAsync(CourseId);
+
+            if (Course == null)
+            {
+                Navigation.NavigateTo("/course_dashboard", true);
+                return;
+            }
+
+            var users = await Services.CourseService.GetAllUsersInCourse(CourseId);
+
+            if (users.Any())
+            {
+                var userTasks = users.Select(user => Services.UserService.GetUserAsync(user.UserId));
+                var allUsersWithDetails = await Task.WhenAll(userTasks);
+
+                var usersInCourse = allUsersWithDetails.Where(user => user != null).ToList();
+                Teachers = usersInCourse.Where(u => u.Role == Models.UserRole.Teacher).ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+}
