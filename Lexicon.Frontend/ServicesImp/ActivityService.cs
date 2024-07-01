@@ -12,9 +12,11 @@ public class ActivityService : IActivityService
         _httpClient = httpClient;
     }
 
-    public async Task<IEnumerable<Activity>> GetActivitiesAsync() => await _httpClient.GetFromJsonAsync<IEnumerable<Activity>>("api/activities");
+    public async Task<List<Activity>> GetActivitiesAsync() => await _httpClient.GetFromJsonAsync<List<Activity>>("api/activities");
+
     public async Task<Activity> GetActivityAsync(int id) => await _httpClient.GetFromJsonAsync<Activity>($"api/activities/{id}");
-    public async Task<bool> PutActivityAsync(int id, Activity activity) {
+    
+	public async Task<bool> PutActivityAsync(int id, Activity activity) {
 		try
 		{
 			// Send a PUT request and capture the response
