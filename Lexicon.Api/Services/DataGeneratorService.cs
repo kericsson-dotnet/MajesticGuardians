@@ -76,58 +76,6 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
                 AddedBy = exampleTeacher,
                 Url = "",
                 TimeAdded = DateTime.Now
-            },
-            // ElasticSearch 101
-            new Document
-            {
-                Name = "Läxa: Grundläggande ElasticSearch",
-                Description = "",
-                AddedBy = exampleTeacher,
-                Url = "",
-                TimeAdded = DateTime.Now
-            },
-            new Document
-            {
-                Name = "Läxa: Grundläggande ElasticSearch 2",
-                Description = "",
-                AddedBy = exampleTeacher,
-                Url = "",
-                TimeAdded = DateTime.Now
-            },
-            // MS SQL with C#
-            new Document
-            {
-                Name = "Läxa: Använda MS SQL med C#",
-                Description = "",
-                AddedBy = exampleTeacher,
-                Url = "",
-                TimeAdded = DateTime.Now
-            },
-            new Document
-            {
-                Name = "Läxa: Grundläggande MS SQL med C# 2",
-                Description = "",
-                AddedBy = exampleTeacher,
-                Url = "",
-                TimeAdded = DateTime.Now
-            },
-            // Basic Dance Moves for Guys - Completely beginner lessons
-            new Document
-            {
-                Name = "Läxa: Lär Dig Några Enkla Danssteg",
-                Description = "",
-                AddedBy = exampleTeacher,
-                Url = "",
-                TimeAdded = DateTime.Now
-            },
-            // LINQ Tutorial: Master the Key C# Library
-            new Document
-            {
-                Name = "Läxa: Grundläggande LINQ i C#",
-                Description = "",
-                AddedBy = exampleTeacher,
-                Url = "",
-                TimeAdded = DateTime.Now
             }
         };
 
@@ -170,68 +118,7 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
                 StartDate = faker.Date.Past(),
                 EndDate = faker.Date.Future(),
                 // Documents = null
-            },
-            // The Complete Python Bootcamp From Zero to Hero in Python
-            new Module
-            {
-                Name = "Objektorienterad Programmering i Python",
-                StartDate = faker.Date.Past(),
-                EndDate = faker.Date.Future(),
-                // Documents = null
-            },
-            new Module
-            {
-                Name = "Fel och Undantag i Python",
-                StartDate = faker.Date.Past(),
-                EndDate = faker.Date.Future(),
-                // Documents = null
-            },
-            // ElasticSearch 101
-            new Module
-            {
-                Name = "Grundläggande ElasticSearch",
-                StartDate = faker.Date.Past(),
-                EndDate = faker.Date.Future(),
-                // Documents = null
-            },
-            new Module
-            {
-                Name = "Grundläggande ElasticSearch 2",
-                StartDate = faker.Date.Past(),
-                EndDate = faker.Date.Future(),
-                // Documents = null
-            },
-            // MS SQL with C#
-            new Module
-            {
-                Name = "Använda MS SQL med C#",
-                StartDate = faker.Date.Past(),
-                EndDate = faker.Date.Future(),
-                // Documents = null
-            },
-            new Module
-            {
-                Name = "Grundläggande MS SQL med C# 2",
-                StartDate = faker.Date.Past(),
-                EndDate = faker.Date.Future(),
-                // Documents = null
-            },
-            // Basic Dance Moves for Guys - Completely beginner lessons
-            new Module
-            {
-                Name = "Lär Dig Några Enkla Danssteg",
-                StartDate = faker.Date.Past(),
-                EndDate = faker.Date.Future(),
-                // Documents = null
-            },
-            // LINQ Tutorial: Master the Key C# Library
-            new Module
-            {
-                Name = "Grundläggande LINQ i C#",
-                StartDate = faker.Date.Past(),
-                EndDate = faker.Date.Future(),
-                // Documents = null
-            },
+            }
         };
 
         await unitOfWork.SaveAsync();
@@ -388,6 +275,24 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
                 " Uppdatera data i maskinen.\r\n Lägga till och ta bort maskiner.",
                 // Documents = null
             },
+            new Activity
+            {
+                Name = "E-learning",
+                Description = "PluralSight"
+                // Documents = null
+            },
+            new Activity
+            {
+                Name = "Lecture",
+                Description = "Blazor" 
+                // Documents = null
+            },
+             new Activity
+            {
+                Name = "Läxa: Grundläggande LINQ i C#",
+                Description = "#### Uppgift 1: Skapa en Lista\r\n1. Skapa en ny C#-konsolapplikation i Visual Studio.\r\n2. Skapa en klass `Person` med följande egenskaper:\r\n   - `Name` (string)\r\n   - `Age` (int)\r\n\r\n3. Skapa en lista av `Person`-objekt med minst fem olika personer med olika namn och åldrar.\r\n\r\n#### Uppgift 2: Använd LINQ för att Hämta Data\r\n1. Använd LINQ för att hitta alla personer som är äldre än 25 år. Skriv ut deras namn och åldrar till konsolen.\r\n2. Använd LINQ för att hitta personen med det längsta namnet. Skriv ut namnet och åldern till konsolen.\r\n\r\n#### Uppgift 3: Sortera och Gruppera Data\r\n1. Använd LINQ för att sortera listan av personer efter ålder i stigande ordning. Skriv ut den sorterade listan till konsolen.\r\n2. Använd LINQ för att gruppera personerna efter deras ålder. Skriv ut varje grupp och personerna i varje grupp till konsolen.\r\n\r\n#### Uppgift 4: Använd LINQ för att Transformera Data\r\n1. Använd LINQ för att skapa en ny lista av strängar som innehåller personernas namn i versaler. Skriv ut denna lista till konsolen.\r\n2. Använd LINQ för att skapa en ny lista av anonyma objekt som innehåller `Name` och en boolsk egenskap `IsAdult` (true om `Age` är 18 eller äldre, annars false). Skriv ut denna lista till konsolen.\r\n\r\n#### Bonusuppgift: Avancerad Fråga\r\n1. Använd LINQ för att hitta den genomsnittliga åldern av alla personer i listan. Skriv ut det genomsnittliga värdet till konsolen.\r\n2. Använd LINQ för att hitta alla personer vars namn börjar med bokstaven 'A'. Skriv ut deras namn och åldrar till konsolen.\r\n\r\n---\r\n\r\nLycka till med läxan!"
+                // Documents = null
+            },
             // The Complete Python Bootcamp From Zero to Hero in Python
             new Activity
             {
@@ -438,44 +343,22 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
                 "Lycka till med läxan!",
                 // Documents = null
             },
-            // ElasticSearch 101
             new Activity
             {
-                Name = "Läxa: Grundläggande ElasticSearch",
-                Description = "### \r\n\r\n#### Uppgift 1: Installera ElasticSearch\r\n1. Installera ElasticSearch på din dator. Följ installationsinstruktionerna för ditt operativsystem från ElasticSearchs officiella webbplats.\r\n2. Starta ElasticSearch och kontrollera att det körs korrekt genom att gå till `http://localhost:9200` i din webbläsare. Du bör se JSON-utdata som innehåller information om din ElasticSearch-instans.\r\n\r\n#### Uppgift 2: Skapa ett Index\r\n1. Skapa ett nytt index i ElasticSearch med namnet `books`. Indexet ska ha följande struktur:\r\n   - `title` (text): Bokens titel.\r\n   - `author` (text): Författarens namn.\r\n   - `published_year` (integer): Utgivningsår.\r\n\r\n2. Använd en HTTP-verktyg som `curl` eller ett program som `Postman` för att skicka en PUT-begäran för att skapa indexet.\r\n\r\n#### Uppgift 3: Lägg till Dokument i Indexet\r\n1. Lägg till några dokument i `books`-indexet. Varje dokument ska representera en bok med `title`, `author`, och `published_year`.\r\n\r\n2. Använd en POST-begäran för att lägga till dokumenten. Här är några exempel på böcker du kan lägga till:\r\n   - Titel: \"The Catcher in the Rye\", Författare: \"J.D. Salinger\", Utgivningsår: 1951\r\n   - Titel: \"To Kill a Mockingbird\", Författare: \"Harper Lee\", Utgivningsår: 1960\r\n   - Titel: \"1984\", Författare: \"George Orwell\", Utgivningsår: 1949\r\n\r\n#### Uppgift 4: Sök i Indexet\r\n1. Skriv en enkel sökfråga för att hitta alla böcker skrivna av \"George Orwell\". Använd en GET-begäran med en lämplig query.\r\n\r\n2. Skriv en sökfråga för att hitta alla böcker som publicerades efter år 1950. Använd en GET-begäran med en lämplig query.\r\n\r\n#### Uppgift 5: Uppdatera och Ta Bort Dokument\r\n1. Skriv en PATCH-begäran för att uppdatera `published_year` för boken \"The Catcher in the Rye\" till 1952.\r\n\r\n2. Skriv en DELETE-begäran för att ta bort boken \"1984\" från indexet.\r\n\r\n#### Bonusuppgift: Analysera Data\r\n1. Skapa en aggregation för att räkna antalet böcker per författare i ditt index.\r\n2. Skapa en aggregation för att hitta det genomsnittliga utgivningsåret för alla böcker i ditt index.\r\n\r\n---\r\n\r\nLycka till med läxan!",
+                Name = "E-Learning",
+                Description = "PluralSight"
                 // Documents = null
             },
             new Activity
             {
-                Name = "### Läxa: Grundläggande ElasticSearch 2",
-                Description = "### \r\n\r\n#### Uppgift 1: Installera och Starta ElasticSearch\r\n1. Installera ElasticSearch på din dator. Följ installationsinstruktionerna för ditt operativsystem från ElasticSearchs officiella webbplats.\r\n2. Starta ElasticSearch och kontrollera att det körs korrekt genom att gå till `http://localhost:9200` i din webbläsare. Du bör se JSON-utdata som innehåller information om din ElasticSearch-instans.\r\n\r\n#### Uppgift 2: Skapa ett Index med Mappings\r\n1. Skapa ett nytt index i ElasticSearch med namnet `employees`. Indexet ska ha följande struktur:\r\n   - `name` (text): Anställdas namn.\r\n   - `position` (text): Anställdas befattning.\r\n   - `salary` (integer): Anställdas lön.\r\n   - `hire_date` (date): Datum för anställning.\r\n\r\n2. Använd en PUT-begäran för att skapa indexet med lämpliga mappings.\r\n\r\n#### Uppgift 3: Lägg till Dokument i Indexet\r\n1. Lägg till några dokument i `employees`-indexet. Varje dokument ska representera en anställd med `name`, `position`, `salary`, och `hire_date`.\r\n2. Använd en POST-begäran för att lägga till följande anställda:\r\n   - Namn: \"Alice Johnson\", Befattning: \"Software Engineer\", Lön: 80000, Anställningsdatum: \"2019-04-22\"\r\n   - Namn: \"Bob Smith\", Befattning: \"Data Scientist\", Lön: 90000, Anställningsdatum: \"2020-08-15\"\r\n   - Namn: \"Carol White\", Befattning: \"Product Manager\", Lön: 85000, Anställningsdatum: \"2018-01-30\"\r\n\r\n#### Uppgift 4: Sök och Filtrera\r\n1. Skriv en sökfråga för att hitta alla anställda med befattningen \"Software Engineer\". Använd en GET-begäran med en lämplig query.\r\n2. Skriv en sökfråga för att hitta alla anställda som anställdes efter 2019. Använd en GET-begäran med en lämplig query.\r\n\r\n#### Uppgift 5: Uppdatera och Ta Bort Dokument\r\n1. Skriv en PUT-begäran för att uppdatera `salary` för anställd \"Alice Johnson\" till 85000.\r\n2. Skriv en DELETE-begäran för att ta bort anställd \"Carol White\" från indexet.\r\n\r\n#### Bonusuppgift: Analysera Data\r\n1. Skapa en aggregation för att beräkna den genomsnittliga lönen för alla anställda i ditt index.\r\n2. Skapa en aggregation för att räkna antalet anställda per befattning i ditt index.\r\n\r\n---\r\n\r\nLycka till med läxan!",
-                // Documents = null
-            },
-            // MS SQL with C#
-            new Activity
-            {
-                Name = "Läxa: Använda MS SQL med C#",
-                Description = "#### Uppgift 1: Installera och Konfigurera MS SQL Server\r\n1. Installera MS SQL Server på din dator. Följ installationsinstruktionerna för ditt operativsystem från den officiella Microsoft-webbplatsen.\r\n2. Installera SQL Server Management Studio (SSMS) för att hantera dina databaser.\r\n3. Skapa en ny databas med namnet `SchoolDB` i SSMS.\r\n\r\n#### Uppgift 2: Skapa en Tabell\r\n1. Använd SSMS för att skapa en tabell i `SchoolDB` med namnet `Students`. Tabellen ska ha följande kolumner:\r\n   - `StudentID` (int, primär nyckel, auto-inkrement)\r\n   - `FirstName` (nvarchar(50))\r\n   - `LastName` (nvarchar(50))\r\n   - `DateOfBirth` (date)\r\n\r\n#### Uppgift 3: Anslut till Databasen från C#\r\n1. Skapa ett nytt C#-konsolprojekt i Visual Studio.\r\n2. Lägg till nödvändiga paket för att ansluta till MS SQL Server, till exempel `System.Data.SqlClient`.\r\n3. Skriv kod för att ansluta till `SchoolDB`-databasen.\r\n\r\n#### Uppgift 4: Infoga Data i Tabellen\r\n1. Skriv en C#-funktion som infogar en ny student i `Students`-tabellen. Funktionen ska ta `FirstName`, `LastName` och `DateOfBirth` som parametrar.\r\n2. Använd SQL INSERT-kommando för att infoga data i tabellen.\r\n\r\n#### Uppgift 5: Hämta och Visa Data\r\n1. Skriv en C#-funktion som hämtar alla poster från `Students`-tabellen.\r\n2. Visa informationen om varje student i konsolen.\r\n\r\n#### Bonusuppgift: Uppdatera och Ta Bort Data\r\n1. Skriv en C#-funktion som uppdaterar en students `LastName` baserat på deras `StudentID`.\r\n2. Skriv en C#-funktion som tar bort en student från `Students`-tabellen baserat på deras `StudentID`.\r\n\r\n---\r\n\r\nLycka till med läxan!"              
+                Name = "Lecture",
+                Description = "Python Selenium"
                 // Documents = null
             },
             new Activity
             {
-                Name = "Läxa: Grundläggande MS SQL med C# 2",
-                Description = "#### Uppgift 1: Installera och Konfigurera MS SQL Server\r\n1. Installera MS SQL Server på din dator. Följ installationsinstruktionerna för ditt operativsystem från den officiella Microsoft-webbplatsen.\r\n2. Installera SQL Server Management Studio (SSMS) för att hantera dina databaser.\r\n3. Skapa en ny databas med namnet `CompanyDB` i SSMS.\r\n\r\n#### Uppgift 2: Skapa Tabeller\r\n1. Använd SSMS för att skapa en tabell i `CompanyDB` med namnet `Employees`. Tabellen ska ha följande kolumner:\r\n   - `EmployeeID` (int, primär nyckel, auto-inkrement)\r\n   - `FirstName` (nvarchar(50))\r\n   - `LastName` (nvarchar(50))\r\n   - `Position` (nvarchar(100))\r\n   - `HireDate` (date)\r\n\r\n2. Skapa en andra tabell i `CompanyDB` med namnet `Departments`. Tabellen ska ha följande kolumner:\r\n   - `DepartmentID` (int, primär nyckel, auto-inkrement)\r\n   - `DepartmentName` (nvarchar(100))\r\n\r\n#### Uppgift 3: Anslut till Databasen från C#\r\n1. Skapa ett nytt C#-konsolprojekt i Visual Studio.\r\n2. Lägg till nödvändiga paket för att ansluta till MS SQL Server, till exempel `System.Data.SqlClient`.\r\n3. Skriv kod för att ansluta till `CompanyDB`-databasen.\r\n\r\n#### Uppgift 4: Infoga Data i Tabellerna\r\n1. Skriv en C#-funktion som infogar en ny anställd i `Employees`-tabellen. Funktionen ska ta `FirstName`, `LastName`, `Position` och `HireDate` som parametrar.\r\n2. Skriv en C#-funktion som infogar en ny avdelning i `Departments`-tabellen. Funktionen ska ta `DepartmentName` som parameter.\r\n3. Använd SQL INSERT-kommandon för att infoga data i tabellerna.\r\n\r\n#### Uppgift 5: Hämta och Visa Data\r\n1. Skriv en C#-funktion som hämtar alla anställda från `Employees`-tabellen och visar informationen i konsolen.\r\n2. Skriv en C#-funktion som hämtar alla avdelningar från `Departments`-tabellen och visar informationen i konsolen.\r\n\r\n#### Bonusuppgift: Relationer och Avancerade Frågor\r\n1. Lägg till en kolumn `DepartmentID` i `Employees`-tabellen som en främmande nyckel som refererar till `DepartmentID` i `Departments`-tabellen.\r\n2. Skriv en C#-funktion som hämtar alla anställda tillsammans med deras respektive avdelningsnamn genom att använda en SQL JOIN-fråga.\r\n\r\n---\r\n\r\nLycka till med läxan!"
-                // Documents = null
-            },
-            // Basic Dance Moves for Guys - Completely beginner lessons
-            new Activity
-            {
-                Name = "Läxa: Lär Dig Några Enkla Danssteg",
-                Description = "#### Uppgift 1: Basic Two-Step\r\n1. Stå med fötterna axelbrett isär och håll armarna avslappnade vid sidorna.\r\n2. Ta ett steg åt höger med höger fot och följ sedan med vänster fot så att de möts.\r\n3. Ta ett steg åt vänster med vänster fot och följ sedan med höger fot så att de möts.\r\n4. Försök att hålla takten med musiken och rör dig mjukt från sida till sida.\r\n\r\n#### Uppgift 2: Head Nod\r\n1. Stå med fötterna axelbrett isär och håll armarna avslappnade vid sidorna.\r\n2. Nicka med huvudet i takt med musiken, upp och ner.\r\n3. Försök att hålla rörelsen avslappnad och naturlig.\r\n\r\n#### Uppgift 3: Shoulder Bounce\r\n1. Stå med fötterna axelbrett isär och håll armarna avslappnade vid sidorna.\r\n2. Lyft axlarna upp och ner i takt med musiken.\r\n3. Försök att hålla rörelsen smidig och synkroniserad med musiken.\r\n\r\n#### Uppgift 4: Side Step with Clap\r\n1. Stå med fötterna axelbrett isär och håll armarna avslappnade vid sidorna.\r\n2. Ta ett steg åt höger med höger fot och följ sedan med vänster fot så att de möts.\r\n3. Klappa händerna en gång när fötterna möts.\r\n4. Upprepa rörelsen åt vänster: ta ett steg åt vänster med vänster fot och följ sedan med höger fot så att de möts, och klappa händerna en gång när fötterna möts.\r\n\r\n#### Uppgift 5: Arm Wave\r\n1. Stå med fötterna axelbrett isär.\r\n2. Sträck ut ena armen rakt framför dig.\r\n3. Gör en \"våg\"-rörelse med armen genom att först höja axeln, sedan armbågen, och till sist handen, så att det ser ut som en flytande våg.\r\n4. Försök att synkronisera rörelsen med musiken.\r\n\r\n#### Bonusuppgift: Freestyle\r\n1. Kombinera alla ovanstående rörelser till en freestyle-dans.\r\n2. Försök att improvisera och ha kul med musiken, använd de steg du lärt dig och var kreativ.\r\n\r\n---\r\n\r\nÖva dessa steg tills du känner dig bekväm med dem. Lycka till och ha kul med dansen!"
-                // Documents = null
-            },
-            // LINQ Tutorial: Master the Key C# Library
-            new Activity
-            {
-                Name = "Läxa: Grundläggande LINQ i C#",
-                Description = "#### Uppgift 1: Skapa en Lista\r\n1. Skapa en ny C#-konsolapplikation i Visual Studio.\r\n2. Skapa en klass `Person` med följande egenskaper:\r\n   - `Name` (string)\r\n   - `Age` (int)\r\n\r\n3. Skapa en lista av `Person`-objekt med minst fem olika personer med olika namn och åldrar.\r\n\r\n#### Uppgift 2: Använd LINQ för att Hämta Data\r\n1. Använd LINQ för att hitta alla personer som är äldre än 25 år. Skriv ut deras namn och åldrar till konsolen.\r\n2. Använd LINQ för att hitta personen med det längsta namnet. Skriv ut namnet och åldern till konsolen.\r\n\r\n#### Uppgift 3: Sortera och Gruppera Data\r\n1. Använd LINQ för att sortera listan av personer efter ålder i stigande ordning. Skriv ut den sorterade listan till konsolen.\r\n2. Använd LINQ för att gruppera personerna efter deras ålder. Skriv ut varje grupp och personerna i varje grupp till konsolen.\r\n\r\n#### Uppgift 4: Använd LINQ för att Transformera Data\r\n1. Använd LINQ för att skapa en ny lista av strängar som innehåller personernas namn i versaler. Skriv ut denna lista till konsolen.\r\n2. Använd LINQ för att skapa en ny lista av anonyma objekt som innehåller `Name` och en boolsk egenskap `IsAdult` (true om `Age` är 18 eller äldre, annars false). Skriv ut denna lista till konsolen.\r\n\r\n#### Bonusuppgift: Avancerad Fråga\r\n1. Använd LINQ för att hitta den genomsnittliga åldern av alla personer i listan. Skriv ut det genomsnittliga värdet till konsolen.\r\n2. Använd LINQ för att hitta alla personer vars namn börjar med bokstaven 'A'. Skriv ut deras namn och åldrar till konsolen.\r\n\r\n---\r\n\r\nLycka till med läxan!"
+                Name = "Lecture",
+                Description = "Python object oriented"
                 // Documents = null
             },
         };
