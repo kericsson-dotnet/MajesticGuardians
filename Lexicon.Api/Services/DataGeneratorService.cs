@@ -41,19 +41,95 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             }
         }
 
-        //var Docmuents = new[]
-        //{
-        //    // C# .net 2024 Course
-        //    new Document
-        //    {
-        //        Name = "",
-        //        Description = "",
-        //        AddedBy = ,
-        //        Module = ,
-        //        Url = "",
-        //        TimeAdded = DateTime.Now
-        //    }
-        //};
+        var Docmuents = new[]
+        {
+            // C# .net 2024 Course
+            new Document
+            {
+                Name = "C# Lexicon LMS",
+                Description = "",
+                AddedBy = exampleTeacher,
+                Url = "",
+                TimeAdded = DateTime.Now
+            },
+            new Document
+            {
+                Name = "Industriell maskinpark –\r\nBlazor",
+                Description = "",
+                AddedBy = exampleTeacher,
+                Url = "",
+                TimeAdded = DateTime.Now
+            },
+            // The Complete Python Bootcamp From Zero to Hero in Python
+            new Document
+            {
+                Name = "Läxa: Objektorienterad Programmering i Python",
+                Description = "",
+                AddedBy = exampleTeacher,
+                Url = "",
+                TimeAdded = DateTime.Now
+            },
+            new Document
+            {
+                Name = "Läxa: Fel och Undantag i Python",
+                Description = "",
+                AddedBy = exampleTeacher,
+                Url = "",
+                TimeAdded = DateTime.Now
+            },
+            // ElasticSearch 101
+            new Document
+            {
+                Name = "Läxa: Grundläggande ElasticSearch",
+                Description = "",
+                AddedBy = exampleTeacher,
+                Url = "",
+                TimeAdded = DateTime.Now
+            },
+            new Document
+            {
+                Name = "Läxa: Grundläggande ElasticSearch 2",
+                Description = "",
+                AddedBy = exampleTeacher,
+                Url = "",
+                TimeAdded = DateTime.Now
+            },
+            // MS SQL with C#
+            new Document
+            {
+                Name = "Läxa: Använda MS SQL med C#",
+                Description = "",
+                AddedBy = exampleTeacher,
+                Url = "",
+                TimeAdded = DateTime.Now
+            },
+            new Document
+            {
+                Name = "Läxa: Grundläggande MS SQL med C# 2",
+                Description = "",
+                AddedBy = exampleTeacher,
+                Url = "",
+                TimeAdded = DateTime.Now
+            },
+            // Basic Dance Moves for Guys - Completely beginner lessons
+            new Document
+            {
+                Name = "Läxa: Lär Dig Några Enkla Danssteg",
+                Description = "",
+                AddedBy = exampleTeacher,
+                Url = "",
+                TimeAdded = DateTime.Now
+            },
+            // LINQ Tutorial: Master the Key C# Library
+            new Document
+            {
+                Name = "Läxa: Grundläggande LINQ i C#",
+                Description = "",
+                AddedBy = exampleTeacher,
+                Url = "",
+                TimeAdded = DateTime.Now
+            }
+        };
 
         await unitOfWork.SaveAsync();
     }
@@ -98,14 +174,14 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             // The Complete Python Bootcamp From Zero to Hero in Python
             new Module
             {
-                Name = "Läxa: Objektorienterad Programmering i Python",
+                Name = "Objektorienterad Programmering i Python",
                 StartDate = faker.Date.Past(),
                 EndDate = faker.Date.Future(),
                 // Documents = null
             },
             new Module
             {
-                Name = "Läxa: Fel och Undantag i Python",
+                Name = "Fel och Undantag i Python",
                 StartDate = faker.Date.Past(),
                 EndDate = faker.Date.Future(),
                 // Documents = null
@@ -113,14 +189,14 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             // ElasticSearch 101
             new Module
             {
-                Name = "Läxa: Grundläggande ElasticSearch",
+                Name = "Grundläggande ElasticSearch",
                 StartDate = faker.Date.Past(),
                 EndDate = faker.Date.Future(),
                 // Documents = null
             },
             new Module
             {
-                Name = "Läxa: Grundläggande ElasticSearch 2",
+                Name = "Grundläggande ElasticSearch 2",
                 StartDate = faker.Date.Past(),
                 EndDate = faker.Date.Future(),
                 // Documents = null
@@ -128,14 +204,14 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             // MS SQL with C#
             new Module
             {
-                Name = "Läxa: Använda MS SQL med C#",
+                Name = "Använda MS SQL med C#",
                 StartDate = faker.Date.Past(),
                 EndDate = faker.Date.Future(),
                 // Documents = null
             },
             new Module
             {
-                Name = "Läxa: Grundläggande MS SQL med C# 2",
+                Name = "Grundläggande MS SQL med C# 2",
                 StartDate = faker.Date.Past(),
                 EndDate = faker.Date.Future(),
                 // Documents = null
@@ -143,7 +219,7 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             // Basic Dance Moves for Guys - Completely beginner lessons
             new Module
             {
-                Name = "Läxa: Lär Dig Några Enkla Danssteg",
+                Name = "Lär Dig Några Enkla Danssteg",
                 StartDate = faker.Date.Past(),
                 EndDate = faker.Date.Future(),
                 // Documents = null
@@ -151,7 +227,7 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             // LINQ Tutorial: Master the Key C# Library
             new Module
             {
-                Name = "Läxa: Grundläggande LINQ i C#",
+                Name = "Grundläggande LINQ i C#",
                 StartDate = faker.Date.Past(),
                 EndDate = faker.Date.Future(),
                 // Documents = null
