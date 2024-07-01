@@ -44,14 +44,17 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
 
     private async Task GenerateModulesAsync()
     {
+        var seedModules = SeedData.GetSeedModules();
         foreach (var course in await unitOfWork.Courses.GetAllAsync())
         {
-            for (var i = 0; i < 4; i++)
+            for (var i = 0; i < 3; i++)
             {
+                var seedModule = seedModules.First();
+                seedModules.RemoveAt(0);
                 var module = new Faker<Module>("sv")
                     .RuleFor(m => m.Course, _ => course)
-                    .RuleFor(m => m.Name, f => f.Commerce.ProductName())
-                    .RuleFor(m => m.Description, f => f.Commerce.ProductDescription())
+                    .RuleFor(m => m.Name, _ => seedModule.Name)
+                    .RuleFor(m => m.Description, f => seedModule.Description)
                     .RuleFor(m => m.StartDate, f => f.Date.Past())
                     .RuleFor(m => m.EndDate, f => f.Date.Future())
                     // .RuleFor(m => m.Documents, f => faker.PickRandom(documents, 2).ToList())
