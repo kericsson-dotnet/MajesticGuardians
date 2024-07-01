@@ -1,0 +1,86 @@
+@page "/modules/{CourseId:int}"
+@inject IUnitOfWork Services
+@rendermode InteractiveServer
+
+@if (loading)
+{
+    <p><em>Läser in...</em></p>
+}
+
+else
+{
+    <h3>Modules</h3>
+
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Namn</th>
+                    <th>Beskrivning</th>
+                    <th>Start Datum</th>
+                    <th>Slut Datum</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @if(modules == null || !modules.Any())
+                {
+                    <p>Det finns inga tillgängliga moduler</p>
+                }
+
+                else
+                {
+                    @foreach (var module in modules)
+                    {
+                        <tr>
+                            <td>@module.Name</td>
+                            <td>@module.Description</td>
+                            <td>@module.StartDate.ToString("yyyy-MM-dd")</td>
+                            <td>@module.EndDate.ToString("yyyy-MM-dd")</td>
+                        </tr>
+                    }
+                }
+                
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public int CourseId { get; set; }
+
+    private List<Module>? modules;
+    public Course? Course { get; set; }
+
+    private bool loading = true;
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            Course = await Services.CourseService.GetCourseAsync(CourseId);
+
+            if (Course?.ModuleIds != null && Course.ModuleIds.Any())
+            {
+                var tasks = Course.ModuleIds.Select(id => Services.ModuleService.GetModuleAsync(id));
+                var moduleResults = await Task.WhenAll(tasks);
+                modules = moduleResults.ToList();
+
+            }
+        }
+
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading moduels: {ex.Message}");
+        }
+
+        finally
+        {
+            loading = false;
+            StateHasChanged();
+        }
+
+    }
+}
