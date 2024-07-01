@@ -11,4 +11,6 @@ public interface IActivityService
 	Task<bool> UpdateActivityAsync(int id, Activity activity);
     
     Task AddActivityAsync(Activity activity);
+
+    Task DeleteActivityAsync(int id);
 }
