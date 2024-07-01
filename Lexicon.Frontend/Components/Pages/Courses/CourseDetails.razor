@@ -78,7 +78,8 @@ else if (currentUser != null)
                                 <td>@user.Email</td>
                                 <td>@user.Role</td>
                                 
-                                @if(currentUser.Role == Models.UserRole.Teacher){
+                                @if(currentUser.Role == Models.UserRole.Teacher)
+                                {
                                     <td>
                                         <button class="btn btn-danger"
                                                 data-bs-toggle="modal"
