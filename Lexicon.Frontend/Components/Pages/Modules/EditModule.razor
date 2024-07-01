@@ -5,10 +5,6 @@
 
 @rendermode InteractiveServer
 
-<PageTitle>@titleText</PageTitle>
-
-<h3>@titleText</h3>
-
 @if (isLoading)
 {
 	<p>Läser in...</p>
@@ -28,29 +24,46 @@ else if(currentUser != null)
 {
 	if (currentUser.Role.ToString().Equals("Teacher") && currentUser.UserId > 0)
 	{
-		<div>
-			<EditForm Model="@Module" OnValidSubmit="HandleSubmit">
-				<DataAnnotationsValidator />
-				<ValidationSummary />
+		<PageTitle>@titleText</PageTitle>
 
-				<div class="form-group mb-3">
-					<label for="name">Namn</label>
-					<InputText id="name" class="form-control" @bind-Value="Module.Name" />
+		<div class="container mt-4">
+			<h3>@titleText</h3>
+
+			<div class="card mt-3">
+				<div class="card-body">
+					<EditForm Model="@Module" OnValidSubmit="HandleSubmit">
+						<DataAnnotationsValidator />
+						<ValidationSummary />
+
+						<div class="mb-3">
+							<label for="name" class="form-label">Namn</label>
+							<InputText id="name" class="form-control" @bind-Value="Module.Name" />
+						</div>
+
+						<div class="mb-3">
+							<label for="beskrivning" class="form-label">Beskrivning</label>
+							<InputText id="beskrivning" class="form-control" @bind-Value="Module.Description" />
+						</div>
+
+						<div class="row g-3">
+							<div class="col-md-6">
+								<label for="startDate" class="form-label">Start datum</label>
+								<InputDate id="startDate" class="form-control" @bind-Value="Module.StartDate" />
+							</div>
+
+							<div class="col-md-6">
+								<label for="endDate" class="form-label">Slut datum</label>
+								<InputDate id="endDate" class="form-control" @bind-Value="Module.EndDate" />
+							</div>
+						</div>
+
+						<div class="d-flex gap-2 mt-3">
+							<button type="submit" class="btn btn-primary">@((CourseId == null) ? "Spara" : "Updatera")</button>
+							<a href="@($"/modules/{CourseId}")" role="button" class="btn btn-secondary">Till modulerna</a>
+						</div>
+					</EditForm>
 				</div>
-				<div class="form-group mb-3">
-					<label for="beskrivining">Beskrivining</label>
-					<InputText id="beskrivining" class="form-control" @bind-Value="Module.Description" />
-				</div>
-				<div class="form-group mb-3">
-					<label for="startDate">Start datum</label>
-					<InputDate id="startDate" class="form-control" @bind-Value="Module.StartDate" />
-				</div>
-				<div class="form-group mb-3">
-					<label for="endtDate">Slut datum</label>
-					<InputDate id="endtDate" class="form-control" @bind-Value="Module.EndDate" />
-				</div>
-				<button type="submit" class="btn btn-primary">@(ModuleId != null ? "Uppdatera" : "Spara")</button>
-			</EditForm>
+			</div>
 		</div>
 	}
 
