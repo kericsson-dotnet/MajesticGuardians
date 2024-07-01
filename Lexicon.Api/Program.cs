@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Lexicon.Api.Services;
+using Microsoft.Extensions.FileProviders;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,7 +68,15 @@ app.MapControllers();
 //For authorization
 app.UseAuthentication();
 app.UseAuthorization();
-
+//use Static Files
+app.UseStaticFiles();
+//Configure a custom folder as a static folder
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "Uploads")),
+    RequestPath = "/uploads"
+});
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;

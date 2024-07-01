@@ -1,0 +1,67 @@
+﻿@inject IUnitOfWork Services;
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+
+<h3>Document List</h3>
+@if(documents == null)
+{
+	<p>Loading...</p>
+}else if(documents.Count == 0)
+{
+	<p>There has no document</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Fil Namn</th>
+                <th>Uppladdad</th>
+                <th>Ladda ner</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var doc in documents)
+            {
+                <tr>
+                    <td>@doc.Name</td>
+                    <td>@doc.TimeAdded.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => DownloadFile(doc.DocumentId)">
+                            Ladda ner
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private List<Document> documents;
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDocumentAsync();
+    }
+    public async Task LoadDocumentAsync()
+    {
+        documents = (await Services.DocumentService.GetDocumentsAsync()).ToList();
+    }
+    private async Task DownloadFile(int id)
+    {
+        var document = await Services.DocumentService.GetDocumentAsync(id);
+        Console.WriteLine("document Url" + document.Url);
+        if (document != null)
+        {
+            var docUrl = document.Url;
+            var docName = document.Name;
+
+            await JS.InvokeVoidAsync("triggerFileDownload", docName, docUrl);
+        }
+        else
+        {
+            Console.WriteLine("Filnedladdning misslyckades");
+        }
+    }
+}
