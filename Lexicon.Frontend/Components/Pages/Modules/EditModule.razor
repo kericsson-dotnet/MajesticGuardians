@@ -24,33 +24,40 @@ else if(Course == null || CourseId == null)
 	<p>Kursen existeras inte, så den har inga moduler</p>
 }
 
-else
+else if(currentUser != null)
 {
-	<div>
-		<EditForm Model="@Module" OnValidSubmit="HandleSubmit">
-			<DataAnnotationsValidator />
-			<ValidationSummary />
+	if (currentUser.Role.ToString().Equals("Teacher") && currentUser.UserId > 0)
+	{
+		<div>
+			<EditForm Model="@Module" OnValidSubmit="HandleSubmit">
+				<DataAnnotationsValidator />
+				<ValidationSummary />
 
-			<div class="form-group mb-3">
-				<label for="name">Namn</label>
-				<InputText id="name" class="form-control" @bind-Value="Module.Name" />
-			</div>
-			<div class="form-group mb-3">
-				<label for="beskrivining">Beskrivining</label>
-				<InputText id="beskrivining" class="form-control" @bind-Value="Module.Description" />
-			</div>
-			<div class="form-group mb-3">
-				<label for="startDate">Start datum</label>
-				<InputDate id="startDate" class="form-control" @bind-Value="Module.StartDate" />
-			</div>
-			<div class="form-group mb-3">
-				<label for="endtDate">Slut datum</label>
-				<InputDate id="endtDate" class="form-control" @bind-Value="Module.EndDate" />
-			</div>
-			<button type="submit" class="btn btn-primary">@(ModuleId != null ? "Uppdatera" : "Spara")</button>
-		</EditForm>
-	</div>
+				<div class="form-group mb-3">
+					<label for="name">Namn</label>
+					<InputText id="name" class="form-control" @bind-Value="Module.Name" />
+				</div>
+				<div class="form-group mb-3">
+					<label for="beskrivining">Beskrivining</label>
+					<InputText id="beskrivining" class="form-control" @bind-Value="Module.Description" />
+				</div>
+				<div class="form-group mb-3">
+					<label for="startDate">Start datum</label>
+					<InputDate id="startDate" class="form-control" @bind-Value="Module.StartDate" />
+				</div>
+				<div class="form-group mb-3">
+					<label for="endtDate">Slut datum</label>
+					<InputDate id="endtDate" class="form-control" @bind-Value="Module.EndDate" />
+				</div>
+				<button type="submit" class="btn btn-primary">@(ModuleId != null ? "Uppdatera" : "Spara")</button>
+			</EditForm>
+		</div>
+	}
 
+	else
+	{
+		GoToMainPage();
+	}
 }
 
 @code {
@@ -65,11 +72,30 @@ else
 
 	private Course? Course { get; set; }
 
+	private User? currentUser;
+
 	private bool isLoading = true;
 	private bool moduleNotFound = false;
 
 	private string? loadingError = null;
 	private string? titleText = null;
+
+	protected async override void OnAfterRender(bool firstRender)
+	{
+		if (firstRender)
+		{
+			currentUser = await Services.UserService.GetCurrentUserAsync();
+
+			if (currentUser == null || currentUser.Role != Models.UserRole.Teacher)
+			{
+				GoToMainPage();
+			}
+
+			StateHasChanged();
+		}
+		
+	}
+
 
 	protected async override Task OnInitializedAsync()
 	{
