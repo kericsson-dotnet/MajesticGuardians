@@ -1,0 +1,94 @@
+﻿@page "/register_Student"
+@inject IUnitOfWork Services
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+
+<PageTitle>Register Student</PageTitle>
+<h3>Register Student</h3>
+
+@if (!loading)
+{
+    <p>Läser in....</p>
+}
+else
+{
+    <EditForm Model="@User" OnValidSubmit="HandleRegister" FormName="logintest">
+        <div class="register-form">
+            <div class="mb-3">
+                <label for="firstName">Förnamn</label>
+                <InputText id="firstName" class="form-control" @bind-Value="User.FirstName" />
+            </div>
+            <div class="mb-3">
+                <label for="lastName">Efternamn</label>
+                <InputText id="lastName" class="form-control" @bind-Value="User.LastName" />
+            </div>
+            <div class="mb-3">
+                <label for="email">Epost</label>
+                <InputText id="email" class="form-control" @bind-Value="User.Email" />
+            </div>
+            <div class="mb-3">
+                <label for="password">Lösenord</label>
+                <InputText id="password" class="form-control" @bind-Value="User.Password" />
+            </div>
+        </div>
+
+        <div class="d-flex gap-3">
+            <button type="submit" class="btn btn-primary">Register</button>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [SupplyParameterFromForm]
+    private User User { get; set; }
+    private bool loading = false;
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var currentUser = await Services.UserService.GetCurrentUserAsync();
+
+            if (currentUser != null && currentUser.Role == Models.UserRole.Student)
+            {
+                Navigation.NavigateTo("/");
+                loading = false;
+                return;
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        User = new User()
+            {
+                FirstName = string.Empty,
+                LastName = string.Empty,
+                Password = string.Empty,
+                Email = string.Empty,
+                Role = Models.UserRole.Student,
+                Documents = new List<Document>()
+            };
+
+        loading = true;
+    }
+
+    private async Task HandleRegister()
+    {
+        try
+        {
+            User.Role = Models.UserRole.Teacher;
+
+            await Services.UserService.CreateUserAsync(User);
+
+            Navigation.NavigateTo("/login");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error registering: {ex.Message}");
+            Navigation.NavigateTo("/error");
+        }
+    }
+}
