@@ -1,5 +1,6 @@
 @page "/modules/{CourseId:int}"
 @inject IUnitOfWork Services
+@inject NavigationManager Navigation
 @rendermode InteractiveServer
 
 @if (isLoading)
@@ -12,62 +13,76 @@ else if (loadingError != null)
     <p> Det gick inte att läsa in modulen: @loadingError</p>
 }
 
-else
+else if (currentUser != null)
 {
-    <h3>@titleText</h3>
-    <div class="mt-2">
-        <NavLink class="btn btn-primary" href="@($"/edit_module/{CourseId}")">Lägg ny module</NavLink>
-    </div>
+    if (currentUser.Role.ToString().Equals("Teacher") || currentUser.Role.ToString().Equals("Student"))
+    {
+        <h3>@titleText</h3>
 
-    <div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Namn</th>
-                    <th>Beskrivning</th>
-                    <th>Start Datum</th>
-                    <th>Slut Datum</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
+        if (currentUser.Role.ToString().Equals("Teacher") && currentUser.UserId > 0)
+        {
+            <div class="mt-2">
+                <NavLink class="btn btn-primary" href="@($"/edit_module/{CourseId}")">Lägg ny module</NavLink>
+            </div>
+        }
 
-                @if(modules == null || !modules.Any())
-                {
-                    <p>Det finns inga tillgängliga moduler</p>
-                }
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Namn</th>
+                        <th>Beskrivning</th>
+                        <th>Start Datum</th>
+                        <th>Slut Datum</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
 
-                else
-                {
-                    @foreach (var module in modules)
+                    @if (modules == null || !modules.Any())
                     {
-                        <tr>
-                            <td>@module.Name</td>
-                            <td>@module.Description</td>
-                            <td>@module.StartDate.ToString("yyyy-MM-dd")</td>
-                            <td>@module.EndDate.ToString("yyyy-MM-dd")</td>
-                            <td>
-                                <div class="d-flex">
-                                    <a class="btn btn-primary me-2" role="button" href="@EditModuleUrl(module.ModuleId)">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-
-                                    <button class="btn btn-danger"
-                                         data-bs-toggle="modal"
-                                         data-bs-target="@($"#deleteModal-{module.ModuleId}")">
-                                        <i class="bi bi-x-lg"></i>
-                                    </button>
-                                      
-                                     <DeleteModule Module="@module" />
-                                </div>
-                            </td>
-                        </tr>
+                        <p>Det finns inga tillgängliga moduler</p>
                     }
-                }
-                
-            </tbody>
-        </table>
-    </div>
+
+                    else
+                    {
+                        @foreach (var module in modules)
+                        {
+                            <tr>
+                                <td>@module.Name</td>
+                                <td>@module.Description</td>
+                                <td>@module.StartDate.ToString("yyyy-MM-dd")</td>
+                                <td>@module.EndDate.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    @if (currentUser.Role == Models.UserRole.Teacher)
+                                    {
+                                        <div class="d-flex">
+                                            <a class="btn btn-primary me-2" role="button" href="@EditModuleUrl(module.ModuleId)">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+
+                                            <button class="btn btn-danger"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="@($"#deleteModal-{module.ModuleId}")">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+
+                                            <DeleteModule Module="@module" />
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    else
+    {
+        NavigateToHome();
+    }
 }
 
 @code {
@@ -77,6 +92,7 @@ else
 
     private List<Module>? modules;
     public Course? Course { get; set; }
+    private User? currentUser;
 
     private bool isLoading = true;
 
@@ -87,6 +103,20 @@ else
     {
         try
         {
+            currentUser = await Services.UserService.GetCurrentUserAsync();
+
+            if (currentUser == null || (currentUser.Role != Models.UserRole.Student && currentUser.Role != Models.UserRole.Teacher) )
+            {
+                NavigateToHome();
+                return;
+            }
+
+            if (currentUser.Role == Models.UserRole.Student)
+            {
+                var courses = await Services.CourseService.GetAllUsersCourses(currentUser.UserId);
+                CourseId = courses.FirstOrDefault().CourseId;
+            }
+
             Course = await Services.CourseService.GetCourseAsync(CourseId);
 
             if (Course == null)
@@ -120,5 +150,6 @@ else
     }
 
     private string EditModuleUrl(int id) => $"/edit_module/{CourseId}/{id}";
+    private void NavigateToHome() => Navigation.NavigateTo("/", true);
 
 }
