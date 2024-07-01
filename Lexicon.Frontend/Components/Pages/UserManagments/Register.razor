@@ -3,14 +3,17 @@
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
 
-
-
 <PageTitle>Register</PageTitle>
 <h3>Register</h3>
 
 @if (!loading)
 {
-    <p>Loading....</p>
+    <p>Läser in....</p>
+}
+
+else if (currentUser != null && currentUser.Role.ToString().Equals("Student"))
+{
+    <p>Läser in.....</p>
 }
 
 else
@@ -18,23 +21,23 @@ else
     <EditForm Model="@User" OnValidSubmit="HandleRegister" FormName="logintest">
         <div class="register-form">
             <div class="mb-3">
-                <label for="firstName">First Name</label>
+                <label for="firstName">Förnamn</label>
                 <InputText id="firstName" class="form-control" @bind-Value="User.FirstName" />
             </div>
             <div class="mb-3">
-                <label for="lastName">Last Name</label>
+                <label for="lastName">Efternamn</label>
                 <InputText id="lastName" class="form-control" @bind-Value="User.LastName" />
             </div>
             <div class="mb-3">
-                <label for="email">Email</label>
+                <label for="email">Epost</label>
                 <InputText id="email" class="form-control" @bind-Value="User.Email" />
             </div>
             <div class="mb-3">
-                <label for="password">Password</label>
+                <label for="password">Lösenord</label>
                 <InputText id="password" class="form-control" @bind-Value="User.Password" />
             </div>
             <div class="mb-3">
-                <label for="role">Role</label>
+                <label for="role">Roll</label>
                 <InputSelect id="role" class="form-control" @bind-Value="User.Role">
                     @foreach (var role in User.AllRoles)
                     {
@@ -56,6 +59,24 @@ else
     private User User { get; set; }
     private bool loading = false;
 
+    private User? currentUser;
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            currentUser = await Services.UserService.GetCurrentUserAsync();
+
+            if (currentUser != null && currentUser.Role == Models.UserRole.Student)
+            {
+                Navigation.NavigateTo("/");
+                loading = false;
+                return;
+            }
+
+            StateHasChanged();
+        }
+    }
 
     protected async override Task OnInitializedAsync()
     {
@@ -68,8 +89,8 @@ else
                 Role = 0,
                 Documents = new List<Document>()
             };
-        loading = true;
 
+        loading = true;
     }
 
 
