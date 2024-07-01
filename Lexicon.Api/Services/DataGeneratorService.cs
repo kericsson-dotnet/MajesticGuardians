@@ -68,15 +68,18 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
 
     private async Task GenerateActivitiesAsync()
     {
+        var seedActivities = SeedData.GetSeedActivities();
         foreach (var module in await unitOfWork.Modules.GetAllAsync())
         {
-            for (var i = 0; i < 4; i++)
+            for (var i = 0; i < 3; i++)
             {
+                var seedActivity = seedActivities.First();
+                seedActivities.RemoveAt(0);
                 var activity = new Faker<Activity>("sv")
                     .RuleFor(a => a.Module, _ => module)
-                    .RuleFor(a => a.Name, f => f.Name.JobTitle())
-                    .RuleFor(a => a.Description, f => f.Name.JobDescriptor())
-                    .RuleFor(a => a.Type, f => f.PickRandom<ActivityType>())
+                    .RuleFor(a => a.Name, _ => seedActivity.Name)
+                    .RuleFor(a => a.Description, _ => seedActivity.Description)
+                    .RuleFor(a => a.Type, _ => seedActivity.Type)
                     .RuleFor(a => a.StartDate, f => f.Date.Past())
                     .RuleFor(a => a.EndDate, f => f.Date.Future())
                     // .RuleFor(a => a.Documents, f => faker.PickRandom(documents, 1).ToList())
