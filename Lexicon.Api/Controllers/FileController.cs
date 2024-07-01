@@ -41,5 +41,7 @@ public class FileUploadWeb()
 {
 	public string Title { get; set; }
 	public string Description { get; set; }
+	public string UserId { get; set; }
+	public string? ModuleId { get; set; }
 	public IFormFileCollection Attachments { get; set; }
 }

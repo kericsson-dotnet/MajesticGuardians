@@ -12,7 +12,7 @@
 <EditForm Model="@LoadFile" method="post" OnValidSubmit="@OnSubmit" enctype="multipart/form-data" FormName="fileUpload">
 	<DataAnnotationsValidator />
 	<ValidationSummary />
-	<InputText class="form-control mb-4" placeholder="Title" @bind-Value="@LoadFile.Title" />
+	<InputText class="form-control mb-4" placeholder="Name" @bind-Value="@LoadFile.Name" />
 	<InputText class="form-control mb-4" placeholder="Description" @bind-Value="@LoadFile.Description" />
 	<InputFile class="form-control mb-4" multiple OnChange="@OnInputFileChange"/>
 	<button class="btn btn-primary" type="submit">Submit</button>
@@ -21,18 +21,29 @@
 @code {
 	[SupplyParameterFromForm(FormName ="fileUpload")]
 	private FileUploadWeb LoadFile { get; set; } = new();
-	private long maxFileSize = 1024 * 15;
+	private long maxFileSize = 1024 * 150;
 	private string Message { get; set; } = String.Empty;
 
-
+	private User? currentUser;
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			currentUser = await Services.UserService.GetCurrentUserAsync();
+			StateHasChanged();
+		}
+	}
 	private async Task OnSubmit()
 	{
+
+
 		try
 		{
 			using MultipartFormDataContent content = new();
 			//Add values if wanted to save in db
-			content.Add(new StringContent(LoadFile.Title), "Title");
+			content.Add(new StringContent(LoadFile.Name), "Title");
 			content.Add(new StringContent(LoadFile.Description), "Description");
+			content.Add(new StringContent(currentUser!.UserId.ToString()), "UserId");
 
 			foreach(var file in LoadFile.Attachments)
 			{
@@ -41,7 +52,7 @@
 				fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(file.ContentType);
 				content.Add(fileContent, nameof(LoadFile.Attachments), safeFileName);
 			}
-			Message = await Services.FileService.PostFileAsync(content);
+			Message = await Services.DocumentService.PostFileAsync(content);
 			LoadFile = new();
 		}catch(Exception e)
 		{
@@ -55,8 +66,10 @@
 	}
 	private class FileUploadWeb
 	{
-		public string Title { get; set; } = String.Empty;
+		public string Name { get; set; } = String.Empty;
 		public string Description { get; set; } = String.Empty;
+		public string UserId { get; set; } = String.Empty;
+		public string? ModuleId { get; set; } = String.Empty;
 		public IReadOnlyList<IBrowserFile> Attachments { get; set; }
 
 	}
