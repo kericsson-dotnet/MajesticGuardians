@@ -177,8 +177,6 @@ public class DocumentsController : ControllerBase
             return BadRequest();
         }
 
-        var document = await _unitOfWork.Documents.GetAsync(id);
-
         try
         {
             _unitOfWork.Documents.Delete(id);
