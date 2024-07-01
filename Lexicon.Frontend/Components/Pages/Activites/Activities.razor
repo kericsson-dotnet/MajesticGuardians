@@ -9,6 +9,11 @@
     <p><em>Läser in...</em></p>
 }
 
+else if (loadingError != null)
+{
+    <p> Det gick inte att läsa in aktiviter: @loadingError</p>
+}
+
 else
 {
     if (activities == null || !activities.Any())
@@ -30,7 +35,7 @@ else
                     <NavLink class="btn btn-primary" href="@($"/edit_activity/{ModuleId}")">Lägg till ny aktivitet</NavLink>
                 }
 
-                <NavLink class="btn btn-secondary" href="@GoToModulePage(ModuleId)">Till module sidan</NavLink>
+                <NavLink class="btn btn-secondary" href="@GoToModulePage()">Till module sidan</NavLink>
             </div>
 
             <table class="table">
@@ -111,6 +116,20 @@ else
                 return;
             }
 
+            // Make sure that the student can not access other modules
+            if (currentUser.Role == Models.UserRole.Student)
+            {
+                var courses = await Services.CourseService.GetAllUsersCourses(currentUser.UserId);
+                var courseId = courses.FirstOrDefault().CourseId;
+                var course = await Services.CourseService.GetCourseAsync(courseId);
+
+                if (!course.ModuleIds.Contains(ModuleId))
+                {
+                    loadingError = $"Error: Not Found - 404";
+                    return;
+                }
+            }
+
             Module = await Services.ModuleService.GetModuleAsync(ModuleId);
 
             if (Module?.ActivityIds != null && Module.ActivityIds.Any())
@@ -134,7 +153,7 @@ else
     }
 
     private string EditActivityUrl(int activityId) => $"/edit_activity/{ModuleId}/{activityId}";
-    private string GoToModulePage(int activityId) => $"/modules/{ModuleId}";
+    private string GoToModulePage() => $"/modules/{Module.CourseId}";
     private void NavigateToHome() => Navigation.NavigateTo("/", true);
 
 }
