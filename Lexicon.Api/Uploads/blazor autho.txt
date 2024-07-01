@@ -1,0 +1,6 @@
+https://www.syncfusion.com/blogs/post/easy-steps-create-a-blazor-server-app-with-authentication
+https://learn.microsoft.com/en-us/aspnet/core/blazor/security/webassembly/hosted-with-microsoft-entra-id?view=aspnetcore-7.0
+https://jasonwatmore.com/post/2020/08/13/blazor-webassembly-jwt-authentication-example-tutorial
+https://medium.com/@shahriyarali08/authentication-and-role-based-authorization-in-blazor-wasm-using-jwt-and-7bcc12317ea
+https://www.youtube.com/watch?v=P0XqYbUmSDU
+https://learn.microsoft.com/zh-cn/aspnet/core/blazor/forms/binding?view=aspnetcore-8.0
