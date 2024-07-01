@@ -14,16 +14,16 @@ public class DocumentsController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
-	private readonly IWebHostEnvironment _environment;
+    private readonly IWebHostEnvironment _environment;
 
-	public DocumentsController(IUnitOfWork unitOfWork, IMapper mapper, IWebHostEnvironment environment)
-	{
-		_unitOfWork = unitOfWork;
-		_mapper = mapper;
-		_environment = environment;
-	}
+    public DocumentsController(IUnitOfWork unitOfWork, IMapper mapper, IWebHostEnvironment environment)
+    {
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
+        _environment = environment;
+    }
 
-	[HttpGet]
+    [HttpGet]
     public async Task<IActionResult> GetDocuments()
     {
         var documents = await _unitOfWork.Documents.GetAllAsync();
@@ -48,7 +48,7 @@ public class DocumentsController : ControllerBase
         {
             var document = await _unitOfWork.Documents.GetAsync(id);
 
-            if(document == null)
+            if (document == null)
             {
                 return NotFound();
             }
@@ -115,31 +115,33 @@ public class DocumentsController : ControllerBase
     }
 
     [HttpPost("upload")]
-    public async Task<IActionResult> PostDocument([FromForm] FileUploadWeb files )
+    public async Task<IActionResult> PostDocument([FromForm] FileUploadWeb files)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-		//var document = _mapper.Map<Document>(documentPostDto);
-		var uploadPath = Path.Combine(_environment.ContentRootPath, "Uploads");
-		if (!Directory.Exists(uploadPath))
-		{
-			Directory.CreateDirectory(uploadPath);
-		}
-		try
-		{
-			foreach (var file in files.Attachments)
-			{
-				// Save locally
-				string safeFileName = WebUtility.HtmlEncode(file.FileName);
-				var path = Path.Combine(uploadPath, safeFileName); //can save this info in database together with file title and description
+        //var document = _mapper.Map<Document>(documentPostDto);
+        var uploadPath = Path.Combine(_environment.ContentRootPath, "Uploads");
+        if (!Directory.Exists(uploadPath))
+        {
+            Directory.CreateDirectory(uploadPath);
+        }
+        try
+        {
+            foreach (var file in files.Attachments)
+            {
+                // Save locally
+                string safeFileName = WebUtility.HtmlEncode(file.FileName);
+                var path = Path.Combine(uploadPath, safeFileName); //can save this info in database together with file title and description
+                // Construct the HTTP URL
+                var fileUrl = $"{Request.Scheme}://{Request.Host}/uploads/{safeFileName}";
                 var documentPostDto = new DocumentPostDto
                 {
                     Name = safeFileName,
                     Description = files.Description,
-                    Url = path,
+                    Url = fileUrl,
                     UserId = Int32.Parse(files.UserId),
                     TimeAdded = DateTime.Now
                 };
@@ -148,22 +150,23 @@ public class DocumentsController : ControllerBase
                 {
                     _unitOfWork.Documents.Add(document);
                     await _unitOfWork.SaveAsync();
-                }catch(InvalidOperationException ex)
+                }
+                catch (InvalidOperationException ex)
                 {
                     return NotFound(ex.Message);
                 }
                 await using FileStream fs = new(path, FileMode.Create);
-				await file.CopyToAsync(fs);
-			}
-			return Ok(new { Message = "Upload Successful!" });
-		}
-		catch (Exception ex)
-		{
-			return StatusCode(500, new { Message = $"Upload failed: {ex.Message}" });
-		}
-	
+                await file.CopyToAsync(fs);
+            }
+            return Ok(new { Message = "Upload Successful!" });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { Message = $"Upload failed: {ex.Message}" });
+        }
 
-      //  return CreatedAtAction("GetDocument", new { id = document.DocumentId }, document);
+
+        //  return CreatedAtAction("GetDocument", new { id = document.DocumentId }, document);
     }
 
     [HttpDelete("{id}")]
