@@ -19,6 +19,7 @@ public class ModuleRepository(DbContext context) : CrudRepository<Module>(contex
         {
             return await _context.Set<Module>()
                        .Include(m => m.Activities)
+                       .Include(m => m.Documents)
                        .FirstOrDefaultAsync(m => m.ModuleId == moduleId) ??
                    throw new InvalidOperationException($"{typeof(Course).Name} Id {id} not found.");
         }

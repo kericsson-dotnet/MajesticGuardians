@@ -1,3 +1,5 @@
+using System.Collections;
+
 namespace Lexicon.Api.Entities;
 
 public class Document
@@ -11,4 +13,8 @@ public class Document
     public DateTime TimeAdded { get; set; } = DateTime.Now;
     public int? ModuleId { get; set; } 
     public Module Module { get; set; }
+    public int? CourseId { get; set; }
+    public Course Course { get; set; }
+    public int? ActivityId { get; set; }
+    public Activity Activity { get; set; }
 }

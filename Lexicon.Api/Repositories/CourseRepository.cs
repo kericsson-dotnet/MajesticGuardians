@@ -7,7 +7,6 @@ public class CourseRepository : CrudRepository<Course>, ICourseRepository
 {
     public CourseRepository(DbContext context) : base(context)
     {
-
     }
 
     public virtual async Task<IEnumerable<Course>> GetAllAsync()
@@ -16,6 +15,7 @@ public class CourseRepository : CrudRepository<Course>, ICourseRepository
             .Set<Course>()
             .Include(c => c.Users)
             .Include(c => c.Modules)
+            .Include(c => c.Documents)
             .ToListAsync();
     }
 
@@ -24,10 +24,12 @@ public class CourseRepository : CrudRepository<Course>, ICourseRepository
         if (id is int courseId)
         {
             return await _context
-                .Set<Course>()
-                .Include(c => c.Users)
-                .Include(c => c.Modules)
-                .FirstOrDefaultAsync(c => c.CourseId == courseId) ?? throw new InvalidOperationException($"{typeof(Course).Name} Id {id} not found.");
+                       .Set<Course>()
+                       .Include(c => c.Users)
+                       .Include(c => c.Modules)
+                       .Include(c => c.Documents)
+                       .FirstOrDefaultAsync(c => c.CourseId == courseId) ??
+                   throw new InvalidOperationException($"{typeof(Course).Name} Id {id} not found.");
         }
 
         throw new ArgumentException("Invalid ID type");
@@ -67,7 +69,8 @@ public class CourseRepository : CrudRepository<Course>, ICourseRepository
 
             else
             {
-                throw new InvalidOperationException($"User with id {user.UserId} is already registered in course {courseId}.");
+                throw new InvalidOperationException(
+                    $"User with id {user.UserId} is already registered in course {courseId}.");
             }
         }
         catch (InvalidOperationException ex)
@@ -80,7 +83,7 @@ public class CourseRepository : CrudRepository<Course>, ICourseRepository
             throw new Exception($"An unexpected error occurred: {ex.Message}");
         }
     }
-    
+
     public void RemoveUserFromCourse(int courseId, int userId)
     {
         var course = _context
@@ -88,14 +91,14 @@ public class CourseRepository : CrudRepository<Course>, ICourseRepository
             .Include(c => c.Users)
             .FirstOrDefault(c => c.CourseId == courseId);
 
-        if(course == null)
+        if (course == null)
         {
             throw new InvalidOperationException($"Course with {courseId} not found");
         }
 
         var user = course.Users.FirstOrDefault(u => u.UserId == userId);
 
-        if(user == null) 
+        if (user == null)
         {
             throw new InvalidOperationException($"User with id {userId} not found in this course");
         }
@@ -120,7 +123,6 @@ public class CourseRepository : CrudRepository<Course>, ICourseRepository
 
     public async Task<IEnumerable<User>> GetAllAvailableUserForCourse(int courseId)
     {
-
         var studentIdsInCourses = await _context
             .Set<Course>()
             .SelectMany(c => c.Users)
@@ -138,7 +140,7 @@ public class CourseRepository : CrudRepository<Course>, ICourseRepository
             .Include(c => c.Users)
             .FirstOrDefaultAsync(c => c.CourseId == courseId);
 
-        if(course == null)
+        if (course == null)
         {
             throw new InvalidOperationException($"Course with id {courseId} not found");
         }
@@ -151,21 +153,20 @@ public class CourseRepository : CrudRepository<Course>, ICourseRepository
             .Select(u => u.UserId)
             .ToListAsync();
 
-        var availableTeachers = await _context     
+        var availableTeachers = await _context
             .Set<User>()
             .Where(u => u.Role == UserRole.Teacher && !teacherIdsInCourse.Contains(u.UserId))
             .ToListAsync();
 
         return availableTeachers.Concat(availableStudents);
-
     }
 
     public async Task<IEnumerable<Course>> GetAllUserCourses(int userId)
     {
         return await _context
-                .Set<Course>()
-                .Include(c => c.Users)
-                .Where(c => c.Users.Any(u => u.UserId == userId))
-                .ToListAsync();
+            .Set<Course>()
+            .Include(c => c.Users)
+            .Where(c => c.Users.Any(u => u.UserId == userId))
+            .ToListAsync();
     }
 }

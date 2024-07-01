@@ -12,48 +12,53 @@ public class Mappings : Profile
 {
     public Mappings()
     {
-            // Document mapper
-            CreateMap<DocumentDto, Document>();
-            CreateMap<Document, DocumentDto>();
-            CreateMap<Document, DocumentPostDto>();
-            CreateMap<DocumentPostDto, Document>();
+        // Document mapper
+        CreateMap<Document, DocumentDto>();
+        CreateMap<DocumentDto, Document>();
+        CreateMap<Document, DocumentPostDto>();
+        CreateMap<DocumentPostDto, Document>();
 
-            // User mapper
-            CreateMap<UserDto, User>();
-            CreateMap<User, UserDto>();
-            CreateMap<User, UserPostDto>();
-            CreateMap<UserPostDto, User>();
-            CreateMap<UserWithIdDto, User>();
-            CreateMap<User, UserWithIdDto>();
+        // User mapper
+        CreateMap<User, UserDto>()
+            .ForMember(dest => dest.CourseIds, opt => opt.MapFrom(src => src.Courses.Select(d => d.CourseId)))
+            .ForMember(dest => dest.DocumentIds, opt => opt.MapFrom(src => src.Documents.Select(d => d.DocumentId)));
+        CreateMap<UserDto, User>()
+            .ForMember(dest => dest.Documents, opt => opt.Ignore());
+        CreateMap<User, UserPostDto>();
+        CreateMap<UserPostDto, User>();
+        CreateMap<User, UserWithIdDto>();
+        CreateMap<UserWithIdDto, User>();
 
-            // Course mapper
-            CreateMap<Course, CourseDto>()
-                .ForMember(dest => dest.UserIds, opt => opt.MapFrom(src => src.Users.Select(u => u.UserId)))
-                .ForMember(dest => dest.DocumentIds, opt => opt.MapFrom(src => src.Documents.Select(d => d.DocumentId)))
-                .ForMember(dest => dest.ModuleIds, opt => opt.MapFrom(src => src.Modules.Select(d => d.ModuleId)));
-            CreateMap<CourseDto, Course>()
-                .ForMember(dest => dest.Users, opt => opt.Ignore())
-                .ForMember(dest => dest.Documents, opt => opt.Ignore())
-                .ForMember(dest => dest.Modules, opt => opt.Ignore());  
-            CreateMap<Course, CoursePostDto>();
-            CreateMap<CoursePostDto, Course>();
-            CreateMap<Course, CourseWithIdDto>();
-            CreateMap<CourseWithIdDto, Course>();
+        // Course mapper
+        CreateMap<Course, CourseDto>()
+            .ForMember(dest => dest.UserIds, opt => opt.MapFrom(src => src.Users.Select(u => u.UserId)))
+            .ForMember(dest => dest.DocumentIds, opt => opt.MapFrom(src => src.Documents.Select(d => d.DocumentId)))
+            .ForMember(dest => dest.ModuleIds, opt => opt.MapFrom(src => src.Modules.Select(d => d.ModuleId)));
+        CreateMap<CourseDto, Course>()
+            .ForMember(dest => dest.Users, opt => opt.Ignore())
+            .ForMember(dest => dest.Documents, opt => opt.Ignore())
+            .ForMember(dest => dest.Modules, opt => opt.Ignore());
+        CreateMap<Course, CoursePostDto>();
+        CreateMap<CoursePostDto, Course>();
+        CreateMap<Course, CourseWithIdDto>();
+        CreateMap<CourseWithIdDto, Course>();
 
         // Activity mapper
-        CreateMap<ActivityDto, Activity>();
-            CreateMap<Activity, ActivityDto>();
-            CreateMap<Activity, ActivityPostDto>();
-            CreateMap<ActivityPostDto, Activity>();
+        CreateMap<Activity, ActivityDto>()
+            .ForMember(dest => dest.DocumentIds, opt => opt.MapFrom(src => src.Documents.Select(a => a.DocumentId)));
+        CreateMap<ActivityDto, Activity>()
+            .ForMember(dest => dest.Documents, opt => opt.Ignore());
+        CreateMap<Activity, ActivityPostDto>();
+        CreateMap<ActivityPostDto, Activity>();
 
-            // Module mapper
-            CreateMap<Module, ModuleDto>()
-                .ForMember(dest => dest.ActivityIds, opt => opt.MapFrom(src => src.Activities.Select(a => a.ActivityId)))
-                .ForMember(dest => dest.DocumentIds, opt => opt.MapFrom(src => src.Documents.Select(a => a.DocumentId)));
-            CreateMap<ModuleDto, Module>()
-                .ForMember(dest => dest.Activities, opt => opt.Ignore());
-            CreateMap<Module, ModulePostDto>();
-            CreateMap<ModulePostDto, Module>();
-        }
-
+        // Module mapper
+        CreateMap<Module, ModuleDto>()
+            .ForMember(dest => dest.ActivityIds, opt => opt.MapFrom(src => src.Activities.Select(a => a.ActivityId)))
+            .ForMember(dest => dest.DocumentIds, opt => opt.MapFrom(src => src.Documents.Select(a => a.DocumentId)));
+        CreateMap<ModuleDto, Module>()
+            .ForMember(dest => dest.Activities, opt => opt.Ignore())
+            .ForMember(dest => dest.Documents, opt => opt.Ignore());
+        CreateMap<Module, ModulePostDto>();
+        CreateMap<ModulePostDto, Module>();
+    }
 }
