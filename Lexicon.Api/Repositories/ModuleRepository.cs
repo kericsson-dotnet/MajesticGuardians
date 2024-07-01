@@ -21,7 +21,7 @@ public class ModuleRepository(DbContext context) : CrudRepository<Module>(contex
                        .Include(m => m.Activities)
                        .Include(m => m.Documents)
                        .FirstOrDefaultAsync(m => m.ModuleId == moduleId) ??
-                   throw new InvalidOperationException($"{typeof(Course).Name} Id {id} not found.");
+                   throw new InvalidOperationException($"{typeof(Module).Name} Id {id} not found.");
         }
 
         throw new ArgumentException("Invalid ID type");
