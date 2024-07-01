@@ -1,7 +1,8 @@
 using Lexicon.Api.Entities;
 using Lexicon.Api.Data;
+using Lexicon.Api.Repositories;
 
-namespace Lexicon.Api.Repositories;
+namespace Lexicon.Api.Services;
 
 public class UnitOfWork : IUnitOfWork
 {
@@ -13,12 +14,12 @@ public class UnitOfWork : IUnitOfWork
     }
 
     public IUserRepository Users => new UserRepository(_context);
-    public ICourseRepository Courses => new CourseRepository(_context);
-    public IModuleRepository Modules => new ModuleRepository(_context);
-    public IActivityRepository Activities => new ActivityRepository(_context);
+    public ICourseRepository Courses => new CourseService(_context);
+    public IModuleRepository Modules => new ModuleService(_context);
+    public IActivityRepository Activities => new ActivityService(_context);
 
-    public IDocumentRepository Documents => new DocumentRepository(_context);
-    
+    public IDocumentRepository Documents => new DocumentService(_context);
+
 
     public async Task SaveAsync()
     {
