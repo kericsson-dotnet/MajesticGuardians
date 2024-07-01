@@ -12,19 +12,19 @@ namespace Lexicon.Api.Controllers;
 [ApiController]
 public class CoursesController : ControllerBase
 {
-    private readonly IUnitOfWork _UoW;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
     public CoursesController(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _UoW = unitOfWork;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CourseDto>>> GetCourses()
     {
-        var courses = await _UoW.Courses.GetAllAsync();
+        var courses = await _unitOfWork.Courses.GetAllAsync();
 
         if (courses == null || !courses.Any())
         {
@@ -44,7 +44,7 @@ public class CoursesController : ControllerBase
 
         try
         {
-            var course = await _UoW.Courses.GetAsync(id);
+            var course = await _unitOfWork.Courses.GetAsync(id);
 
             return Ok(_mapper.Map<CourseDto>(course));
         }
@@ -75,15 +75,15 @@ public class CoursesController : ControllerBase
 
         try
         {
-            var existingCourse = await _UoW.Courses.GetAsync(id);
+            var existingCourse = await _unitOfWork.Courses.GetAsync(id);
             _mapper.Map(coursePost, existingCourse);
 
-            _UoW.Courses.Update(existingCourse);
-            await _UoW.SaveAsync();
+            _unitOfWork.Courses.Update(existingCourse);
+            await _unitOfWork.SaveAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (await _UoW.Users.GetAsync(id) == null)
+            if (await _unitOfWork.Users.GetAsync(id) == null)
             {
                 return NotFound();
             }
@@ -118,8 +118,8 @@ public class CoursesController : ControllerBase
 
         try
         {
-            _UoW.Courses.Add(course);
-            await _UoW.SaveAsync();
+            _unitOfWork.Courses.Add(course);
+            await _unitOfWork.SaveAsync();
         }
 
         catch (InvalidOperationException ex)
@@ -145,10 +145,10 @@ public class CoursesController : ControllerBase
 
         try
         {
-            var course = await _UoW.Courses.GetAsync(id);
+            var course = await _unitOfWork.Courses.GetAsync(id);
 
-            _UoW.Courses.Delete(course.CourseId);
-            await _UoW.SaveAsync();
+            _unitOfWork.Courses.Delete(course.CourseId);
+            await _unitOfWork.SaveAsync();
         }
 
         catch (InvalidOperationException ex)
@@ -174,7 +174,7 @@ public class CoursesController : ControllerBase
 
         try
         {
-            var users = await _UoW.Courses.GetAllUsersInCourse(id);
+            var users = await _unitOfWork.Courses.GetAllUsersInCourse(id);
 
             if (users == null || !users.Any())
             {
@@ -205,22 +205,22 @@ public class CoursesController : ControllerBase
 
         try
         {
-            var course = await _UoW.Courses.GetAsync(id);
+            var course = await _unitOfWork.Courses.GetAsync(id);
 
             if (course == null)
             {
                 return NotFound();
             }
 
-            var user = await _UoW.Users.GetAsync(userId);
+            var user = await _unitOfWork.Users.GetAsync(userId);
 
             if (user == null)
             {
                 return NotFound($"User with id {userId} not found.");
             }
 
-            _UoW.Courses.AddUserToCourse(id, _mapper.Map<User>(user));
-            await _UoW.SaveAsync();
+            _unitOfWork.Courses.AddUserToCourse(id, _mapper.Map<User>(user));
+            await _unitOfWork.SaveAsync();
 
             return Ok($"User with id {userId} successfully added to course {id}.");
         }
@@ -244,8 +244,8 @@ public class CoursesController : ControllerBase
 
         try
         {
-            _UoW.Courses.RemoveUserFromCourse(id, userId);
-            await _UoW.SaveAsync();
+            _unitOfWork.Courses.RemoveUserFromCourse(id, userId);
+            await _unitOfWork.SaveAsync();
         }
 
         catch (InvalidOperationException ex)
@@ -271,7 +271,7 @@ public class CoursesController : ControllerBase
 
         try
         {
-            var users = await _UoW.Courses.GetAllAvailableUserForCourse(id);
+            var users = await _unitOfWork.Courses.GetAllAvailableUserForCourse(id);
 
             if (users == null || !users.Any())
             {
@@ -302,7 +302,7 @@ public class CoursesController : ControllerBase
 
         try
         {
-            var users = await _UoW.Courses.GetAllUserCourses(userId);
+            var users = await _unitOfWork.Courses.GetAllUserCourses(userId);
 
             if (users == null || !users.Any())
             {

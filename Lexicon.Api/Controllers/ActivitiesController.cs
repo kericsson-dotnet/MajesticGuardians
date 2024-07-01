@@ -11,19 +11,19 @@ namespace Lexicon.Api.Controllers;
 [ApiController]
 public class ActivitiesController : ControllerBase
 {
-    private readonly IUnitOfWork _UoW;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
     public ActivitiesController(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _UoW = unitOfWork;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetActivities()
     {
-        var activities = await _UoW.Activities.GetAllAsync();
+        var activities = await _unitOfWork.Activities.GetAllAsync();
 
         if (activities == null || !activities.Any())
         {
@@ -38,7 +38,7 @@ public class ActivitiesController : ControllerBase
     {
         try
         {
-            var activity = await _UoW.Activities.GetAsync(id);
+            var activity = await _unitOfWork.Activities.GetAsync(id);
             return Ok(_mapper.Map<ActivityDto>(activity));
         }
 
@@ -68,7 +68,7 @@ public class ActivitiesController : ControllerBase
 
         try
         {
-            var existingActivity = await _UoW.Activities.GetAsync(id);
+            var existingActivity = await _unitOfWork.Activities.GetAsync(id);
 
 			ActivityPostDto activityPostDto = new ActivityPostDto
 			{
@@ -82,8 +82,8 @@ public class ActivitiesController : ControllerBase
 			};
 			_mapper.Map(activityPostDto, existingActivity);
 
-            _UoW.Activities.Update(existingActivity);
-            await _UoW.SaveAsync();
+            _unitOfWork.Activities.Update(existingActivity);
+            await _unitOfWork.SaveAsync();
 			return NoContent();
 		}
 
@@ -123,8 +123,8 @@ public class ActivitiesController : ControllerBase
         
         try
         {
-            _UoW.Activities.Add(activity);
-            await _UoW.SaveAsync();
+            _unitOfWork.Activities.Add(activity);
+            await _unitOfWork.SaveAsync();
         }
 
         catch (InvalidOperationException ex)
@@ -151,9 +151,9 @@ public class ActivitiesController : ControllerBase
 
         try
         {
-            var activity = await _UoW.Activities.GetAsync(id);
-            _UoW.Activities.Delete(activity.ActivityId);
-            await _UoW.SaveAsync();
+            var activity = await _unitOfWork.Activities.GetAsync(id);
+            _unitOfWork.Activities.Delete(activity.ActivityId);
+            await _unitOfWork.SaveAsync();
         }
 
         catch (InvalidOperationException ex)
@@ -169,6 +169,6 @@ public class ActivitiesController : ControllerBase
         return NoContent();
     }
 
-    private async Task<bool> ActivityExists(int id) => await _UoW.Activities.GetAsync(id) != null;
+    private async Task<bool> ActivityExists(int id) => await _unitOfWork.Activities.GetAsync(id) != null;
 
 }
