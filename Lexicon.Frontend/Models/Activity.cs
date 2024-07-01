@@ -20,4 +20,7 @@ public class Activity
     public DateTime StartDate { get; set; } = DateTime.Now;
     public DateTime EndDate { get; set; }
     public List<Document> Documents { get; set; } = [];
+
+    public List<ActivityType> AllActivities { get { return new List<ActivityType>((ActivityType[])Enum.GetValues(typeof(ActivityType))); } }
+
 }
