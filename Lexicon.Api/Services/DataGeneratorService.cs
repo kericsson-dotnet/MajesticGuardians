@@ -295,6 +295,13 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             },
             new Activity
             {
+                Name = "E-learning",
+                Type = ActivityType.ELearning,
+                Description = "PluralSight"
+                // Documents = null
+            },
+            new Activity
+            {
                 Name = "Läxa: Industriell maskinpark –\r\nBlazor",
                 Type = ActivityType.Assignment,
                 Description = "Övning 16 – Industriell maskinpark –\r\nBlazor\r\n" +
@@ -359,6 +366,13 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             },
             new Activity
             {
+                Name = "E-learning",
+                Type = ActivityType.ELearning,
+                Description = "PluralSight"
+                // Documents = null
+            },
+            new Activity
+            {
                 Name = "Läxa: Fel och Undantag i Python",
                 Type = ActivityType.Assignment,
                 Description =
@@ -390,7 +404,7 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             },
             new Activity
             {
-                Name = "E-Learning",
+                Name = "E-learning",
                 Type = ActivityType.ELearning,
                 Description = "PluralSight"
                 // Documents = null
