@@ -121,13 +121,20 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             },
             new Module
             {
-                Name = "Grundläggande LINQ i C#",
+                Name = "Blazor och Grundläggande LINQ i C#",
                 StartDate = faker.Date.Past(),
                 EndDate = faker.Date.Future(),
                 // Documents = null
             },
 
             // The Complete Python Bootcamp From Zero to Hero in Python
+            new Module
+            {
+                Name = "Objektorienterad Programmering i Python",
+                StartDate = faker.Date.Past(),
+                EndDate = faker.Date.Future(),
+                // Documents = null
+            },
             new Module
             {
                 Name = "Fel och Undantag i Python",
@@ -137,18 +144,12 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             },
             new Module
             {
-                Name = "Fel och Undantag i Python 2",
-                StartDate = faker.Date.Past(),
-                EndDate = faker.Date.Future(),
-                // Documents = null
-            },
-            new Module
-            {
-                Name = "Objektorienterad Programmering i Python",
+                Name = "Fel och Undantag i Python 2 och Python Selenium",
                 StartDate = faker.Date.Past(),
                 EndDate = faker.Date.Future(),
                 // Documents = null
             }
+            
         };
 
         await unitOfWork.SaveAsync();
@@ -388,7 +389,7 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             new Activity
             {
                 Name = "Lecture",
-                Description = "Python object oriented 1"
+                Description = "Python object oriented"
                 // Documents = null
             },
         };
