@@ -6,4 +6,5 @@ public interface IDocumentService
 {
     Task<IEnumerable<Document>> GetDocumentsAsync();
     Task<Document> GetDocumentAsync(int id);
+	Task<string> PostFileAsync(MultipartFormDataContent content);
 }
