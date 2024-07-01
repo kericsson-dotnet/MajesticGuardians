@@ -1,5 +1,6 @@
 ﻿using Lexicon.Frontend.Models;
 using Lexicon.Frontend.Services;
+using System.Net;
 
 namespace Lexicon.Frontend.ServicesImp;
 
@@ -18,8 +19,19 @@ public class ActivityService : IActivityService
 
     public async Task<List<Activity>> GetActivitiesAsync() => await _httpClient.GetFromJsonAsync<List<Activity>>("api/activities");
 
-    public async Task<Activity> GetActivityAsync(int id) => await _httpClient.GetFromJsonAsync<Activity>($"api/activities/{id}");
-    
+	public async Task<Activity> GetActivityAsync(int id)
+	{
+		try
+		{
+			return await _httpClient.GetFromJsonAsync<Activity>($"api/activities/{id}");
+		}
+
+		catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+		{
+			return null;
+		}
+	}
+
 	public async Task<bool> UpdateActivityAsync(int id, Activity activity) {
 		try
 		{
