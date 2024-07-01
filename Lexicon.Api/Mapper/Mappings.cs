@@ -23,6 +23,7 @@ public class Mappings : Profile
             .ForMember(dest => dest.CourseIds, opt => opt.MapFrom(src => src.Courses.Select(d => d.CourseId)))
             .ForMember(dest => dest.DocumentIds, opt => opt.MapFrom(src => src.Documents.Select(d => d.DocumentId)));
         CreateMap<UserDto, User>()
+            .ForMember(dest => dest.Courses, opt => opt.Ignore())
             .ForMember(dest => dest.Documents, opt => opt.Ignore());
         CreateMap<User, UserPostDto>();
         CreateMap<UserPostDto, User>();
