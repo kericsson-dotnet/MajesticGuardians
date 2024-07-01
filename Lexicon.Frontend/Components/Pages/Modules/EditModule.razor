@@ -1,10 +1,14 @@
-﻿@page "/edit_module/{id:int}"
+﻿@page "/edit_module"
+@page "/edit_module/{ModuleId:int}"
 @inject IUnitOfWork Services
-@rendermode InteractiveServer
 @inject NavigationManager Navigation
+
+@rendermode InteractiveServer
+
 
 <PageTitle>Edit Module</PageTitle>
 <h3>EditModul</h3>
+
 @if (isSuccess)
 {
 	<div class="alert alert-success" role="alert">
@@ -12,6 +16,7 @@
 	</div>
 	<button class="btn btn-primary" @onclick="GoToMainPage">Return to Main Page</button>
 }
+
 else
 {
 	<div>
@@ -45,9 +50,11 @@ else
 
 @code {
 	[Parameter]
-	public int Id { get; set; }
+	public int ModuleId { get; set; }
+
 	[SupplyParameterFromForm(FormName = "EditModule")]
 	private Module ModuleModel { get; set; }
+	
 	private bool isSuccess = false;
 
 	protected override void OnInitialized()
@@ -58,7 +65,7 @@ else
 	{
 		//Send request to API
 		
-		isSuccess = await Services.ModuleService.PutModuleAsync(Id, ModuleModel);
+		isSuccess = await Services.ModuleService.PutModuleAsync(ModuleId, ModuleModel);
 	}
 	private void GoToMainPage()
 	{

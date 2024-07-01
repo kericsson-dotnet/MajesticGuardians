@@ -54,6 +54,7 @@ else
                         <th scope="col">Namn</th>
                         <th scope="col">Start datum</th>
                         <th scope="col">Slut datum</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -69,10 +70,21 @@ else
                     {
                         foreach (var course in myCourses)
                         {
-                            <tr @onclick="() => NavigateToCourse(course.CourseId)">
+                            <tr>
                                 <td>@course.Name</td>
                                 <td>@course.StartDate</td>
                                 <td>@course.EndDate</td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a class="btn btn-primary me-2" role="button" href="@NavigateToModules(course.CourseId)">
+                                            Modules
+                                        </a>
+
+                                        <a class="btn btn-secondary me-2" role="button" href="@NavigateToCourse(course.CourseId)">
+                                            Details
+                                        </a>
+                                    </div>
+                                </td>
                             </tr>
                         }
                     }
@@ -146,8 +158,8 @@ else
         }
     }
 
-    private void NavigateToCourse(int id)
-    {
-        Navigation.NavigateTo($"course_details/{id}");
-    }
+    private string NavigateToCourse(int courseId) => $"/course_details/{courseId}";
+
+    private string NavigateToModules(int courseId) => $"/modules/{courseId}";
+
 }
