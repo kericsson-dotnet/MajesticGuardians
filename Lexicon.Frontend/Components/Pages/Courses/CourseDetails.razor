@@ -3,6 +3,8 @@
 @inject IUnitOfWork Services
 @rendermode InteractiveServer
 
+<PageTitle>Course Details</PageTitle>
+
 @if (isLoading)
 {
     <p><em>Läser in...</em></p>
@@ -13,118 +15,115 @@ else if (Course == null)
 }
 else if (currentUser != null)
 {
-    <h3>Kurs detaljer</h3>
+    <h3 class="mt-4 mb-3">Kurs detaljer</h3>
 
     @if (currentUser.Role == Models.UserRole.Teacher && currentUser.UserId > 0)
     {
-        <div class="d-flex gap-3">
-            <NavLink class="btn btn-primary" href="@AddUserToCourseUrl()">Lägg användare till kursen</NavLink>
-            <NavLink class="btn btn-secondary" href="@CourseDashboardUrl()">Återvända tillbaka</NavLink>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <NavLink class="btn btn-primary" href="@AddUserToCourseUrl()">Lägg till användare</NavLink>
+            <NavLink class="btn btn-secondary" href="@CourseDashboardUrl()">Tillbaka till kursöversikt</NavLink>
         </div>
     }
 
     <div class="row">
         <div class="col-md-4">
-            <div class="mb-3">
-                <label for="name" class="form-label"><strong>Namn:</strong> @Course.Name</label>
-            </div>
-            <div class="mb-3">
-                <label for="status" class="form-label"><strong>Beskrivning: </strong> @Course.Description </label>
-            </div>
-            <div class="mb-3">
-                <label for="date" class="form-label"><strong>Start Datum: </strong> @Course.StartDate.ToShortDateString() </label>
-            </div>
-            <div class="mb-3">
-                <label for="date" class="form-label"><strong>Slut Datum: </strong> @Course.EndDate.ToShortDateString() </label>
-            </div>
-        </div>
-    </div>
-
-
-    @*     Koden som används när man loggar in som Student  *@
-    
-    @if (currentUser.Role == Models.UserRole.Student)
-    {
-        <div class="row">
-            <h3 class="mt-3">Studenter i kursen</h3>
-
-            @if (Students == null || !Students.Any())
-            {
-                <p>Det finns inga studenter i kursen</p>
-            }
-            else
-            {
-                <ul class="list-group">
-                    @foreach (var student in Students)
-                    {
-                        <li class="list-group-item">
-                            <strong>@student.FirstName @student.LastName</strong> - @student.Email
-                        </li>
-                    }
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">@Course.Name</h5>
+                    <p class="card-text">@Course.Description</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Start Datum:</strong> @Course.StartDate.ToShortDateString()</li>
+                    <li class="list-group-item"><strong>Slut Datum:</strong> @Course.EndDate.ToShortDateString()</li>
                 </ul>
-            }
+            </div>
         </div>
-    }
 
-        @*     Koden som används när man loggar in som Teacher  *@
-
-    else
-    {
-        <div class="row">
-            <h3 class="mt-3">Användare i kursen</h3>
-
-            @if (Users == null || !Users.Any())
-            {
-                <p>Det finns inga användare i kursen</p>
-            }
-            else
-            {
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Id</th>
-                            <th scope="col">Förnamn</th>
-                            <th scope="col">Efternamn</th>
-                            <th scope="col">Epost</th>
-                            <th scope="col">Roll</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var user in Users)
+        @if (currentUser.Role == Models.UserRole.Student)
+        {
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Studenter i kursen</h5>
+                        @if (Students == null || !Students.Any())
                         {
-                            <tr>
-                                <td>@user.UserId</td>
-                                <td>@user.FirstName</td>
-                                <td>@user.LastName</td>
-                                <td>@user.Email</td>
-                                <td>@user.Role</td>
-
-                                @if (currentUser.Role == Models.UserRole.Teacher)
-                                {
-                                    <td>
-                                        <button class="btn btn-danger"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="@($"#deleteModal-{user.UserId}")">
-                                            <i class="bi bi-x-lg"></i>
-                                        </button>
-                                        <DeleteUserFromCourse User="@user" CourseId="@CourseId" />
-                                    </td>
-                                }
-
-                            </tr>
+                            <p class="card-text">Det finns inga studenter i kursen</p>
                         }
-                    </tbody>
-                </table>
-            }
-        </div>
-    }
+                        else
+                        {
+                            <ul class="list-group list-group-flush">
+                                @foreach (var student in Students)
+                                {
+                                    <li class="list-group-item">
+                                        <strong>@student.FirstName @student.LastName</strong> - @student.Email
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (currentUser.Role == Models.UserRole.Teacher)
+        {
+            <div class="col-md-8">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Användare i kursen</h5>
+                        @if (Users == null || !Users.Any())
+                        {
+                            <p class="card-text">Det finns inga användare i kursen</p>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Id</th>
+                                            <th scope="col">Förnamn</th>
+                                            <th scope="col">Efternamn</th>
+                                            <th scope="col">Epost</th>
+                                            <th scope="col">Roll</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var user in Users)
+                                        {
+                                            <tr>
+                                                <td>@user.UserId</td>
+                                                <td>@user.FirstName</td>
+                                                <td>@user.LastName</td>
+                                                <td>@user.Email</td>
+                                                <td>@user.Role</td>
+                                                <td>
+                                                    <div class="d-flex">
+                                                        <button class="btn btn-danger btn-sm me-2"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="@($"#deleteModal-{user.UserId}")">
+                                                            <i class="bi bi-x-lg"></i>
+                                                        </button>
+                                                        <DeleteUserFromCourse User="@user" CourseId="@CourseId" />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 }
 else
 {
     NavigateToHome();
 }
-
 
 @code {
     [Parameter]
