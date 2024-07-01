@@ -15,11 +15,17 @@ else if (loadingError != null)
 	<p> Det gick inte att läsa in aktiviten: @loadingError</p>
 }
 
+else if (Module == null || ModuleId == null)
+{
+	<p>Modulen existeras inte, så den har inga aktiviter</p>
+}
+
 else{
 
 	
-	<PageTitle>Edit Activity</PageTitle>
-	<h3>Edit Activity</h3>
+	<PageTitle>@titleText</PageTitle>
+	
+	<h3>@titleText</h3>
 
 	<div>
 		<EditForm Model="@Activity" OnValidSubmit="@HandleSubmit">
@@ -76,8 +82,11 @@ else{
 	[SupplyParameterFromForm]
 	private Activity? Activity { get; set; }
 
+	private Module? Module { get; set; }
+
 	private bool isLoading = true;
 
+	private string? titleText = null;
 	private string? loadingError = null;
 
 
@@ -122,11 +131,33 @@ else{
 			return;
 		}
 
+		Module = await Services.ModuleService.GetModuleAsync(ModuleId.Value);
+
+		if (Module == null)
+		{
+			loadingError = "Modulen existerar inte.";
+			isLoading = false;
+			return;
+		}
+
+
 		if (ActivityId != null)
 		{
 			try
 			{
 				Activity = await Services.ActivityService.GetActivityAsync(ActivityId.Value);
+
+				if(Activity == null)
+				{
+					loadingError = "Not Found";
+
+				}
+
+				else
+				{
+					titleText = "Uppdatera aktiviten";
+				}
+
 			}
 
 			catch (Exception ex)
@@ -147,6 +178,7 @@ else{
 				ModuleId = ModuleId.Value
 			};
 
+			titleText = "Lägg till ny aktivitet";
 		}
 
 		isLoading = false;
