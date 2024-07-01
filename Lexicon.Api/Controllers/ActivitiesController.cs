@@ -69,11 +69,12 @@ public class ActivitiesController : ControllerBase
         try
         {
             var existingActivity = await _UoW.Activities.GetAsync(id);
+
 			ActivityPostDto activityPostDto = new ActivityPostDto
 			{
-				Type = existingActivity.Type,
+				Type = activity.Type,
 				Name = activity.Name,
-                Description = existingActivity.Description,
+                Description = activity.Description,
 				StartDate = activity.StartDate,
 				EndDate = activity.EndDate,
                 ModuleId = existingActivity.ModuleId,
