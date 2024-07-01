@@ -40,6 +40,9 @@ else if (currentUser != null)
         </div>
     </div>
 
+
+    @*     Koden som används när man loggar in som Student  *@
+    
     @if (currentUser.Role == Models.UserRole.Student)
     {
         <div class="row">
@@ -62,6 +65,9 @@ else if (currentUser != null)
             }
         </div>
     }
+
+        @*     Koden som används när man loggar in som Teacher  *@
+
     else
     {
         <div class="row">
@@ -77,6 +83,8 @@ else if (currentUser != null)
                     <thead>
                         <tr>
                             <th scope="col">Id</th>
+                            <th scope="col">Förnamn</th>
+                            <th scope="col">Efternamn</th>
                             <th scope="col">Epost</th>
                             <th scope="col">Roll</th>
                             <th></th>
@@ -87,6 +95,8 @@ else if (currentUser != null)
                         {
                             <tr>
                                 <td>@user.UserId</td>
+                                <td>@user.FirstName</td>
+                                <td>@user.LastName</td>
                                 <td>@user.Email</td>
                                 <td>@user.Role</td>
 
@@ -114,6 +124,7 @@ else
 {
     NavigateToHome();
 }
+
 
 @code {
     [Parameter]
