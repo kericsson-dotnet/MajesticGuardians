@@ -29,11 +29,22 @@
     [Parameter]
     public Course Course { get; set; }
 
+    [Parameter]
+    public User? CurrentUser { get; set; }
+
     private string title = string.Empty;
 
     protected override void OnParametersSet()
     {
-        title = $"Ta bort kursen: {Course?.Name}?";
+        if(CurrentUser == null)
+        {
+            title = $"Ta bort kursen: {Course?.Name}?";
+        }
+
+        else
+        {
+            title = $"Vill du ta bort dig från kursen: {Course?.Name}?";
+        }
     }
 
     public static string GetModalId(Course course)
@@ -43,7 +54,17 @@
 
     private async Task DeleteConfirm()
     {
-        await Services.CourseService.DeleteCourseAsync(Course.CourseId);
-        Navigation.NavigateTo("/course_dashboard", true);
+        if (CurrentUser == null)
+        {
+            await Services.CourseService.DeleteCourseAsync(Course.CourseId);
+            Navigation.NavigateTo("/course_dashboard", true);
+        }
+
+        else
+        {
+            await Services.CourseService.RemoveUserFromCourse(Course.CourseId,CurrentUser.UserId);
+            Navigation.NavigateTo("/dashboard", true);
+        }
+
     }
 }
