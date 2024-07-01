@@ -125,9 +125,5 @@ else if (currentUser != null)
 
     private string DetailsCourseUrl(int id) => $"/course_details/{id}";
 
-    private void NavigateToHome()
-    {
-        Navigation.NavigateTo("/", true);
-    }
-
+    private void NavigateToHome() => Navigation.NavigateTo("/", true);
 }
