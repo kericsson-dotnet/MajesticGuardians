@@ -102,16 +102,11 @@ else if(currentUser != null)
 			{
 				GoToMainPage();
 			}
+			await LoadModuleAsync();
 
 			StateHasChanged();
 		}
 		
-	}
-
-
-	protected async override Task OnInitializedAsync()
-	{
-		await LoadModuleAsync();
 	}
 
 	private async Task HandleSubmit()
