@@ -4,11 +4,13 @@ using Lexicon.Api.Entities;
 using Lexicon.Api.Repositories;
 using AutoMapper;
 using Lexicon.Api.Dtos.ModuleDtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lexicon.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Roles = "Teacher, Student")]
 public class ModulesController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -21,7 +23,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ModuleDto>>> GetModules()
+	public async Task<ActionResult<IEnumerable<ModuleDto>>> GetModules()
     {
         var modules = await _unitOfWork.Modules.GetAllAsync();
 
@@ -34,7 +36,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ModuleDto>> GetModule([FromRoute] int id)
+	public async Task<ActionResult<ModuleDto>> GetModule([FromRoute] int id)
     {
         try
         {
@@ -54,7 +56,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutModule([FromRoute] int id, [FromBody] ModulePostDto modulePostDto)
+	public async Task<IActionResult> PutModule([FromRoute] int id, [FromBody] ModulePostDto modulePostDto)
     {
         if (id <= 0)
         {
@@ -100,7 +102,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ModulePostDto>> PostModule([FromBody] ModulePostDto modulePostDto)
+	public async Task<ActionResult<ModulePostDto>> PostModule([FromBody] ModulePostDto modulePostDto)
     {
         if (!ModelState.IsValid)
         {
@@ -129,7 +131,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteModule([FromRoute] int id)
+	public async Task<IActionResult> DeleteModule([FromRoute] int id)
     {
         if (id <= 0)
         {

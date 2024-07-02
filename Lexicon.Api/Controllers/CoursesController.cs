@@ -5,11 +5,13 @@ using Lexicon.Api.Repositories;
 using AutoMapper;
 using Lexicon.Api.Dtos.CourseDtos;
 using Lexicon.Api.Dtos.UserDtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lexicon.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Roles = "Teacher, Student")]
 public class CoursesController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -22,7 +24,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CourseDto>>> GetCourses()
+	public async Task<ActionResult<IEnumerable<CourseDto>>> GetCourses()
     {
         var courses = await _unitOfWork.Courses.GetAllAsync();
 
@@ -35,7 +37,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CourseDto>> GetCourse([FromRoute] int id)
+	public async Task<ActionResult<CourseDto>> GetCourse([FromRoute] int id)
     {
         if (id <= 0)
         {
@@ -61,7 +63,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutCourse([FromRoute] int id, [FromBody] CoursePostDto coursePost)
+	public async Task<IActionResult> PutCourse([FromRoute] int id, [FromBody] CoursePostDto coursePost)
     {
         if (id <= 0)
         {
@@ -107,7 +109,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<CoursePostDto>> PostCourse([FromBody] CoursePostDto coursePostDto)
+	public async Task<ActionResult<CoursePostDto>> PostCourse([FromBody] CoursePostDto coursePostDto)
     {
         if (!ModelState.IsValid)
         {
@@ -136,7 +138,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteCourse([FromRoute] int id)
+	public async Task<IActionResult> DeleteCourse([FromRoute] int id)
     {
         if (id <= 0)
         {
@@ -165,7 +167,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpGet("{id}/getAllUsersInCourse")]
-    public async Task<ActionResult<IEnumerable<UserWithIdDto>>> GetAllUsersInCourse([FromRoute] int id)
+	public async Task<ActionResult<IEnumerable<UserWithIdDto>>> GetAllUsersInCourse([FromRoute] int id)
     {
         if (id <= 0)
         {
@@ -196,7 +198,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpPost("{id}/addUserToCourse/{userId}")]
-    public async Task<IActionResult> AddUserToCourse([FromRoute] int id, [FromRoute] int userId)
+	public async Task<IActionResult> AddUserToCourse([FromRoute] int id, [FromRoute] int userId)
     {
         if (id <= 0 || userId <= 0)
         {
@@ -235,7 +237,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpDelete("{id}/removeUserFromCourse/{userId}")]
-    public async Task<IActionResult> RemoveUserFromCourse([FromRoute] int id, [FromRoute] int userId)
+	public async Task<IActionResult> RemoveUserFromCourse([FromRoute] int id, [FromRoute] int userId)
     {
         if (id <= 0 || userId <= 0)
         {
@@ -262,7 +264,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpGet("{id}/getAllAvailableUserForCourse")]
-    public async Task<ActionResult<IEnumerable<UserWithIdDto>>> GetAllAvailableUserForCourse([FromRoute] int id)
+	public async Task<ActionResult<IEnumerable<UserWithIdDto>>> GetAllAvailableUserForCourse([FromRoute] int id)
     {
         if (id <= 0)
         {
@@ -293,7 +295,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpGet("getAllUsersCourses/{userId}")]
-    public async Task<ActionResult<IEnumerable<CourseWithIdDto>>> GetAllUsersCourses([FromRoute] int userId)
+	public async Task<ActionResult<IEnumerable<CourseWithIdDto>>> GetAllUsersCourses([FromRoute] int userId)
     {
         if (userId <= 0)
         {
