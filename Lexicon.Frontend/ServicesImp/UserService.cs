@@ -28,17 +28,21 @@ public class UserService : IUserService
 
     public async Task<IEnumerable<User>> GetUsersAsync()
     {
-            await AddTokenToRequestHeader();
-            return await _httpClient.GetFromJsonAsync<IEnumerable<User>>("api/users");
-        }
+        await AddTokenToRequestHeader();
+        return await _httpClient.GetFromJsonAsync<IEnumerable<User>>("api/users");
+    }
 
-    public async Task CreateUserAsync(User user) => await _httpClient.PostAsJsonAsync("api/users", user);
+    public async Task CreateUserAsync(User user)
+    {
+		await AddTokenToRequestHeader();
+		await _httpClient.PostAsJsonAsync("api/users", user);
+    }
 
     public async Task<User> GetUserAsync(int id)
     {
-            //await AddTokenToRequestHeader(); Tog bort Authorize från API förtillfället
-            return await _httpClient.GetFromJsonAsync<User>($"api/users/{id}");
-        }
+		await AddTokenToRequestHeader();
+		return await _httpClient.GetFromJsonAsync<User>($"api/users/{id}");
+    }
 
     public async Task<User?> GetCurrentUserAsync()
     {
@@ -66,11 +70,17 @@ public class UserService : IUserService
         }
 
     public async Task UpdateUserAsync(User user)
-    {
-            var response = await _httpClient.PutAsJsonAsync($"api/users/{user.UserId}", user);
-            response.EnsureSuccessStatusCode();
-        }
+	{
+		await AddTokenToRequestHeader();
 
-    public async Task DeleteUserAsync(int id) => await _httpClient.DeleteAsync($"api/users/{id}");
+		var response = await _httpClient.PutAsJsonAsync($"api/users/{user.UserId}", user);
+            response.EnsureSuccessStatusCode();
+    }
+
+    public async Task DeleteUserAsync(int id)
+    {
+        await AddTokenToRequestHeader();
+        await _httpClient.DeleteAsync($"api/users/{id}");
+    }
 
 }
