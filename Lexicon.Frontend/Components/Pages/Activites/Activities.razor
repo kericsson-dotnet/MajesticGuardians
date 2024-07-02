@@ -102,52 +102,56 @@ else
 
     private string? loadingError = null;
 
-    protected async override Task OnInitializedAsync()
+    protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-
-        try
+        if (firstRender)
         {
-            currentUser = await Services.UserService.GetCurrentUserAsync();
-
-            if (currentUser == null || (currentUser.Role != Models.UserRole.Student && currentUser.Role != Models.UserRole.Teacher))
+            try
             {
-                NavigateToHome();
-                return;
-            }
+                currentUser = await Services.UserService.GetCurrentUserAsync();
 
-            // Make sure that the student can not access other modules
-            if (currentUser.Role == Models.UserRole.Student)
-            {
-                var courses = await Services.CourseService.GetAllUsersCourses(currentUser.UserId);
-                var courseId = courses.FirstOrDefault().CourseId;
-                var course = await Services.CourseService.GetCourseAsync(courseId);
-
-                if (!course.ModuleIds.Contains(ModuleId))
+                if (currentUser == null || (currentUser.Role != Models.UserRole.Student && currentUser.Role != Models.UserRole.Teacher))
                 {
-                    loadingError = $"Error: Not Found - 404";
+                    NavigateToHome();
                     return;
+                }
+
+                // Make sure that the student can not access other modules
+                if (currentUser.Role == Models.UserRole.Student)
+                {
+                    var courses = await Services.CourseService.GetAllUsersCourses(currentUser.UserId);
+                    var courseId = courses.FirstOrDefault().CourseId;
+                    var course = await Services.CourseService.GetCourseAsync(courseId);
+
+                    if (!course.ModuleIds.Contains(ModuleId))
+                    {
+                        loadingError = $"Error: Not Found - 404";
+                        return;
+                    }
+                }
+
+                Module = await Services.ModuleService.GetModuleAsync(ModuleId);
+
+                if (Module?.ActivityIds != null && Module.ActivityIds.Any())
+                {
+                    var tasks = Module.ActivityIds.Select(id => Services.ActivityService.GetActivityAsync(id));
+                    var activityResults = await Task.WhenAll(tasks);
+                    activities = activityResults.ToList();
                 }
             }
 
-            Module = await Services.ModuleService.GetModuleAsync(ModuleId);
-
-            if (Module?.ActivityIds != null && Module.ActivityIds.Any())
+            catch (Exception ex)
             {
-                var tasks = Module.ActivityIds.Select(id => Services.ActivityService.GetActivityAsync(id));
-                var activityResults = await Task.WhenAll(tasks);
-                activities = activityResults.ToList();
+                loadingError = $"Error: {ex.Message}";
+            }
+
+            finally
+            {
+                isLoading = false;
+                StateHasChanged();
             }
         }
 
-        catch(Exception ex)
-        {
-            loadingError = $"Error: {ex.Message}";
-        }
-
-        finally
-        {
-            isLoading = false;
-        }
 
     }
 
