@@ -1,14 +1,14 @@
 ﻿@inject IUnitOfWork Services;
 @inject IJSRuntime JS
 
-<h3>Dokumenter</h3>
+<h3>Dokument</h3>
 @if (documents == null)
 {
 	<p>Läser in...</p>
 }
 else if (documents.Count == 0)
 {
-	<p>Det finns inga tillgängliga dokumenter</p>
+	<p>Det finns inga tillgängliga dokument</p>
 }
 else
 {
