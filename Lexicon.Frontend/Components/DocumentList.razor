@@ -1,121 +1,67 @@
 ﻿@inject IUnitOfWork Services;
 @inject IJSRuntime JS
 
-@rendermode InteractiveServer
-
-
 <h3>Dokumenter</h3>
-
-@if (!isRender)
+@if (documents == null)
 {
-    <p>Läser...</p>
+	<p>Läser in...</p>
 }
-
+else if (documents.Count == 0)
+{
+	<p>Det finns inga tillgängliga dokumenter</p>
+}
 else
 {
-    @if (documents == null)
-    {
-        <p>Läser in...</p>
-    }
-    
-    else if (documents.Count == 0)
-    {
-        <p>Det finns inga tillgängliga dokumenter</p>
-    }
-
-    else
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Filnamn</th>
-                    <th>Beskrivning</th>
-                    <th>Uppladdad</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var doc in documents)
-                {
-                    <tr>
-                        <td>@doc.Name</td>
-                        <td>@doc.Description</td>
-                        <td>@doc.TimeAdded.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                        <td>
-                            <button class="btn btn-primary" @onclick="() => DownloadFile(doc.DocumentId)">
-                                Ladda ner
-                            </button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Filnamn</th>
+				<th>Beskrivning</th>
+				<th>Uppladdad</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var doc in documents)
+			{
+				<tr>
+					<td>@doc.Name</td>
+					<td>@doc.Description</td>
+					<td>@doc.TimeAdded.ToString("yyyy-MM-dd HH:mm:ss")</td>
+					<td>
+						<button class="btn btn-primary" @onclick="() => DownloadFile(doc.DocumentId)">
+							Ladda ner
+						</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 }
 
+
 @code {
-    private List<Document> documents;
-    private User? currentUser;
-    private bool isRender = false;
+	private List<Document> documents = new();
+	private User? currentUser;
+	private bool isRender = false;
 
-    protected override async Task OnInitializedAsync()
-    {
-        documents = new();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            currentUser = await Services.UserService.GetCurrentUserAsync();
-            await LoadDocumentAsync();
-            isRender = true;
-            StateHasChanged();
-        }
-    }
-    
-    public async Task LoadDocumentAsync()
-    {
-        documents.Clear();
-        if(currentUser!.Role == UserRole.Teacher)
-        {
-            documents = (await Services.DocumentService.GetDocumentsAsync()).ToList();
-        }
-
-        else
-        {
-            var docs = (await Services.DocumentService.GetDocumentsAsync()).ToList();
-            foreach(var doc in docs)
-            {
-                if(doc.UserId == currentUser.UserId)
-                {
-                    documents.Add(doc);
-                }
-            }
-        } 
-    }
-    
-    public async Task RefreshDocumentList()
-    {
-        await LoadDocumentAsync();
-        StateHasChanged(); // Notify the component to re-render
-    }
-
-    private async Task DownloadFile(int id)
-    {
-        var document = await Services.DocumentService.GetDocumentAsync(id);
-        Console.WriteLine("document Url" + document.Url);
-        
-        if (document != null)
-        {
-            var docUrl = document.Url;
-            var docName = document.Name;
-            await JS.InvokeVoidAsync("triggerFileDownload", docName, docUrl);
-        }
-
-        else
-        {
-            Console.WriteLine("Filnedladdning misslyckades");
-        }
-    }
+	public void SetDocuments(List<Document> docs)
+	{
+		documents = docs;
+		StateHasChanged();
+	}
+	private async Task DownloadFile(int id)
+	{
+		var document = await Services.DocumentService.GetDocumentAsync(id);
+		if (document != null)
+		{
+			var docUrl = document.Url;
+			var docName = document.Name;
+			await JS.InvokeVoidAsync("triggerFileDownload", docName, docUrl);
+		}
+		else
+		{
+			Console.WriteLine("Filnedladdning misslyckades");
+		}
+	}
 }

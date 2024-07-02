@@ -42,28 +42,48 @@
 	private string Message { get; set; } = String.Empty;
 
 	private DocumentList documentList;
+	private List<Document> documents;
 	private User? currentUser;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
 		{
+			documents = new();
 			currentUser = await Services.UserService.GetCurrentUserAsync();
+			await GetDocForUser();
+			documentList.SetDocuments(documents);
 			StateHasChanged();
 		}
 	}
-
+	private async Task GetDocForUser()
+	{
+		documents.Clear();
+		if (currentUser!.Role == UserRole.Teacher)
+		{
+			documents = (await Services.DocumentService.GetDocumentsAsync()).ToList();
+		}
+		else
+		{
+			var docs = (await Services.DocumentService.GetDocumentsAsync()).ToList();
+			foreach (var doc in docs)
+			{
+				if (doc.UserId == currentUser.UserId)
+				{
+					documents.Add(doc);
+				}
+			}
+		}
+	}
 	private async Task OnSubmit()
 	{
 		try
 		{
 			using MultipartFormDataContent content = new();
-
 			//Add values if wanted to save in db
 			content.Add(new StringContent(LoadFile.Name), "Title");
 			content.Add(new StringContent(LoadFile.Description), "Description");
 			content.Add(new StringContent(currentUser!.UserId.ToString()), "UserId");
-
 			foreach(var file in LoadFile.Attachments)
 			{
 				string safeFileName = WebUtility.HtmlEncode(file.Name);
@@ -71,24 +91,20 @@
 				fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(file.ContentType);
 				content.Add(fileContent, nameof(LoadFile.Attachments), safeFileName);
 			}
-
 		    await Services.DocumentService.PostFileAsync(content);
 			Message = "Uppladdningen lyckades";
 			LoadFile = new();
-			await documentList.RefreshDocumentList();
-		}
-		
+			await GetDocForUser();
+			documentList.SetDocuments(documents);
+		}	
 		catch(Exception e)
 		{
 			Message = "Uppladdning misslyckades: " + e.Message;
 		}
 	}
-
 	private void OnInputFileChange(InputFileChangeEventArgs e)
 	{
 		var newFiles = e.GetMultipleFiles().ToList();
 		LoadFile.Attachments = e.GetMultipleFiles();
-	}
-	
-	
+	}	
 }
