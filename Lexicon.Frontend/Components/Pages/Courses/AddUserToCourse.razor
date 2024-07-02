@@ -74,38 +74,43 @@ else if (currentUser != null)
     private bool isLoading = true;
     public List<User> Users { get; set; } = new List<User>();
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        try
-        {
-            currentUser = await Services.UserService.GetCurrentUserAsync();
-
-            if (currentUser == null)
+      if(firstRender)
+      {
+            try
             {
-                NavigateToHome();
-                return;
+                currentUser = await Services.UserService.GetCurrentUserAsync();
+
+                if (currentUser == null)
+                {
+                    NavigateToHome();
+                    return;
+                }
+
+                Course = await Services.CourseService.GetCourseAsync(CourseId.Value);
+                var users = await Services.CourseService.GetAllAvailableUserForCourse(CourseId.Value);
+
+                if (users.Any())
+                {
+                    var userTasks = users.Select(user => Services.UserService.GetUserAsync(user.UserId));
+                    var allUsersWithDetails = await Task.WhenAll(userTasks);
+
+                    Users = allUsersWithDetails.Where(user => user != null).ToList();
+                }
+            }
+            
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
             }
 
-            Course = await Services.CourseService.GetCourseAsync(CourseId.Value);
-            var users = await Services.CourseService.GetAllAvailableUserForCourse(CourseId.Value);
-
-            if (users.Any())
+            finally
             {
-                var userTasks = users.Select(user => Services.UserService.GetUserAsync(user.UserId));
-                var allUsersWithDetails = await Task.WhenAll(userTasks);
-
-                Users = allUsersWithDetails.Where(user => user != null).ToList();
+                isLoading = false;
+                StateHasChanged();
             }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.ToString());
-        }
-        finally
-        {
-            isLoading = false;
-            StateHasChanged();
-        }
+      }
     }
 
     private string CourseDetailsUrl() => $"/course_details/{CourseId}";
