@@ -1,32 +1,49 @@
 ﻿@page "/file-upload"
+@inject IUnitOfWork Services;
 @rendermode InteractiveServer
+
 @using System.Net
 @using System.Net.Http.Headers
-@inject IUnitOfWork Services;
-<h2>Document Upload</h2>
 
-@if (Message.Length > 0)
+<h2>Dokument Uppladdning</h2>
+
+@if (!string.IsNullOrEmpty(Message))
 {
 	<p class="alert alert-secondary" role="alert">@Message</p>
 }
-<EditForm Model="@LoadFile" method="post" OnValidSubmit="@OnSubmit" enctype="multipart/form-data" FormName="fileUpload">
+
+<EditForm Model="@LoadFile" OnValidSubmit="@OnSubmit" enctype="multipart/form-data">
 	<DataAnnotationsValidator />
 	<ValidationSummary />
-	<InputText class="form-control mb-4" placeholder="Name" @bind-Value="@LoadFile.Name" />
-	<InputText class="form-control mb-4" placeholder="Description" @bind-Value="@LoadFile.Description" />
-	<InputFile class="form-control mb-4" multiple OnChange="@OnInputFileChange"/>
-	<button class="btn btn-primary" type="submit">Submit</button>
+	<div class="mb-4">
+		<label for="name">Namn</label>
+		<InputText id="name" class="form-control" placeholder="Name" @bind-Value="@LoadFile.Name" />
+		<ValidationMessage For="@(() => LoadFile.Name)" />
+	</div>
+	<div class="mb-4">
+		<label for="description">Beskrivning</label>
+		<InputText id="description" class="form-control" placeholder="Description" @bind-Value="@LoadFile.Description" />
+		<ValidationMessage For="@(() => LoadFile.Description)" />
+	</div>
+	<div class="mb-4">
+		<label for="attachments">Bilaga</label>
+		<InputFile id="attachments" class="form-control" multiple OnChange="@OnInputFileChange" />
+		<ValidationMessage For="@(() => LoadFile.Attachments)" />
+	</div>
+	<button class="btn btn-primary" type="submit">Skicka in</button>
 </EditForm>
 
 <DocumentList @ref="documentList"></DocumentList>
 
 @code {
-	[SupplyParameterFromForm(FormName ="fileUpload")]
-	private FileUploadWeb LoadFile { get; set; } = new();
+	[SupplyParameterFromForm]
+	private File LoadFile { get; set; } = new();
 	private long maxFileSize = 1024 * 150;
 	private string Message { get; set; } = String.Empty;
+
 	private DocumentList documentList;
 	private User? currentUser;
+
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
@@ -35,6 +52,7 @@
 			StateHasChanged();
 		}
 	}
+	
 	private async Task OnSubmit()
 	{
 		try
@@ -59,17 +77,12 @@
 			Message = "Upload failed. Error: " + e.Message;
 		}
 	}
+
 	private void OnInputFileChange(InputFileChangeEventArgs e)
 	{
 		var newFiles = e.GetMultipleFiles().ToList();
 		LoadFile.Attachments = e.GetMultipleFiles();
 	}
-	private class FileUploadWeb
-	{
-		public string Name { get; set; } = String.Empty;
-		public string Description { get; set; } = String.Empty;
-		public string UserId { get; set; } = String.Empty;
-		public string? ModuleId { get; set; } = String.Empty;
-		public IReadOnlyList<IBrowserFile> Attachments { get; set; }
-	}
+	
+	
 }
