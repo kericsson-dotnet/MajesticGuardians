@@ -29,6 +29,7 @@ else
             <thead>
                 <tr>
                     <th>Filnamn</th>
+                    <th>Beskrivning</th>
                     <th>Uppladdad</th>
                     <th></th>
                 </tr>
@@ -38,6 +39,7 @@ else
                 {
                     <tr>
                         <td>@doc.Name</td>
+                        <td>@doc.Description</td>
                         <td>@doc.TimeAdded.ToString("yyyy-MM-dd HH:mm:ss")</td>
                         <td>
                             <button class="btn btn-primary" @onclick="() => DownloadFile(doc.DocumentId)">
