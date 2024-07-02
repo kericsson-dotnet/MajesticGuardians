@@ -102,13 +102,9 @@ else if (currentUser != null)
 				GoToMainPage();
 			}
 
+			await LoadActivityAsync();
 			StateHasChanged();
 		}
-	}
-
-	protected async override Task OnInitializedAsync()
-	{
-		await LoadActivityAsync();
 	}
 
 	private async Task HandleSubmit()
