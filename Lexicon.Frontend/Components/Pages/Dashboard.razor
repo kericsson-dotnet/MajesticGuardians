@@ -72,8 +72,9 @@ else
                         {
                             <tr>
                                 <td>@course.Name</td>
-                                <td>@course.StartDate</td>
-                                <td>@course.EndDate</td>
+                                <td>@course.StartDate.ToString("yyyy-MM-dd")</td>
+                                <td>@course.EndDate.ToString("yyyy-MM-dd")</td>
+
                                 <td>
                                     <div class="d-flex gap-2">
                                         <a class="btn btn-primary me-2" role="button" href="@NavigateToModules(course.CourseId)">
