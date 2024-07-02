@@ -14,10 +14,10 @@ public class Module
 	[StringLength(500, MinimumLength = 10, ErrorMessage = "Beskrivningen måste vara mellan 10 och 500 tecken")]
 	public string Description { get; set; } = string.Empty;
 
-	[Required(ErrorMessage = "Startdatum är obligatoriskt")]
+	[Required(ErrorMessage = "Start datum är obligatoriskt")]
 	public DateTime StartDate { get; set; } = DateTime.Now;
 	
-    [Required(ErrorMessage = "Slutdatum är obligatoriskt")]
+    [Required(ErrorMessage = "Slut datum är obligatoriskt")]
 	public DateTime EndDate { get; set; }
 
     public int CourseId { get; set; }
