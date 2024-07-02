@@ -102,52 +102,56 @@ else if (currentUser != null)
     private string? loadingError = null;
     private string? titleText = null;
 
-    protected async override Task OnInitializedAsync()
+    protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        try
+        if(firstRender)
         {
-            currentUser = await Services.UserService.GetCurrentUserAsync();
-
-            if (currentUser == null || (currentUser.Role != Models.UserRole.Student && currentUser.Role != Models.UserRole.Teacher) )
+            try
             {
-                NavigateToHome();
-                return;
+                currentUser = await Services.UserService.GetCurrentUserAsync();
+
+                if (currentUser == null || (currentUser.Role != Models.UserRole.Student && currentUser.Role != Models.UserRole.Teacher))
+                {
+                    NavigateToHome();
+                    return;
+                }
+
+                if (currentUser.Role == Models.UserRole.Student)
+                {
+                    var courses = await Services.CourseService.GetAllUsersCourses(currentUser.UserId);
+                    CourseId = courses.FirstOrDefault().CourseId;
+                }
+
+                Course = await Services.CourseService.GetCourseAsync(CourseId);
+
+                if (Course == null)
+                {
+                    loadingError = "Kursen existerar inte.";
+                    isLoading = false;
+                    return;
+                }
+
+                titleText = $"Moduler för {Course.Name} kursen";
+
+                if (Course?.ModuleIds != null && Course.ModuleIds.Any())
+                {
+                    var tasks = Course.ModuleIds.Select(id => Services.ModuleService.GetModuleAsync(id));
+                    var moduleResults = await Task.WhenAll(tasks);
+                    modules = moduleResults.ToList();
+
+                }
             }
 
-            if (currentUser.Role == Models.UserRole.Student)
+            catch (Exception ex)
             {
-                var courses = await Services.CourseService.GetAllUsersCourses(currentUser.UserId);
-                CourseId = courses.FirstOrDefault().CourseId;
+                loadingError = $"Error: {ex.Message}";
             }
 
-            Course = await Services.CourseService.GetCourseAsync(CourseId);
-
-            if (Course == null)
+            finally
             {
-                loadingError = "Kursen existerar inte.";
                 isLoading = false;
-                return;
+                StateHasChanged();
             }
-
-            titleText = $"Moduler för {Course.Name} kursen";
-
-            if (Course?.ModuleIds != null && Course.ModuleIds.Any())
-            {
-                var tasks = Course.ModuleIds.Select(id => Services.ModuleService.GetModuleAsync(id));
-                var moduleResults = await Task.WhenAll(tasks);
-                modules = moduleResults.ToList();
-
-            }
-        }
-
-        catch (Exception ex)
-        {
-            loadingError = $"Error: {ex.Message}";
-        }
-
-        finally
-        {
-            isLoading = false;
         }
 
     }
