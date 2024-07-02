@@ -4,16 +4,17 @@ using Lexicon.Api.Entities;
 using Lexicon.Api.Repositories;
 using AutoMapper;
 using Lexicon.Api.Dtos.UserDtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lexicon.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Roles = "Teacher, Student")]
 public class UsersController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
-
 
     public UsersController(IUnitOfWork unitOfWork, IMapper mapper)
     {
@@ -22,7 +23,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
+	public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
     {
         var users = await _unitOfWork.Users.GetAllAsync();
 
@@ -35,7 +36,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<UserDto>> GetUser([FromRoute] int id)
+	public async Task<ActionResult<UserDto>> GetUser([FromRoute] int id)
     {
         try
         {
@@ -55,7 +56,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] UserPostDto userPostDto)
+	public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] UserPostDto userPostDto)
     {
         if (id <= 0)
         {
@@ -112,7 +113,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<UserPostDto>> PostUser([FromBody] UserPostDto userPostDto)
+	public async Task<ActionResult<UserPostDto>> PostUser([FromBody] UserPostDto userPostDto)
     {
         if (!ModelState.IsValid)
         {
@@ -141,7 +142,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteUser([FromRoute] int id)
+	public async Task<IActionResult> DeleteUser([FromRoute] int id)
     {
         if (id <= 0)
         {
