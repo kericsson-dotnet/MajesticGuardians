@@ -11,4 +11,5 @@ public class Document
     public int? UserId { get; set; }
     public int? CourseId { get; set; }
     public int? ActivityId { get; set; }
+    public int? ModuleId { get; set; }
 }

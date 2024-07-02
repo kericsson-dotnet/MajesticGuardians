@@ -1,0 +1,49 @@
+﻿@page "/documents/module/{ModuleId:int?}"
+@page "/documents/activity/{ActivityId:int?}"
+@inject IUnitOfWork Services;
+
+<h3>Documents</h3>
+<DocumentList @ref="documentList"></DocumentList>
+
+@code {
+	[Parameter]
+	public int? ModuleId { get; set; }
+	[Parameter]
+	public int? ActivityId { get; set; }
+	private List<Document> documents;
+	private DocumentList? documentList;
+
+	protected override async Task OnInitializedAsync()
+	{
+		documents = new();
+		await LoadDocumentAsync();
+	}
+	public async Task LoadDocumentAsync()
+	{
+		var allDocs = (await Services.DocumentService.GetDocumentsAsync()).ToList();
+		if (ModuleId.HasValue)
+		{
+			foreach(var doc in allDocs)
+			{
+				if (doc.ModuleId == ModuleId)
+				{
+					documents.Add(doc);
+				}
+			}
+		}else if (ActivityId.HasValue)
+		{
+			foreach (var doc in allDocs)
+			{
+				if (doc.ActivityId == ActivityId)
+				{
+					documents.Add(doc);
+				}
+			}
+		}
+		if(documents.Count > 0)
+		{
+			documentList.SetDocuments(documents);
+		}
+
+	}
+}
