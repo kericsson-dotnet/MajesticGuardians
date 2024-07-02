@@ -94,13 +94,9 @@ else if(currentUser != null)
                 NavigateToHome();
             }
 
+            await LoadCourseAsync();
             StateHasChanged();
         }
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        await LoadCourseAsync();
     }
 
     private async Task LoadCourseAsync()

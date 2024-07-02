@@ -136,51 +136,54 @@ else
     public List<User> Users { get; set; } = new List<User>();
     public List<User> Students { get; set; } = new List<User>();
 
-    protected async override Task OnInitializedAsync()
+    protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        try
+        if (firstRender)
         {
-            currentUser = await Services.UserService.GetCurrentUserAsync();
-
-            if (currentUser == null)
+            try
             {
-                NavigateToHome();
-                return;
-            }
+                currentUser = await Services.UserService.GetCurrentUserAsync();
 
-            if (currentUser.Role == Models.UserRole.Student)
+                if (currentUser == null)
+                {
+                    NavigateToHome();
+                    return;
+                }
+
+                if (currentUser.Role == Models.UserRole.Student)
+                {
+                    var courses = await Services.CourseService.GetAllUsersCourses(currentUser.UserId);
+                    CourseId = courses.FirstOrDefault()?.CourseId ?? CourseId;
+                }
+
+                Course = await Services.CourseService.GetCourseAsync(CourseId);
+
+                if (Course == null)
+                {
+                    Navigation.NavigateTo("/course_dashboard", true);
+                    return;
+                }
+
+                var users = await Services.CourseService.GetAllUsersInCourse(CourseId);
+
+                if (users.Any())
+                {
+                    var userTasks = users.Select(user => Services.UserService.GetUserAsync(user.UserId));
+                    var allUsersWithDetails = await Task.WhenAll(userTasks);
+
+                    Users = allUsersWithDetails.Where(user => user != null).ToList();
+                    Students = Users.Where(u => u.Role == Models.UserRole.Student).ToList();
+                }
+            }
+            catch (Exception ex)
             {
-                var courses = await Services.CourseService.GetAllUsersCourses(currentUser.UserId);
-                CourseId = courses.FirstOrDefault()?.CourseId ?? CourseId;
+                Console.WriteLine(ex.ToString());
             }
-
-            Course = await Services.CourseService.GetCourseAsync(CourseId);
-
-            if (Course == null)
+            finally
             {
-                Navigation.NavigateTo("/course_dashboard", true);
-                return;
+                isLoading = false;
+                StateHasChanged();
             }
-
-            var users = await Services.CourseService.GetAllUsersInCourse(CourseId);
-
-            if (users.Any())
-            {
-                var userTasks = users.Select(user => Services.UserService.GetUserAsync(user.UserId));
-                var allUsersWithDetails = await Task.WhenAll(userTasks);
-
-                Users = allUsersWithDetails.Where(user => user != null).ToList();
-                Students = Users.Where(u => u.Role == Models.UserRole.Student).ToList();
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.ToString());
-        }
-        finally
-        {
-            isLoading = false;
-            StateHasChanged();
         }
     }
 

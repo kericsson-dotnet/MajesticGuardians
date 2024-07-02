@@ -94,15 +94,12 @@ else if (currentUser != null)
                 NavigateToHome();
             }
 
+            courses = (await Services.CourseService.GetCoursesAsync()).ToList();
+            isLoading = false;
             StateHasChanged();
         }
     }
 
-    protected async override Task OnInitializedAsync()
-    {
-        courses = (await Services.CourseService.GetCoursesAsync()).ToList();
-        isLoading = false;
-    }
 
     private string EditCourseUrl(int id) => $"/edit_course/{id}";
     private string DetailsCourseUrl(int id) => $"/course_details/{id}";
