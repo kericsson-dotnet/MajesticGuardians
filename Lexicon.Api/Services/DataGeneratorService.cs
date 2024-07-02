@@ -101,7 +101,7 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             new Course
             {
                 Name = ".net 2024",
-                Description = faker.Commerce.ProductDescription(),
+                Description = "Kursen .NET 2024 är en kurs som lär dig grunderna i .NET och C#. Den behandlar bland annat databasehantering, webbutveckling och API:er.",
                 StartDate = faker.Date.Past(),
                 EndDate = faker.Date.Future(),
                 // Documents = null
@@ -109,7 +109,7 @@ public class DataGeneratorService(IUnitOfWork unitOfWork)
             new Course
             {
                 Name = "Python 2024",
-                Description = faker.Commerce.ProductDescription(),
+                Description = "Kursen Python 2024 är en kurs som lär dig grunderna i Python. Den behandlar bland annat webbutveckling, maskininlärning och dataanalys.",
                 StartDate = faker.Date.Past(),
                 EndDate = faker.Date.Future(),
                 // Documents = null
