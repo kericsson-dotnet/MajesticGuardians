@@ -9,7 +9,7 @@
 
 @if (!string.IsNullOrEmpty(Message))
 {
-	<p class="alert alert-secondary" role="alert">@Message</p>
+	<p class="alert alert-success" role="alert">@Message</p>
 }
 
 <EditForm Model="@LoadFile" OnValidSubmit="@OnSubmit" enctype="multipart/form-data">
@@ -17,12 +17,12 @@
 	<ValidationSummary />
 	<div class="mb-4">
 		<label for="name">Namn</label>
-		<InputText id="name" class="form-control" placeholder="Name" @bind-Value="@LoadFile.Name" />
+		<InputText id="name" class="form-control" placeholder="Namn" @bind-Value="@LoadFile.Name" />
 		<ValidationMessage For="@(() => LoadFile.Name)" />
 	</div>
 	<div class="mb-4">
 		<label for="description">Beskrivning</label>
-		<InputText id="description" class="form-control" placeholder="Description" @bind-Value="@LoadFile.Description" />
+		<InputText id="description" class="form-control" placeholder="Beskrivning" @bind-Value="@LoadFile.Description" />
 		<ValidationMessage For="@(() => LoadFile.Description)" />
 	</div>
 	<div class="mb-4">
@@ -52,16 +52,18 @@
 			StateHasChanged();
 		}
 	}
-	
+
 	private async Task OnSubmit()
 	{
 		try
 		{
 			using MultipartFormDataContent content = new();
+
 			//Add values if wanted to save in db
 			content.Add(new StringContent(LoadFile.Name), "Title");
 			content.Add(new StringContent(LoadFile.Description), "Description");
 			content.Add(new StringContent(currentUser!.UserId.ToString()), "UserId");
+
 			foreach(var file in LoadFile.Attachments)
 			{
 				string safeFileName = WebUtility.HtmlEncode(file.Name);
@@ -69,12 +71,16 @@
 				fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(file.ContentType);
 				content.Add(fileContent, nameof(LoadFile.Attachments), safeFileName);
 			}
-			Message = await Services.DocumentService.PostFileAsync(content);
+
+		    await Services.DocumentService.PostFileAsync(content);
+			Message = "Uppladdningen lyckades";
 			LoadFile = new();
 			await documentList.RefreshDocumentList();
-		}catch(Exception e)
+		}
+		
+		catch(Exception e)
 		{
-			Message = "Upload failed. Error: " + e.Message;
+			Message = "Uppladdning misslyckades: " + e.Message;
 		}
 	}
 
