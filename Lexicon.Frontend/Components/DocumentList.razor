@@ -1,30 +1,36 @@
 ﻿@inject IUnitOfWork Services;
-@rendermode InteractiveServer
 @inject IJSRuntime JS
 
-<h3>Document List</h3>
+@rendermode InteractiveServer
+
+
+<h3>Dokumenter</h3>
+
 @if (!isRender)
 {
-    <p>Loading...</p>
+    <p>Läser...</p>
 }
+
 else
 {
     @if (documents == null)
     {
-        <p>Loading...</p>
+        <p>Läser in...</p>
     }
+    
     else if (documents.Count == 0)
     {
-        <p>There has no document</p>
+        <p>Det finns inga tillgängliga dokumenter</p>
     }
+
     else
     {
         <table class="table">
             <thead>
                 <tr>
-                    <th>Fil Namn</th>
+                    <th>Filnamn</th>
                     <th>Uppladdad</th>
-                    <th>Ladda ner</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -44,8 +50,6 @@ else
         </table>
     }
 }
-
-
 
 @code {
     private List<Document> documents;
@@ -75,6 +79,7 @@ else
         {
             documents = (await Services.DocumentService.GetDocumentsAsync()).ToList();
         }
+
         else
         {
             var docs = (await Services.DocumentService.GetDocumentsAsync()).ToList();
@@ -87,21 +92,25 @@ else
             }
         } 
     }
+    
     public async Task RefreshDocumentList()
     {
         await LoadDocumentAsync();
         StateHasChanged(); // Notify the component to re-render
     }
+
     private async Task DownloadFile(int id)
     {
         var document = await Services.DocumentService.GetDocumentAsync(id);
         Console.WriteLine("document Url" + document.Url);
+        
         if (document != null)
         {
             var docUrl = document.Url;
             var docName = document.Name;
             await JS.InvokeVoidAsync("triggerFileDownload", docName, docUrl);
         }
+
         else
         {
             Console.WriteLine("Filnedladdning misslyckades");
