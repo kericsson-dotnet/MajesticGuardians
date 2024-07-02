@@ -1,26 +1,53 @@
 ﻿using Lexicon.Frontend.Models;
 using Lexicon.Frontend.Services;
 using System.Net;
+using System.Net.Http.Headers;
 
 namespace Lexicon.Frontend.ServicesImp;
 
 public class ActivityService : IActivityService
 {
     private readonly HttpClient _httpClient;
+	private readonly ISessionStorageService _sessionStorageService;
 
-    public ActivityService(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-    }
+	public ActivityService(HttpClient httpClient, ISessionStorageService sessionStorageService)
+	{
+		_httpClient = httpClient;
+		_sessionStorageService = sessionStorageService;
+	}
 
-	public async Task AddActivityAsync(Activity activity) => await _httpClient.PostAsJsonAsync("api/activities", activity);
+	private async Task AddTokenToRequestHeader()
+	{
+		var token = await _sessionStorageService.GetItemAsync("authToken");
 
-	public async Task DeleteActivityAsync(int id) => await _httpClient.DeleteAsync($"api/activities/{id}");
+		if (!string.IsNullOrEmpty(token))
+		{
+			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+		}
+	}
 
-    public async Task<List<Activity>> GetActivitiesAsync() => await _httpClient.GetFromJsonAsync<List<Activity>>("api/activities");
+	public async Task AddActivityAsync(Activity activity)
+	{
+		await AddTokenToRequestHeader();
+		await _httpClient.PostAsJsonAsync("api/activities", activity);
+	}
+
+	public async Task DeleteActivityAsync(int id)
+	{
+		await AddTokenToRequestHeader();
+		await _httpClient.DeleteAsync($"api/activities/{id}");
+	}
+
+	public async Task<List<Activity>> GetActivitiesAsync()
+	{
+		await AddTokenToRequestHeader();
+		return await _httpClient.GetFromJsonAsync<List<Activity>>("api/activities");
+	}
 
 	public async Task<Activity> GetActivityAsync(int id)
 	{
+		await AddTokenToRequestHeader();
+
 		try
 		{
 			return await _httpClient.GetFromJsonAsync<Activity>($"api/activities/{id}");
@@ -32,7 +59,10 @@ public class ActivityService : IActivityService
 		}
 	}
 
-	public async Task<bool> UpdateActivityAsync(int id, Activity activity) {
+	public async Task<bool> UpdateActivityAsync(int id, Activity activity)
+	{
+		await AddTokenToRequestHeader();
+
 		try
 		{
 			// Send a PUT request and capture the response

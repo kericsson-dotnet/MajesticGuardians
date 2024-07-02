@@ -4,11 +4,13 @@ using Lexicon.Api.Entities;
 using Lexicon.Api.Repositories;
 using AutoMapper;
 using Lexicon.Api.Dtos.ActivityDtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lexicon.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Roles = "Teacher, Student")]
 public class ActivitiesController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -21,7 +23,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetActivities()
+	public async Task<IActionResult> GetActivities()
     {
         var activities = await _unitOfWork.Activities.GetAllAsync();
 
@@ -34,7 +36,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ActivityDto>> GetActivity([FromRoute] int id)
+	public async Task<ActionResult<ActivityDto>> GetActivity([FromRoute] int id)
     {
         try
         {
@@ -54,7 +56,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutActivity([FromRoute] int id, [FromBody] ActivityPostDto activityPostDto)
+	public async Task<IActionResult> PutActivity([FromRoute] int id, [FromBody] ActivityPostDto activityPostDto)
     {
         if (id <= 0)
         {
@@ -100,7 +102,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ActivityPostDto>> PostActivity([FromBody] ActivityPostDto activityPostDto)
+	public async Task<ActionResult<ActivityPostDto>> PostActivity([FromBody] ActivityPostDto activityPostDto)
     {
         if (!ModelState.IsValid)
         {
@@ -130,7 +132,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteActivity([FromRoute] int id)
+	public async Task<IActionResult> DeleteActivity([FromRoute] int id)
     {
         if (id <= 0)
         {

@@ -1,13 +1,14 @@
+using Lexicon.Api.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace Lexicon.Api.Repositories;
+namespace Lexicon.Api.Services;
 
-public class CrudRepository<T> : ICrudRepository<T> where T : class
+public class CrudService<T> : ICrudRepository<T> where T : class
 {
     protected readonly DbContext _context;
     protected DbSet<T> DbSet;
 
-    public CrudRepository(DbContext context)
+    public CrudService(DbContext context)
     {
         _context = context;
         DbSet = _context.Set<T>();

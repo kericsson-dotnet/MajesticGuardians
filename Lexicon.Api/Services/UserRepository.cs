@@ -1,9 +1,10 @@
 ﻿using Lexicon.Api.Entities;
+using Lexicon.Api.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace Lexicon.Api.Repositories;
+namespace Lexicon.Api.Services;
 
-public class UserRepository(DbContext context) : CrudRepository<User>(context), IUserRepository
+public class UserRepository(DbContext context) : CrudService<User>(context), IUserRepository
 
 {
     public virtual async Task<IEnumerable<User>> GetAllAsync()
