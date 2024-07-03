@@ -4,7 +4,7 @@
 The task is to develop a Learning Management System (LMS) for Lexicon's advanced courses. The system will centralize and simplify communication between teachers and students by putting schedules, course materials, information, assignments, and submissions all in one place. The project will involve full-stack development using Blazor Web App, Entity Framework Core, and Bootstrap 5. The system will manage users, courses, modules, activities, and documents.
 
 ## Video Demonstration (Coming soon)
-**Link:** 
+[Link](https://www.youtube.com/watch?v=lo9FIRZQRGI)
 
 ### ER Diagram and Assignment description
 [Entityframework Relationship](https://drive.google.com/file/d/1zR73l3ImWsBmax1V0GBj2C04I6gqgPFj/view?usp=sharing)
