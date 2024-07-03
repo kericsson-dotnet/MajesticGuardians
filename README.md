@@ -8,6 +8,7 @@ The task is to develop a Learning Management System (LMS) for Lexicon's advanced
 
 ### ER Diagram and Assignment description
 [Entityframework Relationship](https://drive.google.com/file/d/1zR73l3ImWsBmax1V0GBj2C04I6gqgPFj/view?usp=sharing)
+
 [Assignment_description](https://github.com/user-attachments/files/15871981/Projektdokument_.Lexicon.LMS.pdf)
 
 ## C# (.NET) Installation Guide
